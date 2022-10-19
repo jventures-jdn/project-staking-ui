@@ -48,7 +48,7 @@ $ cd root-project/packages/staking-ui
 $ yarn build:[jfin, jfintest]
 ```
 
-To deploy user interface to <b>preview</b> envrioment include mainnet, testnet and run the following commands:
+To deploy user interface to <b>preview</b> envrioment include mainnet, testnet by run the following commands:
 ```bash
 $ cd root-project/packages/staking-ui
 $ yarn deploy-preview:[mainnet, testnet]
