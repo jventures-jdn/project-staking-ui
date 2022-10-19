@@ -80,7 +80,7 @@ $ cd root-project
 $ yarn build
 ```
 
-When new validator has been added to the chain you to match address with the validator's name and image at `staking-ui/.../utils/const.ts`
+When new validator has been added to the chain you need to match address with the validator's name and image at `staking-ui/.../utils/const.ts`
 ```javascript
 export const VALIDATOR_WALLETS: Record<string, {name: string, image: string}> = {
     "address": {
