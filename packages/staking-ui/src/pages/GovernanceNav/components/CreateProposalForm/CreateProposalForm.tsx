@@ -150,7 +150,7 @@ const CreateProposalForm = observer((props: IGenerateThresholdKeyFormProps) => {
       try {
         const a = await store.getBasSdk().getGovernance()
           .createProposal(values.description, votingPeriod)
-          .removeDeployer(values.address);
+          .removeValidator(values.address);
         const tx = await store.getBasSdk().getGovernance().sendProposal(a)
         const receipt = await tx.receipt
         message.success('Proposal was successfully added!');
