@@ -67,9 +67,9 @@
     "build:devnet": "REACT_APP_ENVIRONMENT=devnet react-scripts build",
     "build:jfin": "REACT_APP_ENVIRONMENT=jfin react-scripts build",
     "build:jfintest": "REACT_APP_ENVIRONMENT=jfintest react-scripts build",
-    "deploy:mainnet": "yarn build:jfin && firebase deploy --only hosting:mainnet",
-    "deploy:testnet": "yarn build:jfintest && firebase deploy --only hosting:testnet",
-    "deploy": "yarn deploy:testnet && yarn deploy:mainnet"
+    "deploy-preview:mainnet": "yarn build:jfin && firebase deploy --only hosting:mainnet",
+    "deploy-preview:testnet": "yarn build:jfintest && firebase deploy --only hosting:testnet",
+    "deploy-preview": "yarn deploy:testnet && yarn deploy:mainnet"
   },
   "browserslist": {
     "production": [
