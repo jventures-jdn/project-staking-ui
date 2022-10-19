@@ -6,6 +6,7 @@ import { useBasStore } from "src/stores";
 import ValidatorInfo from "src/components/ValidatorInfo/ValidatorInfo";
 import Validators from "src/components/Validator/Validators";
 import { IValidator } from "@ankr.com/bas-javascript-sdk";
+import { statusToStatusId } from "src/utils/helpers";
 
 const Staking = observer(() => {
   /* -------------------------------------------------------------------------- */
@@ -26,16 +27,21 @@ const Staking = observer(() => {
       .getBasSdk()
       .getStaking()
       .getAllValidators();
-    const active = await currentValidators.filter((v) => v.status === "1");
+    const filterValidators = currentValidators.filter((v) =>
+      [ statusToStatusId('ACTIVE'), statusToStatusId('JAILED')].includes(
+        v.status
+      )
+    );
 
+    const active = await filterValidators.filter((v) => v.status === statusToStatusId('ACTIVE'));
     const totalDelegatedTokens = await store
       .getBasSdk()
       .getStaking()
       .getTotalDelegatedAmount();
 
-    setValidators(currentValidators);
+    setValidators(filterValidators);
     setBondedTokens(totalDelegatedTokens.toFixed());
-    setTotalValidators(currentValidators.length);
+    setTotalValidators(filterValidators.length);
     setActiveValidators(active.length);
     setIsLoading(false);
   };
@@ -50,7 +56,6 @@ const Staking = observer(() => {
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
   useEffect(() => {
-    // if (!store.isConnected) setIsLoading(true);
     if (store.isConnected) {
       inital();
     }
