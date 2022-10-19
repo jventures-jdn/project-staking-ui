@@ -23,13 +23,13 @@
 <b>Note</b>: In this guide we describe using yarn to install packages. Other package managers may be used at your discretion. With yarn, you have several options available for managing how your OS command line resolves the location of package. but we prefer to use yarn to avoid any problems.
 
 Install project dependencies
-```
+```bash
 $ cd root-project
 $ yarn install
 ```
 
 Build monorepo package
-```
+```bash
 $ cd root-project
 $ yarn build
 ```
@@ -37,19 +37,19 @@ $ yarn build
 ## Using
 
 Once installed, you can start user-interface in local envrioment with following commands: 
-```
+```bash
 $ cd root-project/packages/staking-ui
 $ yarn start:[jfin, jfintest]
 ```
 
 For deploy to production you need to build static at user-interface directory, and then copy `build` directory to your web server, to build static run the following commands:
-```
+```bash
 $ cd root-project/packages/staking-ui
 $ yarn build:[jfin, jfintest]
 ```
 
 To deploy user interface to preview envrioment include mainnet, testnet and run the following commands:
-```
+```bash
 $ cd root-project/packages/staking-ui
 $ yarn deploy:[mainnet, testnet]
 ```
