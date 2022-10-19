@@ -36,7 +36,7 @@ $ yarn build
 
 ## Using
 
-Once installed, you can start user-interface in local envrioment with following commands: 
+Once installed, you can start user-interface in local environment with following commands: 
 ```bash
 $ cd root-project/packages/staking-ui
 $ yarn start:[jfin, jfintest]
@@ -48,10 +48,10 @@ $ cd root-project/packages/staking-ui
 $ yarn build:[jfin, jfintest]
 ```
 
-To deploy user interface to preview envrioment include mainnet, testnet and run the following commands:
+To deploy user interface to <b>preview</b> envrioment include mainnet, testnet and run the following commands:
 ```bash
 $ cd root-project/packages/staking-ui
-$ yarn deploy:[mainnet, testnet]
+$ yarn deploy-preview:[mainnet, testnet]
 ```
 
 ## Project structure
@@ -60,7 +60,7 @@ This project consists of three parts. that are connected to each other, the main
     .
     ├── packages
     │   ├── backoffice-ui           # Backoffice user-interface
-    │   ├── javascript-sdk          # Web3 sdk library
+    │   ├── javascript-sdk          # Web3 sdk library (need to build every time after changed)
     │   └── staking-ui              # Staking user-interface
     │       └── src
     │           ├── assets          # assets file include images, css
@@ -71,6 +71,30 @@ This project consists of three parts. that are connected to each other, the main
     └── ...
 ```
 *** Please check before using some page and components. It's an old file that is no longer in use. but is also exist for future error references (from original fork).
+
+## Others
+
+`javascript-sdk` It needs to be rebuilt after every edit.
+```bash
+$ cd root-project
+$ yarn build
+```
+
+When new validator has been added to the chain you to match address with the validator's name and image at `staking-ui/.../utils/const.ts`
+```javascript
+export const VALIDATOR_WALLETS: Record<string, {name: string, image: string}> = {
+    "address": {
+        name: "validator name",
+        image: validator import image
+    },
+}
+```
+
+If you want to change `gas prices` or `gas limit` You can change it at `javascript-sdk/.../config.ts`
+```javascript
+export const GAS_LIMIT = "7000000";
+export const GAS_PRICE = "23000000000";
+```
 
 ## Team
 - [JVenture Team](https://github.com/orgs/jventures-jdn)
