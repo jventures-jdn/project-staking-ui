@@ -136,6 +136,7 @@ const Assets = observer(() => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                height: "70px",
               }}
             >
               {loading ? (
