@@ -82,7 +82,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
           <WarningOutlined />
           If reward you received does not match the reward that the system has
           indicated, This may happen from the gas limit. Please increase the gas
-          limit in wallet (up to 7000000).
+          limit in wallet (up to 25000000).
         </div>
 
         <button
