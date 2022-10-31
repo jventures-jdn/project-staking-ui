@@ -10,7 +10,7 @@ import {
 import BigNumber from "bignumber.js";
 import {sortEventData, sortHasEventData} from "./utils";
 import {EventData} from "web3-eth-contract";
-import { GAS_CLAIM_LIMIT, GAS_PRICE } from "./config";
+import { GAS_LIMIT_CLAIM, GAS_PRICE } from "./config";
 
 export class Staking {
 
@@ -231,7 +231,7 @@ export class Staking {
     return this.keyProvider.sendTx({
       to: this.keyProvider.stakingAddress!,
       data: data,
-      gasLimit: GAS_CLAIM_LIMIT,
+      gasLimit: GAS_LIMIT_CLAIM,
       gasPrice: GAS_PRICE
     })
   }

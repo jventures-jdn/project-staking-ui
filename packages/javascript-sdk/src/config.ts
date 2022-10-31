@@ -25,6 +25,6 @@ export interface IConfig {
   deployerProxyAddress: Web3Address;
 }
 
-export const GAS_LIMIT = "7000000";
-export const GAS_CLAIM_LIMIT = "25000000"
+export const GAS_LIMIT_DEFAULT = "10000000"; // used for staking and governance
+export const GAS_LIMIT_CLAIM = "25000000"
 export const GAS_PRICE = "23000000000";
