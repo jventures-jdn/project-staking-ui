@@ -1,4 +1,4 @@
-import { IValidator } from "@ankr.com/bas-javascript-sdk";
+import { GAS_LIMIT_CLAIM, IValidator } from "@ankr.com/bas-javascript-sdk";
 import { LoadingOutlined, WarningOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import BigNumber from "bignumber.js";
@@ -82,7 +82,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
           <WarningOutlined />
           If reward you received does not match the reward that the system has
           indicated, This may happen from the gas limit. Please increase the gas
-          limit in wallet (up to 25000000).
+          limit in wallet (up to {GAS_LIMIT_CLAIM}).
         </div>
 
         <button

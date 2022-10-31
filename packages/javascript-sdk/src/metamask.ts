@@ -81,28 +81,27 @@ export const sendTransactionAsync = async (
   }
   console.log("Nonce: " + nonce);
   const chainId = await web3.eth.getChainId();
-  const tx = {
+
+
+  // declear gasLimit from parameter or estimate
+  const gasLimit = sendOptions.gasLimit
+    ? numberToHex(sendOptions.gasLimit)
+    : numberToHex(
+        await web3.eth.estimateGas(sendOptions)
+      ); // return units
+
+  // declear transaction payload
+  let tx = {
     from: sendOptions.from,
     to: sendOptions.to,
     value: numberToHex(sendOptions.value || "0"),
-    gas: numberToHex(sendOptions.gasLimit || "1000000"),
-    gasPrice: price,
+    gas: gasLimit, // gas unit (limit)
+    gasPrice: price, // The price of gas for this transaction in wei, defaults to web3.eth.gasPrice.
     data: sendOptions.data,
     nonce: nonce,
     chainId: chainId,
   };
-  const gasEstimation = await web3.eth.estimateGas(tx);
-  console.log(`Gas estimation is: ${gasEstimation}`);
-  if (
-    sendOptions.gasLimit &&
-    Number(gasEstimation) > Number(sendOptions.gasLimit)
-  ) {
-    throw new Error(
-      `Gas estimation exceeds possible limit (${Number(
-        gasEstimation
-      )} > ${Number(sendOptions.gasLimit)})`
-    );
-  }
+
   console.log("Sending transaction via Web3: ", tx);
   return new Promise((resolve, reject) => {
     const promise = web3.eth.sendTransaction(tx);
