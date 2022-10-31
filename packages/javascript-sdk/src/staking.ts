@@ -214,6 +214,7 @@ export class Staking {
     return this.keyProvider.sendTx({
       to: this.keyProvider.stakingAddress!,
       data: data,
+      gasPrice: GAS_PRICE
     })
   }
 
