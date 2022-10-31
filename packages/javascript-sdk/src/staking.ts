@@ -148,6 +148,7 @@ export class Staking {
       to: this.keyProvider.stakingAddress!,
       value: amount,
       data: data,
+      gasPrice: GAS_PRICE
     })
   }
 
