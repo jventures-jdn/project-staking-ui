@@ -26,5 +26,5 @@ export interface IConfig {
 }
 
 export const GAS_LIMIT = "7000000";
-export const GAS_CLAIM_LIMIT = "35000000"
+export const GAS_CLAIM_LIMIT = "25000000"
 export const GAS_PRICE = "23000000000";
