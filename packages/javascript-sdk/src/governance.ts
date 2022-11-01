@@ -11,7 +11,7 @@ import {PastEventOptions} from "web3-eth-contract";
 import BigNumber from "bignumber.js";
 import {keccak256} from "web3-utils";
 import {sortEventData} from "./utils";
-import { GAS_PRICE } from "./config";
+import { GAS_LIMIT_GOVERNANCE, GAS_PRICE } from "./config";
 
 export class ProposalBuilder {
 
@@ -241,7 +241,11 @@ export class Governance {
     } else {
       data = this.keyProvider.governanceContract!.methods.propose(targets, values, inputs, builder.description).encodeABI();
     }
-    return this.keyProvider.sendTx({to: this.keyProvider.governanceAddress!, data: data});
+    return this.keyProvider.sendTx({
+      to: this.keyProvider.governanceAddress!,
+      data: data, 
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT_GOVERNANCE});
   }
 
   public async voteForProposal(id: string): Promise<IPendingTx> {
@@ -251,6 +255,8 @@ export class Governance {
     return await this.keyProvider.sendTx({
       to: this.keyProvider.governanceAddress!,
       data: data,
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT_GOVERNANCE
     })
   }
 
@@ -261,6 +267,8 @@ export class Governance {
     return await this.keyProvider.sendTx({
       to: this.keyProvider.governanceAddress!,
       data: data,
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT_GOVERNANCE
     })
   }
 
@@ -272,7 +280,8 @@ export class Governance {
     return await this.keyProvider.sendTx({
       to: this.keyProvider.governanceAddress!,
       data: data,
-      gasPrice: GAS_PRICE
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT_GOVERNANCE
     })
   }
 }

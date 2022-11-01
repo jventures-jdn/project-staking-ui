@@ -93,6 +93,7 @@ export const VALIDATOR_WALLETS: Record<string, {name: string, image: string}> = 
 If you want to change `gas prices` or `gas limit` You can change it at `javascript-sdk/.../config.ts`
 ```javascript
 export const GAS_LIMIT_CLAIM = mainnet = "25000000", testnet = "7000000"
+export const GAS_LIMIT_GOVERNANCE = mainnet = "15000000", testnet = "7000000"
 export const GAS_PRICE = "23000000000";
 ```
 
