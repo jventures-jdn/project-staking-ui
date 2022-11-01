@@ -33,7 +33,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
     if (!unStakingAmount) return;
     if (unStakingAmount < 1) return setError("Un-Stake amount must be more 1");
     if (unStakingAmount > Number(stakedAmount))
-      return setError(`Un-Stake amount must be lower than ${stakedAmount}`);
+      return setError(`Un-Stake amount must be lower or equal to ${stakedAmount}`);
 
     modalStore.setIsLoading(true);
     const amount = new BigNumber(unStakingAmount)

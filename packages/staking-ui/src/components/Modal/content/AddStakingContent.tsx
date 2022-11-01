@@ -32,7 +32,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
     if (stakingAmount < 1) return setError("Stake amount must be more 1");
     if (stakingAmount > Number(store.walletBalance) / GWEI)
       return setError(
-        `Stake amount must lower than ${store.getWalletBalance()}`
+        `Insufficient Balance`
       );
 
     modalStore.setIsLoading(true);
