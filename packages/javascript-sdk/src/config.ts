@@ -26,9 +26,5 @@ export interface IConfig {
 }
 
 export const GAS_LIMIT_CLAIM = process.env.REACT_APP_ENVIRONMENT === 'jfintest' ? "7000000" : "25000000"
-<<<<<<< HEAD
-export const GAS_PRICE = "30000000000";
-=======
 export const GAS_LIMIT_GOVERNANCE = process.env.REACT_APP_ENVIRONMENT === 'jfintest' ? "7000000" : "15000000"
 export const GAS_PRICE = "23000000000";
->>>>>>> 0b94f7e926727f60bde50c030ce33e13329dcc3e
