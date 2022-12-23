@@ -85,7 +85,7 @@ export const sendTransactionAsync = async (
 
   // declear gasLimit from parameter or estimate
   const gasLimit = sendOptions.gasLimit
-    ? numberToHex( await web3.eth.estimateGas({...sendOptions, gas: GAS_LIMIT_CLAIM, maxFeePerGas: GAS_LIMIT_CLAIM}))
+    ? numberToHex(sendOptions.gasLimit)
     : numberToHex(
         await web3.eth.estimateGas({...sendOptions, gas: GAS_LIMIT_CLAIM})
       ); // return units
