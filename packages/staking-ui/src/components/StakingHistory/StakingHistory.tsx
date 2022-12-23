@@ -25,11 +25,11 @@ const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
       title: "Type",
       render: (v: IMyTransactionHistory) => {
         const diffBlock =
-          Number(v.event.blockNumber) - Number(store.chainInfo?.blockNumber);
+          Number(store.chainInfo?.nextEpochBlock) - Number(v.event.blockNumber);
         return (
           <>
             {v.type.toUpperCase()}{" "}
-            {v.type === "undelegation" && diffBlock >= 0 && (
+            {v.type === "undelegation" && diffBlock > 0 && (
               <span style={{ color: "orange" }}>
                 ({store?.chainInfo && store.chainInfo.nextEpochIn})
               </span>
