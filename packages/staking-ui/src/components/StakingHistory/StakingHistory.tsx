@@ -2,6 +2,7 @@ import { CopyOutlined } from "@ant-design/icons";
 import { Table } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import { observer } from "mobx-react";
+import moment from "moment";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { getCurrentEnv, useBasStore } from "src/stores";
 
@@ -24,18 +25,40 @@ const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
     {
       title: "Type",
       render: (v: IMyTransactionHistory) => {
-        const diffBlock =
-          Number(store.chainInfo?.nextEpochBlock) - Number(v.event.blockNumber);
-        return (
-          <>
-            {v.type.toUpperCase()}{" "}
-            {v.type === "undelegation" && diffBlock > 0 && (
-              <span style={{ color: "orange" }}>
-                ({store?.chainInfo && store.chainInfo.nextEpochIn})
-              </span>
-            )}
-          </>
-        );
+        if (v.type === "undelegation") {
+          const epochBlockInterval = +(
+            store.chainInfo?.epochBlockInterval || 0
+          );
+          const transactionBlock = +(v.event?.blockNumber || 0);
+          const nextBlock = store.chainInfo?.nextEpochBlock || 0;
+          const currentBlock = +(store.chainInfo?.blockNumber || 0);
+          const blockTime = store.chainInfo?.blockTime || 0;
+
+          const targetUndelegateBlock =
+            transactionBlock + epochBlockInterval * 2;
+          const remain = (targetUndelegateBlock - currentBlock) * blockTime;
+          const timeRemain = moment.utc(remain * 1000).format("HH:mm:ss");
+
+          return (
+            <>
+              {v.type.toUpperCase()}{" "}
+              {remain > 0 ? (
+                <span style={{ color: "orange" }}>({timeRemain})</span>
+              ) : (
+                <span style={{ color: "green" }}>(Done)</span>
+              )}
+            </>
+          );
+        }
+
+        return <>{v.type.toUpperCase()}</>;
+        // console.log("transaction: ", v.event?.blockNumber);
+        // console.log("block: ", store.chainInfo?.nextEpochBlock);
+        // const remain =
+        //   ((store.chainInfo?.nextEpochBlock || 0) - v.event?.blockNumber) /
+        //   (store.chainInfo?.blockTime || 0);
+
+        // console.log("remain", remain, remain / 60);
       },
     },
     {
