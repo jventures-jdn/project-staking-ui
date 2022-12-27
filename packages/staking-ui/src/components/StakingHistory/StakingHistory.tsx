@@ -42,7 +42,7 @@ const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
           const remain = targetUndelegateBlock * blockTime;
           const timeRemain = moment
             .utc(remain * 1000)
-            .format(remain < 3600 ? "mm[m] ss[s]" : "hh[h] mm[m] ss[s]");
+            .format(remain < 3600 ? "mm[m] ss[s]" : "h[h] mm[m] ss[s]");
 
           return (
             <>
