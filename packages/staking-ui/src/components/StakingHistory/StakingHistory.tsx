@@ -42,23 +42,14 @@ const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
           return (
             <>
               {v.type.toUpperCase()}{" "}
-              {remain > 0 ? (
-                <span style={{ color: "orange" }}>({timeRemain})</span>
-              ) : (
-                <span style={{ color: "green" }}>(Done)</span>
+              {remain > 0 && (
+                <span style={{ color: "orange" }}>Ready in ({timeRemain})</span>
               )}
             </>
           );
         }
 
         return <>{v.type.toUpperCase()}</>;
-        // console.log("transaction: ", v.event?.blockNumber);
-        // console.log("block: ", store.chainInfo?.nextEpochBlock);
-        // const remain =
-        //   ((store.chainInfo?.nextEpochBlock || 0) - v.event?.blockNumber) /
-        //   (store.chainInfo?.blockTime || 0);
-
-        // console.log("remain", remain, remain / 60);
       },
     },
     {
