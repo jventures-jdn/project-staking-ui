@@ -37,7 +37,7 @@ const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
           const targetUndelegateBlock =
             transactionBlock + epochBlockInterval * 2;
           const remain = (targetUndelegateBlock - currentBlock) * blockTime;
-          const timeRemain = moment.utc(remain * 1000).format("HH:mm:ss");
+          const timeRemain = moment.utc(remain * 1000).format("HH[h] mm[m] ss[s]");
 
           return (
             <>
