@@ -35,15 +35,15 @@ const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
           const blockTime = store.chainInfo?.blockTime || 0;
 
           const targetUndelegateBlock =
-            transactionBlock + epochBlockInterval * 2;
+            transactionBlock + (epochBlockInterval * 2);
           const remain = (targetUndelegateBlock - currentBlock) * blockTime;
-          const timeRemain = moment.utc(remain * 1000).format("HH[h] mm[m] ss[s]");
+          const timeRemain = moment.utc(remain * 1000).format("mm[m] ss[s]");
 
           return (
             <>
               {v.type.toUpperCase()}{" "}
               {remain > 0 && (
-                <span style={{ color: "orange" }}>Ready in ({timeRemain})</span>
+                <span style={{ color: "orange" }}>(Ready in {timeRemain})</span>
               )}
             </>
           );
