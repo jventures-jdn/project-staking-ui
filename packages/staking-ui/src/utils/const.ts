@@ -52,7 +52,7 @@ export const VALIDATOR_WALLETS: Record<
     image: fox
   },
   "0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a": {
-    name: "AVA",
+    name: "AVANTIS",
     image: ava
   }
 };
