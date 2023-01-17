@@ -48,7 +48,7 @@ export const VALIDATOR_WALLETS: Record<
     image: bnb,
   },
   "0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6": {
-    name: "FOX",
+    name: "MR.FOX",
     image: fox
   },
   "0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a": {
