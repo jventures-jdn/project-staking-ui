@@ -5,6 +5,8 @@ import iam from "../assets/images/partners/iam.png";
 import jet from "../assets/images/partners/jet.png";
 import jmb from "../assets/images/partners/jmb.png";
 import bnb from "../assets/images/partners/bnb.png";
+import fox from '../assets/images/partners/fox.png';
+import ava from '../assets/images/partners/ava.png';
 // import unknow from '../assets/images/partners/default.png';
 import BigNumber from "bignumber.js";
 
@@ -45,6 +47,14 @@ export const VALIDATOR_WALLETS: Record<
     name: "B&B",
     image: bnb,
   },
+  "0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6": {
+    name: "FOX",
+    image: fox
+  },
+  "0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a": {
+    name: "AVA",
+    image: ava
+  }
 };
 
 export const BLOCK_REWARD = new BigNumber(
