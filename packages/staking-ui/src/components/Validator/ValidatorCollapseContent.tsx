@@ -29,8 +29,8 @@ const ValidatorCollapseContent = observer(
     /* -------------------------------------------------------------------------- */
     const store = useBasStore();
     const modalStore = useModalStore();
-    const [stakingReward, setStakingReward] = useState((0).toFixed(3));
-    const [stakingAmount, setStakingAmount] = useState((0).toFixed(3));
+    const [stakingReward, setStakingReward] = useState(0);
+    const [stakingAmount, setStakingAmount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
     /* -------------------------------------------------------------------------- */
@@ -38,22 +38,22 @@ const ValidatorCollapseContent = observer(
     /* -------------------------------------------------------------------------- */
 
     const getReward = async (stakingProvider: Staking) => {
-      if (!stakingProvider || !validator) return Number(0).toFixed(3);
+      if (!stakingProvider || !validator) return Number(0);
 
       const reward = await stakingProvider?.getMyStakingRewards(
         validator.validator
       );
 
-      return new BigNumber(reward).dividedBy(GWEI).toFixed(3);
+      return new BigNumber(reward).dividedBy(GWEI).toNumber();
     };
 
     const getMyStaking = async (stakingProvider: Staking) => {
-      if (!stakingProvider || !validator) return (0).toFixed(3);
+      if (!stakingProvider || !validator) return 0;
 
       const amount = await stakingProvider.getMyDelegatedAmount(
         validator.validator
       );
-      return new BigNumber(amount).dividedBy(GWEI).toFixed(3);
+      return new BigNumber(amount).dividedBy(GWEI).toNumber();
     };
 
     const inital = async () => {
@@ -63,8 +63,32 @@ const ValidatorCollapseContent = observer(
       await setStakingAmount(await getMyStaking(stakingProvider));
     };
 
+    const handleClaim = async (isStaking = false) => {
+      if (!validator) return;
+
+      modalStore.setVisible(true);
+      modalStore.setIsLoading(true);
+      modalStore.setTitle("Claim Reward");
+      modalStore.setContent(
+        <ClaimStakingContent
+          amount={+stakingReward}
+          isStaking={isStaking}
+          onSuccess={refresh || inital}
+          validator={validator}
+        />
+      );
+      modalStore.setIsLoading(false);
+    };
+
+    const isStaking = async () => {
+      const stakingProvider = await store.getBasSdk().getStaking();
+      const reward = await getReward(stakingProvider);
+      return !!reward;
+    };
+
     const handleAdd = async () => {
       if (!validator) return;
+      if (await isStaking()) return handleClaim(true);
 
       modalStore.setVisible(true);
       modalStore.setIsLoading(true);
@@ -80,27 +104,13 @@ const ValidatorCollapseContent = observer(
 
     const handleUnStaking = async () => {
       if (!validator) return;
+      if (await isStaking()) return handleClaim(true);
 
       modalStore.setVisible(true);
       modalStore.setIsLoading(true);
       modalStore.setTitle("Un-Staking");
       modalStore.setContent(
         <UnStakingContent onSuccess={refresh || inital} validator={validator} />
-      );
-      modalStore.setIsLoading(false);
-    };
-
-    const handleCliam = async () => {
-      if (!validator) return;
-      modalStore.setVisible(true);
-      modalStore.setIsLoading(true);
-      modalStore.setTitle("Claim Reward");
-      modalStore.setContent(
-        <ClaimStakingContent
-          amount={+stakingReward}
-          onSuccess={refresh || inital}
-          validator={validator}
-        />
       );
       modalStore.setIsLoading(false);
     };
@@ -169,14 +179,14 @@ const ValidatorCollapseContent = observer(
                 <div className="value">
                   {Number(stakingReward).toLocaleString(undefined, {
                     minimumFractionDigits: 3,
-                    maximumFractionDigits: 3,
+                    maximumFractionDigits: 7,
                   })}{" "}
                   <JfinCoin />
                 </div>
                 <button
                   className="button secondary lg"
                   disabled={!store.walletAccount}
-                  onClick={handleCliam}
+                  onClick={() => handleClaim()}
                   type="button"
                 >
                   {isLoading ? <LoadingOutlined spin /> : "Claim"}

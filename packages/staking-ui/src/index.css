@@ -334,7 +334,21 @@ h1.ant-typography {
 
 .warning-message span {
   font-size: 1rem;
-  color: orange;
+  color: var(--WARN);
+  margin-right: 10px;
+}
+
+.alert-message {
+  margin-top: 1rem;
+  border-radius: 15px;
+  border: 1px solid var(--S075);
+  padding: 1rem;
+  background: rgba(237, 0, 0, 0.2);
+}
+
+.alert-message span {
+  font-size: 1rem;
+  color: var(--S075);
   margin-right: 10px;
 }
 
