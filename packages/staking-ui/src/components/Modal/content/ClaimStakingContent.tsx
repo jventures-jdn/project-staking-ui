@@ -74,7 +74,10 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
             disabled
             style={{ marginTop: "15px" }}
             type="number"
-            value={props.amount}
+            value={props.amount?.toLocaleString(undefined, {
+              minimumFractionDigits: 5,
+              maximumFractionDigits: 5,
+            })}
           />
           <div className="staking-sub-input justify-between ">
             <span className="wallet-warning">{error}</span>
