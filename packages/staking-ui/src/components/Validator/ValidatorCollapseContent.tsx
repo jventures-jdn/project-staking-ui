@@ -4,6 +4,7 @@ import {
   MinusOutlined,
   PlusOutlined,
   WalletOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { Col, Row } from "antd";
 import BigNumber from "bignumber.js";
@@ -80,15 +81,8 @@ const ValidatorCollapseContent = observer(
       modalStore.setIsLoading(false);
     };
 
-    const isStaking = async () => {
-      const stakingProvider = await store.getBasSdk().getStaking();
-      const reward = await getReward(stakingProvider);
-      return !!reward;
-    };
-
     const handleAdd = async () => {
       if (!validator) return;
-      if (await isStaking()) return handleClaim(true);
 
       modalStore.setVisible(true);
       modalStore.setIsLoading(true);
@@ -104,7 +98,6 @@ const ValidatorCollapseContent = observer(
 
     const handleUnStaking = async () => {
       if (!validator) return;
-      if (await isStaking()) return handleClaim(true);
 
       modalStore.setVisible(true);
       modalStore.setIsLoading(true);
@@ -151,7 +144,12 @@ const ValidatorCollapseContent = observer(
                   </div>
                   <div>
                     <span>Total Stake: </span>
-                    {store.getValidatorTotalStake(validator)}
+                    {store
+                      .getValidatorTotalStake(validator)
+                      .toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                   </div>
                   <a
                     href={
@@ -178,14 +176,14 @@ const ValidatorCollapseContent = observer(
               <div>
                 <div className="value">
                   {Number(stakingReward).toLocaleString(undefined, {
-                    minimumFractionDigits: 3,
-                    maximumFractionDigits: 7,
+                    minimumFractionDigits: 5,
+                    maximumFractionDigits: 5,
                   })}{" "}
                   <JfinCoin />
                 </div>
                 <button
                   className="button secondary lg"
-                  disabled={!store.walletAccount}
+                  disabled={!store.walletAccount || !stakingReward}
                   onClick={() => handleClaim()}
                   type="button"
                 >
@@ -200,33 +198,53 @@ const ValidatorCollapseContent = observer(
               <div>
                 <div className="value">
                   {Number(stakingAmount).toLocaleString(undefined, {
-                    minimumFractionDigits: 3,
-                    maximumFractionDigits: 3,
+                    minimumFractionDigits: 5,
+                    maximumFractionDigits: 5,
                   })}{" "}
                   <JfinCoin />
                 </div>
                 <div>
-                  {store.getValidatorStatus(validator!.status).status ===
-                    "Active" && (
+                  <div style={{ textAlign: "right" }}>
+                    {store.getValidatorStatus(validator!.status).status ===
+                      "Active" && (
+                      <button
+                        className="button secondary lg"
+                        disabled={!store.walletAccount || !!stakingReward}
+                        onClick={handleAdd}
+                        type="button"
+                      >
+                        <PlusOutlined />
+                      </button>
+                    )}
+
                     <button
                       className="button secondary lg"
-                      disabled={!store.walletAccount}
-                      onClick={handleAdd}
+                      disabled={!store.walletAccount || !!stakingReward}
+                      onClick={handleUnStaking}
+                      style={{ marginLeft: "10px" }}
                       type="button"
                     >
-                      <PlusOutlined />
+                      <MinusOutlined />
                     </button>
+                  </div>
+                  {stakingReward ? (
+                    <div
+                      style={{
+                        marginTop: "5px",
+                        marginLeft: "1rem",
+                        fontSize: "0.7rem",
+                        textAlign: "right",
+                        opacity: 0.75,
+                        lineHeight: 1,
+                      }}
+                    >
+                      <span>
+                        Please claim all pending reward before staking.
+                      </span>
+                    </div>
+                  ) : (
+                    <></>
                   )}
-
-                  <button
-                    className="button secondary lg"
-                    disabled={!store.walletAccount}
-                    onClick={handleUnStaking}
-                    style={{ marginLeft: "10px" }}
-                    type="button"
-                  >
-                    <MinusOutlined />
-                  </button>
                 </div>
               </div>
             </div>

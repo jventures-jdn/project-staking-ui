@@ -22,8 +22,10 @@
 }
 
 .button[disabled] {
-  opacity: 0.75;
   cursor: default;
+  background: var(--MUTE_BG);
+  border: 2px solid var(--MUTE_BG);
+  color: var(--MUTE_TEXT);
 }
 
 .button:hover:not([disabled]) {

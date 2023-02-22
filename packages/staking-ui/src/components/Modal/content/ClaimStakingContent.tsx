@@ -74,7 +74,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
             disabled
             style={{ marginTop: "15px" }}
             type="number"
-            value={props.amount?.toPrecision(4)}
+            value={props.amount}
           />
           <div className="staking-sub-input justify-between ">
             <span className="wallet-warning">{error}</span>
