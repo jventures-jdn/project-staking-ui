@@ -130,12 +130,12 @@ const ValidatorCollapseContent = observer(
                   </div>
                   <div>
                     <span>APR: </span>{" "}
-                    {store
-                      .getValidatorsApr(validator)
-                      .toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                    {Number(
+                      Number(store.getValidatorsApr(validator)).toFixed(2)
+                    ).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                     %
                   </div>
                   <div>
