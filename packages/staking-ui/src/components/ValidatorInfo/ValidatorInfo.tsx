@@ -37,7 +37,7 @@ const ValidatorInfo = observer((props: IValidatorProps) => {
             {!props.isLoading ? (
               <b>
                 {(+(+props.bondedTokens).toFixed(2)).toLocaleString(undefined, {
-                  minimumIntegerDigits: 2,
+                  minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
               </b>
