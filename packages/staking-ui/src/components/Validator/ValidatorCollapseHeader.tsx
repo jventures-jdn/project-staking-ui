@@ -147,7 +147,7 @@ const ValidatorCollapseHeader = observer(
         <Col className="item-staking" lg={4} sm={2}>
           <div>
             <span className="col-title">Staked</span>
-            <div>{myStaked ? Number(myStaked).toFixed(5) : "-"}</div>
+            <div>{myStaked ? Number(myStaked).toFixed(2) : "-"}</div>
           </div>
         </Col>
 

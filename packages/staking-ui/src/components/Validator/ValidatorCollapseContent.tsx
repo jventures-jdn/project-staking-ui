@@ -198,8 +198,8 @@ const ValidatorCollapseContent = observer(
               <div>
                 <div className="value">
                   {Number(stakingAmount).toLocaleString(undefined, {
-                    minimumFractionDigits: 5,
-                    maximumFractionDigits: 5,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
                   })}{" "}
                   <JfinCoin />
                 </div>
