@@ -64,8 +64,8 @@ const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
       render: (v: number) => (
         <>
           {v.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5,
           })}
         </>
       ),

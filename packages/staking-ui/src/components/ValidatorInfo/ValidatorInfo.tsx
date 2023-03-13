@@ -35,7 +35,12 @@ const ValidatorInfo = observer((props: IValidatorProps) => {
           <div>
             <span>Bonded Tokens</span>
             {!props.isLoading ? (
-              <b>{(+(+props.bondedTokens).toFixed(2)).toLocaleString()}</b>
+              <b>
+                {(+(+props.bondedTokens).toFixed(2)).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </b>
             ) : (
               <div>
                 <LoadingOutlined spin />
