@@ -73,7 +73,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
             className="staking-input"
             disabled
             style={{ marginTop: "15px" }}
-            type="number"
+            type="text"
             value={props.amount?.toLocaleString(undefined, {
               minimumFractionDigits: 5,
               maximumFractionDigits: 5,
