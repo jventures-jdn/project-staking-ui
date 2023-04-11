@@ -23,6 +23,7 @@
     "web3-utils": "^1.7.1"
   },
   "scripts": {
-    "start": "tsc -w --preserveWatchOutput"
+    "start": "tsc -w --preserveWatchOutput",
+    "build": "tsc --build"
   }
 }

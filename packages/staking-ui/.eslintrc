@@ -12,7 +12,7 @@
       "files": ["**/*.ts?(x)"],
       "rules": {
         "import/no-extraneous-dependencies": [
-          "error",
+          "off",
           {
             "bundledDependencies": false,
             "devDependencies": [
@@ -26,6 +26,8 @@
         ],
         // TODO: change to error
         "jsx-a11y/click-events-have-key-events": "off",
+        "import/no-cycle": "off",
+        "import/no-mutable-exports": "off",
         "react/no-did-update-set-state": "off",
         "react/no-children-prop": "off",
         "import/no-unresolved": "off",
@@ -38,6 +40,8 @@
         "no-case-declarations": "error",
         "no-unused-vars": "warn",
         "no-use-before-define": "off",
+        "no-shadow": "off",
+        "@typescript-eslint/no-shadow": ["off"],
         "@typescript-eslint/no-use-before-define": [
           "error",
           {

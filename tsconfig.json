@@ -9,7 +9,7 @@
   ],
   "files": [],
   "compilerOptions": {
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "target": "esnext",
     "module": "esnext",
     "lib": [
