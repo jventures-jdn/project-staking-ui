@@ -27,12 +27,12 @@ export class BasSdk {
     return this.keyProvider.isConnected();
   }
 
-  public async connectProvider() {
+  public async connectProvider(address?: string) {
     try {
       const keyProvider = new KeyProvider(this.config);
       const httpProvider = new Web3.providers.HttpProvider(this.config.rpcUrl);
       const web3 = new Web3(httpProvider);
-      await keyProvider.connect(web3, true);
+      await keyProvider.connect(web3, true, address);
 
       this.keyProvider = keyProvider;
       this.staking = new Staking(keyProvider);
@@ -45,8 +45,6 @@ export class BasSdk {
 
   public async connect(): Promise<void> {
     const keyProvider = new KeyProvider(this.config);
-    // connect web3
-    await keyProvider.connectFromInjected();
     // init providers
     this.keyProvider = keyProvider;
     this.staking = new Staking(keyProvider);

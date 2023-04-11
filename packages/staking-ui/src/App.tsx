@@ -1,20 +1,32 @@
 import { observer } from "mobx-react";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import CookieConsent from "react-cookie-consent";
 import { Route, Switch } from "react-router-dom";
 import Navbar from "src/components/Navbar/Navbar";
 import BlockInfo from "./components/BlockInfo/BlockInfo";
 import Conditions from "./components/Conditions";
 import GlobalModal from "./components/Modal/GlobalModal";
+import { useAccount, useProvider } from "wagmi";
+import { getConfig, useBasStore } from "./stores";
 
 const Staking = React.lazy(() => import("./pages/Staking/Staking"));
 const Governance = React.lazy(() => import("./pages/Governance"));
 const Assets = React.lazy(() => import("./pages/Assets/Assets"));
+const config = getConfig()
 
 const Main = observer(() => {
-  /* -------------------------------------------------------------------------- */
-  /*                                    DOMS                                    */
-  /* -------------------------------------------------------------------------- */
+  /* --------------------------------- States --------------------------------- */
+  const store = useBasStore();
+  const { address } = useAccount();
+  const provider = useProvider({chainId: config.chainId})
+
+  /* --------------------------------- Watches -------------------------------- */
+  useEffect(() => {
+    if (!provider) return;
+    store.connectProvider(address)
+  }, [address, provider,]);
+
+  /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="app-container">
       <Navbar />

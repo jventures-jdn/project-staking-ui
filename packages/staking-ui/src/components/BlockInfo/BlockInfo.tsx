@@ -6,11 +6,14 @@ import prettyTime from "pretty-time";
 import "./BlockInfo.css";
 import { observer } from "mobx-react";
 import { LoadingOutlined, WarningOutlined } from "@ant-design/icons";
+import { useAccount } from "wagmi";
 
 const BlockInfo = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
+  const { isDisconnected } = useAccount();
+  
   const store = useBasStore();
   const [chainInfo, setChainInfo] = useState<
     (IChainConfig & IChainParams) | undefined
@@ -48,7 +51,7 @@ const BlockInfo = observer(() => {
   return (
     <div className="block-info-container">
       {/* show alert message incase not connect metamask */}
-      {!store.walletAccount && (
+      {isDisconnected && (
         <div className="wallet-warning" style={{ textAlign: "right" }}>
           <span> Please connect wallet for staking </span>
           <WarningOutlined />

@@ -10,13 +10,35 @@ import "./assets/css/input.css";
 import "./assets/css/pagination.css";
 import Main from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { Web3Modal } from "@web3modal/react";
+import { WagmiConfig } from "wagmi";
+import { useWallectConnect } from "./stores";
 
 const App = () => {
+  /* --------------------------------- States --------------------------------- */
+  const { wagmiClient, projectId, ethereumClient, chains } =
+    useWallectConnect();
+
+  /* ---------------------------------- Doms ---------------------------------- */
   return (
     <React.StrictMode>
       <Provider>
         <BrowserRouter>
-          <Main />
+          <WagmiConfig client={wagmiClient}>
+            <Main />
+          </WagmiConfig>
+          <Web3Modal
+            projectId={projectId}
+            ethereumClient={ethereumClient}
+            themeVariables={{
+              "--w3m-accent-color": "#ed0000",
+              "--w3m-accent-fill-color": "#fff",
+              "--w3m-background-color": " #0b0d0f",
+            }}
+            chainImages={{ 3501: "/jfin-light.png" }}
+            tokenImages={{ JFIN: "/jfin-light.png" }}
+            defaultChain={chains[0]}
+          />
         </BrowserRouter>
       </Provider>
     </React.StrictMode>

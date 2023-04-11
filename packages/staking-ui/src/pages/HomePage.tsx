@@ -3,12 +3,9 @@ import {
   LockOutlined,
   WalletOutlined,
 } from "@ant-design/icons";
-import { Menu, Typography } from "antd";
+import { Menu } from "antd";
 import { observer } from "mobx-react";
 import { ReactElement, useState } from "react";
-
-import { useBasStore } from "../stores";
-
 import { GovernanceNav } from "./GovernanceNav/GovernanceNav";
 import { StakingNav } from "./StakingNav/StakingNav";
 import { ValidatorsNav } from "./ValidatorsNav/ValidatorNav";

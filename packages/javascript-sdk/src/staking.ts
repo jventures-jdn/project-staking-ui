@@ -254,7 +254,8 @@ export class Staking {
   }
 
   public async getMyStakingRewards(validator: Web3Address): Promise<Web3Uint256> {
-    const [delegator] = this.keyProvider.accounts!
+    const delegator = this.keyProvider?.accounts ? this.keyProvider?.accounts![0] : undefined
+    if (!delegator) return '0'
     return this.keyProvider.stakingContract!.methods.getDelegatorFee(validator, delegator).call()
   }
 
@@ -298,9 +299,10 @@ export class Staking {
   }
 
   public async getMyDelegatedAmount(validator: Web3Address): Promise<Web3Uint256> {
-    const [currentAccount] = this.keyProvider.accounts!
+    const delegator = this.keyProvider?.accounts ? this.keyProvider?.accounts![0] : undefined
+    if (!delegator) return "0"
     const result = await this.keyProvider.stakingContract!.methods
-      .getValidatorDelegation(validator, currentAccount)
+      .getValidatorDelegation(validator, delegator)
       .call()
     return result.delegatedAmount
   }

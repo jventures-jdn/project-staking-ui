@@ -5,13 +5,12 @@ import logo from "../../assets/images/logo.svg";
 import { useEffect, useState } from "react";
 import {
   CloseOutlined,
-  DownOutlined,
   MenuOutlined,
-  WalletOutlined,
 } from "@ant-design/icons";
 import { getCurrentEnv, useBasStore } from "src/stores";
 import { observer } from "mobx-react";
 import { NavHashLink } from "react-router-hash-link";
+import { Web3Button } from "@web3modal/react";
 
 const Navbar = observer(() => {
   /* -------------------------------------------------------------------------- */
@@ -26,21 +25,7 @@ const Navbar = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
-  const handleConnectWallet = async () => {
-    if (!store.walletAccount) {
-      setIsWalletLoading(true);
-      await store
-        .connectFromInjected()
-        .finally(() => setIsWalletLoading(false));
-    }
-  };
 
-  const handleDapp = () => {
-    if (store.walletAccount) return;
-    window.location.replace(
-      `https://metamask.app.link/dapp/${window.location.href}`
-    );
-  };
 
   const handleDisconnect = async () => {
     await store.disconnect();
@@ -123,23 +108,7 @@ const Navbar = observer(() => {
           </div>
 
           <div className="navbar-wallet">
-            {walletAccount ? (
-              <Dropdown overlay={WalletOverlay}>
-                <Button type="primary">
-                  <WalletOutlined /> {walletAccount} <DownOutlined />
-                </Button>
-              </Dropdown>
-            ) : (
-              <>
-                <Button
-                  loading={isWalletLoading}
-                  onClick={handleConnectWallet}
-                  type="primary"
-                >
-                  Connect Metamask
-                </Button>
-              </>
-            )}
+            <Web3Button />
           </div>
 
           <div className={`navbar-burger ${isBurgerActive && "active"}`}>
@@ -186,6 +155,7 @@ const Navbar = observer(() => {
         >
           Explorer
         </a>
+
         {getCurrentEnv() === "jfintest" && (
           <a
             href={`https://faucet.${
@@ -198,28 +168,7 @@ const Navbar = observer(() => {
           </a>
         )}
         <div style={{ paddingBottom: "1rem" }}>
-          {/* <Button
-            loading={isWalletLoading}
-            onClick={handleConnectWallet}
-            type="primary"
-          >
-            {walletAccount ? (
-              <>
-                <WalletOutlined /> {walletAccount}
-              </>
-            ) : (
-              "Connect Metamask"
-            )}
-          </Button> */}
-          <Button loading={isWalletLoading} onClick={handleDapp} type="primary">
-            {walletAccount ? (
-              <>
-                <WalletOutlined /> {walletAccount}
-              </>
-            ) : (
-              "Connect Metamask"
-            )}
-          </Button>
+          <Web3Button />
         </div>
       </div>
     </>

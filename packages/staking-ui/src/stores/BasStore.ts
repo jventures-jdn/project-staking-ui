@@ -227,11 +227,18 @@ export class BasStore {
   }
 
   @action
-  public async connectProvider() {
-    await this.sdk.connectProvider();
+  public async connectProvider(address?: string) {
+    this.isConnected = false;
+    await this.sdk.connectProvider(address);
     await this.fetchChainInfo();
+    
+    if (address) {
+      await this.updateKeyProvider(await this.getBasSdk().getKeyProvider());
+      this.walletAccount = this.provider?.accounts;
+      this.walletBalance =
+        (await this.provider?.getMyBalance()) || Number(0).toFixed(5);
+    }
     this.isConnected = true;
-    await this.connectFromInjected();
   }
 
   @action

@@ -49,11 +49,12 @@ export class KeyProvider implements IKeyProvider {
     return !!this.web3;
   }
 
-  public async connect(web3: Web3, withoutWallet?: boolean): Promise<void> {
+  public async connect(web3: Web3, withoutWallet?: boolean, address?: string): Promise<void> {
     const remoteChainId = await web3.eth.getChainId();
     if (remoteChainId != this.config.chainId) {
       await waitForExpectedNetworkOrThrow(web3, this.config);
     }
+    this.accounts = address ? [address] : undefined
     // init web3 state
     if (!withoutWallet) {
       this.accounts = await this.unlockAccounts(web3);
@@ -81,7 +82,7 @@ export class KeyProvider implements IKeyProvider {
   }
 
   public async connectFromInjected(): Promise<void> {
-    const provider = await detectEthereumProvider()
+    const provider = await detectEthereumProvider({'mustBeMetaMask': false})
     if (!provider) throw new Error(`There is no injected provider`)
     const web3 = new Web3(provider as any);
     try {

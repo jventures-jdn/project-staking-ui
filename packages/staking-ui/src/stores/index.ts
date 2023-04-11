@@ -13,6 +13,7 @@ import {
   CONFIGS,
 } from "./BasStore";
 import ModalStore from "./ModalStore";
+import WalletConnectStore from "./WalletConnectStore";
 
 let currentEnvironment =
   process?.env?.REACT_APP_ENVIRONMENT || "${REACT_APP_ENVIRONMENT}";
@@ -70,9 +71,9 @@ if (currentEnvironment === "env") {
   );
 }
 
-// console.log(`Current config: ${JSON.stringify(config, null, 2)}`);
 const basStore = new BasStore(config);
 const modalStore = new ModalStore();
+const walletConnectStore = new WalletConnectStore(config);
 
 basStore.connectProvider();
 basStore.listenAccountChange();
@@ -83,9 +84,10 @@ export const getCurrentEnv = () => {
 };
 
 export const useStores: any = () => {
-  return React.useContext(MobXProviderContext);
+  return React.useContext(MobXProviderContext as any);
 };
 
-export const useBasStore = (): BasStore => basStore;
-export const useModalStore = (): ModalStore => modalStore;
+export const useBasStore = () => basStore;
+export const useModalStore = () => modalStore;
 export const getConfig = () => config;
+export const useWallectConnect = () => walletConnectStore;
