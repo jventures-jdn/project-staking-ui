@@ -88,7 +88,7 @@ export const JFIN_CONFIG: IConfig = makeDefaultConfig(
 // export const JFIN_TESTNET_CONFIG: IConfig = makeDefaultConfig(3503, 'JFIN', 'http://65.108.44.103:8005/', 'https://exp.jfinchain.com/')
 export const JFIN_TESTNET_CONFIG: IConfig = makeDefaultConfig(
   3502,
-  "JFIN",
+  "JFINT",
   "https://rpc.testnet.jfinchain.com",
   "https://exp.testnet.jfinchain.com/"
 );

@@ -1,4 +1,8 @@
-import { IValidator } from "@ankr.com/bas-javascript-sdk";
+import {
+  GAS_LIMIT_GENERAL,
+  GAS_PRICE,
+  IValidator,
+} from "@ankr.com/bas-javascript-sdk";
 import { LoadingOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import BigNumber from "bignumber.js";
@@ -7,6 +11,11 @@ import { FormEvent, useEffect, useState } from "react";
 import JfinCoin from "src/components/JfinCoin/JfinCoin";
 import { useBasStore, useModalStore } from "src/stores";
 import { GWEI } from "src/utils/const";
+import {
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from "wagmi";
 
 interface IAddStakingContent {
   validator: IValidator;
@@ -18,42 +27,57 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
   const store = useBasStore();
+  const sdk = store.getBasSdk();
+  const keyProvider = sdk.getKeyProvider();
   const modalStore = useModalStore();
   const [stakingAmount, setStakingAmount] = useState(props.amount || 0);
   const [error, setError] = useState<string>();
+
+  /* -------------------------------------------------------------------------- */
+  /*                                    Web3                                    */
+  /* -------------------------------------------------------------------------- */
+  const tx = usePrepareSendTransaction({
+    request: {
+      to: keyProvider.stakingAddress!,
+      data: keyProvider
+        .stakingContract!.methods.delegate(props.validator.validator)
+        .encodeABI(),
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT_GENERAL,
+      value: new BigNumber(stakingAmount).multipliedBy(GWEI).toString(10),
+    },
+  });
+
+  const { data, sendTransaction, isError } = useSendTransaction(tx.config);
+  useWaitForTransaction({
+    hash: data?.hash,
+    onSuccess: async () => {
+      if (props.onSuccess) props.onSuccess();
+      modalStore.setIsLoading(false);
+      modalStore.setVisible(false);
+      store.updateWalletBalance();
+      message.success("Staking was done!");
+    },
+    onError: (error) => {
+      modalStore.setIsLoading(false);
+      message.error(`Something went wrong ${error.message || ""}`);
+    },
+  });
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError(undefined);
+    if (!sendTransaction) return;
     if (!stakingAmount) return;
+
+    setError(undefined);
     if (stakingAmount < 1) return setError("Stake amount must be more 1");
     if (stakingAmount > Number(store.walletBalance) / GWEI)
-      return setError(
-        `Insufficient Balance`
-      );
-
+      return setError(`Insufficient Balance`);
     modalStore.setIsLoading(true);
-    const amount = new BigNumber(stakingAmount).multipliedBy(GWEI).toString(10);
-
-    try {
-      const tx = await store
-        .getBasSdk()
-        .getStaking()
-        .delegateTo(props.validator.validator, amount);
-      await tx.receipt;
-
-      if (props.onSuccess) props.onSuccess();
-      modalStore.setIsLoading(false);
-      modalStore.setVisible(false);
-      store.updateWalletBalance();
-      message.success("Staking was done!");
-    } catch (err: any) {
-      modalStore.setIsLoading(false);
-      message.error(`Something went wrong ${err.message || ""}`);
-    }
+    sendTransaction();
   };
 
   /* -------------------------------------------------------------------------- */
@@ -62,6 +86,12 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
   useEffect(() => {
     modalStore.setIsLoading(false);
   }, []);
+
+  // handle transaction reject
+  useEffect(() => {
+    if (!isError) return;
+    modalStore.setIsLoading(false);
+  }, [isError]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */

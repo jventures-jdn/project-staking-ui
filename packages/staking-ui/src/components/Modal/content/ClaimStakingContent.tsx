@@ -1,4 +1,8 @@
-import { GAS_LIMIT_CLAIM, IValidator } from "@ankr.com/bas-javascript-sdk";
+import {
+  GAS_LIMIT_CLAIM,
+  GAS_PRICE,
+  IValidator,
+} from "@ankr.com/bas-javascript-sdk";
 import {
   AlertOutlined,
   LoadingOutlined,
@@ -9,6 +13,11 @@ import { observer } from "mobx-react";
 import { FormEvent, useEffect, useState } from "react";
 import JfinCoin from "src/components/JfinCoin/JfinCoin";
 import { useBasStore, useModalStore } from "src/stores";
+import {
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from "wagmi";
 
 interface IClaimStakingContent {
   isStaking?: boolean;
@@ -21,34 +30,50 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
   const store = useBasStore();
+  const sdk = store.getBasSdk();
+  const keyProvider = sdk.getKeyProvider();
   const modalStore = useModalStore();
   const [error, setError] = useState<string>();
+
+  /* -------------------------------------------------------------------------- */
+  /*                                    Web3                                    */
+  /* -------------------------------------------------------------------------- */
+  const tx = usePrepareSendTransaction({
+    request: {
+      to: keyProvider.stakingAddress!,
+      data: keyProvider
+        .stakingContract!.methods.claimDelegatorFee(props.validator?.validator)
+        .encodeABI(),
+      gasLimit: GAS_LIMIT_CLAIM,
+      gasPrice: GAS_PRICE,
+    },
+  });
+
+  const { data, sendTransaction, isError } = useSendTransaction(tx.config);
+  useWaitForTransaction({
+    hash: data?.hash,
+    onSuccess: async () => {
+      if (props.onSuccess) await props.onSuccess(); // callback function
+      modalStore.setIsLoading(false);
+      modalStore.setVisible(false);
+      store.updateWalletBalance();
+      message.success("Claim reward was done!");
+    },
+    onError: (error) => {
+      modalStore.setIsLoading(false);
+      message.error(`Something went wrong ${error.message || ""}`);
+    },
+  });
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!sendTransaction) return;
     setError(undefined);
     modalStore.setIsLoading(true);
-
-    try {
-      const tx = await store
-        .getBasSdk()
-        .getStaking()
-        .claimDelegatorFee(props.validator?.validator);
-
-      await tx.receipt;
-
-      if (props.onSuccess) props.onSuccess();
-      modalStore.setIsLoading(false);
-      modalStore.setVisible(false);
-      store.updateWalletBalance();
-      message.success("Claim reward was done!");
-    } catch (err: any) {
-      modalStore.setIsLoading(false);
-      message.error(`Something went wrong ${err.message || ""}`);
-    }
+    sendTransaction();
   };
 
   /* -------------------------------------------------------------------------- */
@@ -57,6 +82,13 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
   useEffect(() => {
     modalStore.setIsLoading(false);
   }, []);
+
+  
+  // handle transaction reject
+  useEffect(() => {
+    if (!isError) return;
+    modalStore.setIsLoading(false);
+  }, [isError]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */

@@ -6,25 +6,34 @@ import Navbar from "src/components/Navbar/Navbar";
 import BlockInfo from "./components/BlockInfo/BlockInfo";
 import Conditions from "./components/Conditions";
 import GlobalModal from "./components/Modal/GlobalModal";
-import { useAccount, useProvider } from "wagmi";
+import { useAccount, useProvider, useNetwork, useDisconnect } from "wagmi";
 import { getConfig, useBasStore } from "./stores";
 
 const Staking = React.lazy(() => import("./pages/Staking/Staking"));
 const Governance = React.lazy(() => import("./pages/Governance"));
 const Assets = React.lazy(() => import("./pages/Assets/Assets"));
-const config = getConfig()
+const config = getConfig();
 
 const Main = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const store = useBasStore();
   const { address } = useAccount();
-  const provider = useProvider({chainId: config.chainId})
+  const { disconnect } = useDisconnect();
+  const { chain } = useNetwork();
 
   /* --------------------------------- Watches -------------------------------- */
   useEffect(() => {
-    if (!provider) return;
-    store.connectProvider(address)
-  }, [address, provider,]);
+    if (!address) return;
+    store.connectProvider(address);
+  }, [address]);
+
+  useEffect(() => {
+    // if current chainId is not match with our chain, disconnect wallet
+    // this is hack way to solve wagmi autoConnect wrong network (metamask)
+    if (!chain) return;
+    if (chain.id === config.chainId) return;
+    disconnect();
+  }, [chain]);
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (

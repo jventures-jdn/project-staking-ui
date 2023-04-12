@@ -1,4 +1,8 @@
-import { IValidator } from "@ankr.com/bas-javascript-sdk";
+import {
+  GAS_LIMIT_GENERAL,
+  GAS_PRICE,
+  IValidator,
+} from "@ankr.com/bas-javascript-sdk";
 import { LoadingOutlined, WarningOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react";
 import { FormEvent, useEffect, useState } from "react";
@@ -7,6 +11,11 @@ import { getCurrentEnv, useBasStore, useModalStore } from "src/stores";
 import { message } from "antd";
 import { GWEI } from "src/utils/const";
 import BigNumber from "bignumber.js";
+import {
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from "wagmi";
 
 interface IUnStakingContent {
   validator: IValidator;
@@ -19,10 +28,46 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
   const store = useBasStore();
+  const sdk = store.getBasSdk();
+  const keyProvider = sdk.getKeyProvider();
   const modalStore = useModalStore();
   const [stakedAmount, setStakedAmount] = useState<number>();
   const [unStakingAmount, setUnStakingAmount] = useState(props.amount || 0);
   const [error, setError] = useState<string>();
+
+  /* -------------------------------------------------------------------------- */
+  /*                                    Web3                                    */
+  /* -------------------------------------------------------------------------- */
+  const tx = usePrepareSendTransaction({
+    request: {
+      to: keyProvider.stakingAddress!,
+      data: keyProvider
+        .stakingContract!.methods.undelegate(
+          props.validator.validator,
+          new BigNumber(unStakingAmount).multipliedBy(GWEI).toString(10)
+        )
+        .encodeABI(),
+      gasLimit: GAS_LIMIT_GENERAL,
+      gasPrice: GAS_PRICE,
+      value: "0x0",
+    },
+  });
+
+  const { data, sendTransaction, isError } = useSendTransaction(tx.config);
+  useWaitForTransaction({
+    hash: data?.hash,
+    onSuccess: async () => {
+      if (props.onSuccess) props.onSuccess();
+      modalStore.setIsLoading(false);
+      modalStore.setVisible(false);
+      store.updateWalletBalance();
+      message.success("Un-Staking was done!");
+    },
+    onError: (error) => {
+      modalStore.setIsLoading(false);
+      message.error(`Something went wrong ${error.message || ""}`);
+    },
+  });
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
@@ -30,32 +75,15 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(undefined);
+    if (!sendTransaction) return;
     if (!unStakingAmount) return;
     if (unStakingAmount < 1) return setError("Un-Stake amount must be more 1");
     if (unStakingAmount > Number(stakedAmount))
-      return setError(`Un-Stake amount must be lower or equal to ${stakedAmount}`);
-
+      return setError(
+        `Un-Stake amount must be lower or equal to ${stakedAmount}`
+      );
+    sendTransaction();
     modalStore.setIsLoading(true);
-    const amount = new BigNumber(unStakingAmount)
-      .multipliedBy(GWEI)
-      .toString(10);
-
-    try {
-      const tx = await store
-        .getBasSdk()
-        .getStaking()
-        .undelegateFrom(props.validator.validator, amount);
-      await tx.receipt;
-
-      if (props.onSuccess) props.onSuccess();
-      modalStore.setIsLoading(false);
-      modalStore.setVisible(false);
-      store.updateWalletBalance();
-      message.success("Un-Staking was done!");
-    } catch (err: any) {
-      modalStore.setIsLoading(false);
-      message.error(`Something went wrong ${err.message || ""}`);
-    }
   };
 
   const inital = async () => {
@@ -66,6 +94,12 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
   useEffect(() => {
     inital();
   }, [store.isConnected]);
+
+  // handle transaction reject
+  useEffect(() => {
+    if (!isError) return;
+    modalStore.setIsLoading(false);
+  }, [isError]);
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */

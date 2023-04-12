@@ -74,7 +74,7 @@ const ValidatorCollapseContent = observer(
         <ClaimStakingContent
           amount={+stakingReward}
           isStaking={isStaking}
-          onSuccess={refresh || inital}
+          onSuccess={inital}
           validator={validator}
         />
       );
@@ -89,7 +89,7 @@ const ValidatorCollapseContent = observer(
       modalStore.setTitle("Add Staking");
       modalStore.setContent(
         <AddStakingContent
-          onSuccess={refresh || inital}
+          onSuccess={inital}
           validator={validator}
         />
       );
@@ -103,7 +103,7 @@ const ValidatorCollapseContent = observer(
       modalStore.setIsLoading(true);
       modalStore.setTitle("Un-Staking");
       modalStore.setContent(
-        <UnStakingContent onSuccess={refresh || inital} validator={validator} />
+        <UnStakingContent onSuccess={inital} validator={validator} />
       );
       modalStore.setIsLoading(false);
     };

@@ -82,7 +82,7 @@ export class KeyProvider implements IKeyProvider {
   }
 
   public async connectFromInjected(): Promise<void> {
-    const provider = await detectEthereumProvider({'mustBeMetaMask': false})
+    const provider = await detectEthereumProvider({'mustBeMetaMask': true})
     if (!provider) throw new Error(`There is no injected provider`)
     const web3 = new Web3(provider as any);
     try {

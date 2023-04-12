@@ -51,6 +51,13 @@ export const tryAddMetaMaskNetwork = async (
           chainId: numberToHex(config.chainId),
           chainName: config.chainName,
           rpcUrls: [config.rpcUrl],
+          nativeCurrency: {
+            name: config.chainName,
+            symbol: config.chainName, // 2-6 characters long
+            decimals: 18,
+          },
+          blockExplorerUrls: [config.explorerConfig?.homePage],
+          iconUrls: ["https://staking.jfinchain.com/favicon-96x96.png"], // Currently ignored.
         },
       ],
     });
@@ -82,12 +89,11 @@ export const sendTransactionAsync = async (
   console.log("Nonce: " + nonce);
   const chainId = await web3.eth.getChainId();
 
-
   // declear gasLimit from parameter or estimate
   const gasLimit = sendOptions.gasLimit
     ? numberToHex(sendOptions.gasLimit)
     : numberToHex(
-        await web3.eth.estimateGas({...sendOptions, gas: GAS_LIMIT_CLAIM})
+        await web3.eth.estimateGas({ ...sendOptions, gas: GAS_LIMIT_CLAIM })
       ); // return units
 
   // console.log('gas estimate', await web3.eth.estimateGas({from: sendOptions.from, value: sendOptions.value, gas: GAS_LIMIT_CLAIM}))
