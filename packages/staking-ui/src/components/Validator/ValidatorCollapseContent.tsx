@@ -4,7 +4,6 @@ import {
   MinusOutlined,
   PlusOutlined,
   WalletOutlined,
-  WarningOutlined,
 } from "@ant-design/icons";
 import { Col, Row } from "antd";
 import BigNumber from "bignumber.js";
@@ -59,7 +58,6 @@ const ValidatorCollapseContent = observer(
 
     const inital = async () => {
       const stakingProvider = await store.getBasSdk().getStaking();
-
       await setStakingReward(await getReward(stakingProvider));
       await setStakingAmount(await getMyStaking(stakingProvider));
     };
@@ -74,7 +72,9 @@ const ValidatorCollapseContent = observer(
         <ClaimStakingContent
           amount={+stakingReward}
           isStaking={isStaking}
-          onSuccess={inital}
+          onSuccess={() => {
+            inital().then(() => refresh?.());
+          }}
           validator={validator}
         />
       );
@@ -89,7 +89,9 @@ const ValidatorCollapseContent = observer(
       modalStore.setTitle("Add Staking");
       modalStore.setContent(
         <AddStakingContent
-          onSuccess={inital}
+          onSuccess={() => {
+            inital().then(() => refresh?.());
+          }}
           validator={validator}
         />
       );
@@ -103,7 +105,12 @@ const ValidatorCollapseContent = observer(
       modalStore.setIsLoading(true);
       modalStore.setTitle("Un-Staking");
       modalStore.setContent(
-        <UnStakingContent onSuccess={inital} validator={validator} />
+        <UnStakingContent
+          onSuccess={() => {
+            inital().then(() => refresh?.());
+          }}
+          validator={validator}
+        />
       );
       modalStore.setIsLoading(false);
     };
