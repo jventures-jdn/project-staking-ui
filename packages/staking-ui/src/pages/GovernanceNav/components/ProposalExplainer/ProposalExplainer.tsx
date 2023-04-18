@@ -25,7 +25,9 @@ export const ProposalExplainer = ({event}: { event: IGovernanceProposal }): JSX.
           key="status"
           label="Status"
         >
+          <span>
           {renderStatus(event.status)}
+          </span>
         </Descriptions.Item>
 
         <Descriptions.Item

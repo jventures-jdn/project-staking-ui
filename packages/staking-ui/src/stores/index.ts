@@ -83,7 +83,7 @@ export const getCurrentEnv = () => {
 };
 
 export const useStores: any = () => {
-  return React.useContext(MobXProviderContext);
+  return React.useContext(MobXProviderContext as any);
 };
 
 export const useBasStore = (): BasStore => basStore;
