@@ -35,16 +35,6 @@ export class BasSdk {
       const web3 = new Web3(httpProvider);
       await keyProvider.connect(web3, true, address);
 
-      // if detect provider from inject extension, switch or add network
-      if (window.ethereum) {
-        const web3 = new Web3(window.ethereum as any);
-        const remoteChainId = await web3.eth.getChainId();
-
-        if (remoteChainId != this.config.chainId) {
-          await waitForExpectedNetworkOrThrow(web3, this.config);
-        }
-      }
-
       this.keyProvider = keyProvider;
       this.staking = new Staking(keyProvider);
       this.runtimeUpgrade = new RuntimeUpgrade(keyProvider);

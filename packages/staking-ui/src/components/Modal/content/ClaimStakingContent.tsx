@@ -47,11 +47,13 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
       gasLimit: GAS_LIMIT_CLAIM,
       gasPrice: GAS_PRICE,
     },
+    chainId: store.config.chainId,
   });
 
   const { data, sendTransaction, isError } = useSendTransaction(tx.config);
   useWaitForTransaction({
     hash: data?.hash,
+    chainId: store.config.chainId,
     onSuccess: async () => {
       if (props.onSuccess) await props.onSuccess(); // callback function
       modalStore.setIsLoading(false);

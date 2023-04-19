@@ -46,11 +46,13 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
       gasLimit: GAS_LIMIT_GENERAL,
       value: new BigNumber(stakingAmount).multipliedBy(GWEI).toString(10),
     },
+    chainId: store.config.chainId,
   });
 
   const { data, sendTransaction, isError } = useSendTransaction(tx.config);
   useWaitForTransaction({
     hash: data?.hash,
+    chainId: store.config.chainId,
     onSuccess: async () => {
       if (props.onSuccess) props.onSuccess();
       modalStore.setIsLoading(false);

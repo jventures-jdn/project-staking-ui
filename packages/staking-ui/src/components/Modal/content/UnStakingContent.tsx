@@ -39,6 +39,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
   /*                                    Web3                                    */
   /* -------------------------------------------------------------------------- */
   const tx = usePrepareSendTransaction({
+    chainId: store.config.chainId,
     request: {
       to: keyProvider.stakingAddress!,
       data: keyProvider
@@ -56,6 +57,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
   const { data, sendTransaction, isError } = useSendTransaction(tx.config);
   useWaitForTransaction({
     hash: data?.hash,
+    chainId: store.config.chainId,
     onSuccess: async () => {
       if (props.onSuccess) props.onSuccess();
       modalStore.setIsLoading(false);
