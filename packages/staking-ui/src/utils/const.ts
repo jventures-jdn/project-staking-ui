@@ -5,9 +5,10 @@ import iam from "../assets/images/partners/iam.png";
 import jet from "../assets/images/partners/jet.png";
 import jmb from "../assets/images/partners/jmb.png";
 import bnb from "../assets/images/partners/bnb.png";
-import fox from '../assets/images/partners/fox.png';
-import ava from '../assets/images/partners/ava.png';
-// import unknow from '../assets/images/partners/default.png';
+import fox from "../assets/images/partners/fox.png";
+import ava from "../assets/images/partners/ava.png";
+import warden from "../assets/images/partners/warden.png";
+import kmrs from "../assets/images/partners/kmars.png";
 import BigNumber from "bignumber.js";
 
 export const EXPLORER_URL = "https://blockscout.com/xdai/mainnet/{}";
@@ -49,12 +50,20 @@ export const VALIDATOR_WALLETS: Record<
   },
   "0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6": {
     name: "MR.FOX",
-    image: fox
+    image: fox,
   },
   "0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a": {
     name: "AVANTIS",
-    image: ava
-  }
+    image: ava,
+  },
+  "0xd0004509B34A3ec8A1489CCBA9FA892A09945d1f": {
+    name: "MetaWarden",
+    image: warden,
+  },
+  "0x88a2D9b0B0c357085E63C790f0551B1aAFB88378": {
+    name: "KMARS Studio",
+    image: kmrs,
+  },
 };
 
 export const BLOCK_REWARD = new BigNumber(
