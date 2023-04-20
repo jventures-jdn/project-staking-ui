@@ -11,10 +11,11 @@ interface IValidatorsProps {
   validators: undefined | IValidator[];
   refresh?: () => unknown;
   loading: boolean;
+  isEmergency?: boolean
 }
 
 const Validators = observer(
-  ({ validators, refresh, loading }: IValidatorsProps) => {
+  ({ validators, refresh, loading, isEmergency }: IValidatorsProps) => {
     /* -------------------------------------------------------------------------- */
     /*                                   States                                   */
     /* -------------------------------------------------------------------------- */
@@ -56,6 +57,7 @@ const Validators = observer(
                       <ValidatorCollapseContent
                         validator={v}
                         refresh={refresh}
+                        isEmergency={isEmergency}
                       />
                     </Panel>
                   );

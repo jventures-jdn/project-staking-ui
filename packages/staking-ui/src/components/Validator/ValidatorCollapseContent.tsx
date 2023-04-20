@@ -21,10 +21,11 @@ import "./ValidatorCollapseContent.css";
 interface IValidatorCollapseContentProps {
   validator?: IValidator;
   refresh?: () => unknown;
+  isEmergency?: boolean;
 }
 
 const ValidatorCollapseContent = observer(
-  ({ validator, refresh }: IValidatorCollapseContentProps) => {
+  ({ validator, refresh, isEmergency }: IValidatorCollapseContentProps) => {
     /* -------------------------------------------------------------------------- */
     /*                                   States                                   */
     /* -------------------------------------------------------------------------- */
@@ -183,7 +184,9 @@ const ValidatorCollapseContent = observer(
                 </div>
                 <button
                   className="button secondary lg"
-                  disabled={!store.walletAccount || !stakingReward}
+                  disabled={
+                    (!store.walletAccount || !stakingReward) && !isEmergency
+                  }
                   onClick={() => handleClaim()}
                   type="button"
                 >
@@ -209,7 +212,10 @@ const ValidatorCollapseContent = observer(
                       "Active" && (
                       <button
                         className="button secondary lg"
-                        disabled={!store.walletAccount || !!stakingReward}
+                        disabled={
+                          (!store.walletAccount || !!stakingReward) &&
+                          !isEmergency
+                        }
                         onClick={handleAdd}
                         type="button"
                       >
@@ -219,7 +225,10 @@ const ValidatorCollapseContent = observer(
 
                     <button
                       className="button secondary lg"
-                      disabled={!store.walletAccount || !!stakingReward}
+                      disabled={
+                        (!store.walletAccount || !!stakingReward) &&
+                        !isEmergency
+                      }
                       onClick={handleUnStaking}
                       style={{ marginLeft: "10px" }}
                       type="button"

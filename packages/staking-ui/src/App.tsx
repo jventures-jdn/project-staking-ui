@@ -6,6 +6,7 @@ import Navbar from "src/components/Navbar/Navbar";
 import BlockInfo from "./components/BlockInfo/BlockInfo";
 import Conditions from "./components/Conditions";
 import GlobalModal from "./components/Modal/GlobalModal";
+import StakingEmergency from "./pages/StakingForce/StakingEmergency";
 
 const Staking = React.lazy(() => import("./pages/Staking/Staking"));
 const Governance = React.lazy(() => import("./pages/Governance"));
@@ -31,6 +32,12 @@ const Main = observer(() => {
               exact
               component={Staking}
               path={["/", "/staking"]}
+            />
+              <Route
+              key="Staking-emergency"
+              exact
+              component={StakingEmergency}
+              path="/staking-emergency"
             />
             <Route key="governance" component={Governance} path="/governance" />
             <Route key="assets" component={Assets} path="/assets" />
