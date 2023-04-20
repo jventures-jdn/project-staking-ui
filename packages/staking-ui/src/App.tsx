@@ -5,7 +5,6 @@ import { Route, Switch } from "react-router-dom";
 import Navbar from "src/components/Navbar/Navbar";
 import BlockInfo from "./components/BlockInfo/BlockInfo";
 import Conditions from "./components/Conditions";
-import GlobalModal from "./components/Modal/GlobalModal";
 import { useAccount } from "wagmi";
 import { switchNetwork } from "@wagmi/core";
 import { getConfig, useBasStore, useWallectConnect } from "./stores";
@@ -36,7 +35,6 @@ const Main = observer(() => {
   return (
     <div className="app-container">
       <Navbar />
-      <GlobalModal />
 
       <div className="body">
         <BlockInfo />

@@ -14,6 +14,7 @@ import { Web3Modal } from "@web3modal/react";
 import { WagmiConfig } from "wagmi";
 import { useWallectConnect } from "./stores";
 import * as Sentry from "@sentry/react";
+import GlobalModal from "./components/Modal/GlobalModal";
 
 Sentry.init({
   dsn: "https://6fdd78509c3e443f85dffd333976349e@o4505033136537600.ingest.sentry.io/4505033142108160",
@@ -38,6 +39,7 @@ const App = () => {
       <Provider>
         <BrowserRouter>
           <WagmiConfig client={wagmiClient}>
+            <GlobalModal />
             <Main />
           </WagmiConfig>
           <Web3Modal
