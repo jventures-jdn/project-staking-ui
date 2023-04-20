@@ -23,15 +23,15 @@
 }
 
 .block-info-container .block-info-item:first-child > div > div {
-  background-image: url("src/assets/images/block-info1.png");
+  background-image: url("src/assets/images/background/block-info1.png");
 }
 
 .block-info-container .block-info-item:nth-child(2) > div > div {
-  background-image: url("src/assets/images/block-info2.png");
+  background-image: url("src/assets/images/background/block-info2.png");
 }
 
 .block-info-container .block-info-item:last-child > div > div {
-  background-image: url("src/assets/images/block-info3.png");
+  background-image: url("src/assets/images/background/block-info3.png");
 }
 
 .block-info-container .block-info-item-content > div {

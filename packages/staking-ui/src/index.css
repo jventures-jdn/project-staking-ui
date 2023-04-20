@@ -134,15 +134,6 @@ h1.ant-typography {
   padding: 4px 0;
 }
 
-.blockInfoItem:first-child > div {
-  background-image: url(bg-40.png);
-}
-.blockInfoItem:nth-child(2) > div {
-  background-image: url(53.png);
-}
-.blockInfoItem:last-child > div {
-  background-image: url(13.png);
-}
 .app-container {
   min-height: 100%;
   background-image: url(jfin-bg.png);
@@ -153,10 +144,6 @@ h1.ant-typography {
 
 .app-container .body {
   padding: 0 32px 80px 32px;
-}
-.blockInfoItem {
-  display: flex;
-  flex-direction: column;
 }
 
 .block-info-wrapper {
