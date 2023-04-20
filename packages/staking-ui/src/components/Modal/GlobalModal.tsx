@@ -42,7 +42,7 @@ const GlobalModal = observer((props: IModal) => {
         onCancel={props.onCancel || handleCancel}
         onOk={props.onSubmit || handleSubmit}
         title={modalStore.title}
-        visible={isVisible}
+        open={isVisible}
       >
         {modalStore.content}
       </Modal>

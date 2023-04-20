@@ -1,8 +1,8 @@
 import {Divider} from "antd";
 import {observer} from "mobx-react";
 import {ReactElement} from "react";
-import DelegatedAssets from "src/pages/StakingNav/components/DelegatedAssets/DelegatedAssets";
-import StakingHistory from "src/pages/StakingNav/components/StakingHistory/StakingHistory";
+import DelegatedAssets from "src/pages/Staking/components/DelegatedAssets/DelegatedAssets";
+import StakingHistory from "src/pages/Staking/components/StakingHistory/StakingHistory";
 
 import '../index.css';
 

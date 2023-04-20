@@ -6,11 +6,10 @@ import Navbar from "src/components/Navbar/Navbar";
 import BlockInfo from "./components/BlockInfo/BlockInfo";
 import Conditions from "./components/Conditions";
 import { useAccount } from "wagmi";
-import { switchNetwork } from "@wagmi/core";
-import { getConfig, useBasStore, useWallectConnect } from "./stores";
+import { getConfig, useBasStore } from "./stores";
 
 const Staking = React.lazy(() => import("./pages/Staking/Staking"));
-const Governance = React.lazy(() => import("./pages/Governance"));
+const Governance = React.lazy(() => import("./pages/Governance/Governance"));
 const Assets = React.lazy(() => import("./pages/Assets/Assets"));
 const config = getConfig();
 

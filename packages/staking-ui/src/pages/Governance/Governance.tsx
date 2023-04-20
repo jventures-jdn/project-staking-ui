@@ -1,4 +1,4 @@
-import { GovernanceNav } from "./GovernanceNav/GovernanceNav";
+import { GovernanceNav } from "./GovernanceNav";
 
 const Governance = () => {
   return (
