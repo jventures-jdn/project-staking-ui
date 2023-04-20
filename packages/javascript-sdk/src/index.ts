@@ -6,7 +6,7 @@ import { IChainConfig, IChainParams, Web3Address } from "./types";
 import { PastEventOptions } from "web3-eth-contract";
 import { RuntimeUpgrade } from "./runtime";
 import Web3 from "web3";
-import { waitForExpectedNetworkOrThrow } from "./metamask";
+import { tryAddMetaMaskNetwork } from "./metamask";
 
 export * from "./config";
 export * from "./governance";
@@ -34,6 +34,11 @@ export class BasSdk {
       const httpProvider = new Web3.providers.HttpProvider(this.config.rpcUrl);
       const web3 = new Web3(httpProvider);
       await keyProvider.connect(web3, true, address);
+
+      // if detect inject provider
+      if (window.ethereum) {
+        tryAddMetaMaskNetwork(web3, this.config);
+      }
 
       this.keyProvider = keyProvider;
       this.staking = new Staking(keyProvider);

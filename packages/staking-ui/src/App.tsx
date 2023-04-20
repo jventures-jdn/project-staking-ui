@@ -8,7 +8,7 @@ import Conditions from "./components/Conditions";
 import GlobalModal from "./components/Modal/GlobalModal";
 import { useAccount } from "wagmi";
 import { switchNetwork } from "@wagmi/core";
-import { getConfig, useBasStore } from "./stores";
+import { getConfig, useBasStore, useWallectConnect } from "./stores";
 
 const Staking = React.lazy(() => import("./pages/Staking/Staking"));
 const Governance = React.lazy(() => import("./pages/Governance"));
@@ -18,17 +18,19 @@ const config = getConfig();
 const Main = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const store = useBasStore();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   /* --------------------------------- Watches -------------------------------- */
   useEffect(() => {
-    if (!address) return;
-    store.connectProvider(address).then(() =>
-      switchNetwork({
-        chainId: config.chainId,
-      })
-    );
-  }, [address]);
+    store.connectProvider(address);
+  }, []);
+
+  useEffect(() => {
+    if (!isConnected) return;
+    if (!window.ethereum) {
+      switchNetwork({ chainId: config.chainId });
+    }
+  }, [isConnected]);
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
