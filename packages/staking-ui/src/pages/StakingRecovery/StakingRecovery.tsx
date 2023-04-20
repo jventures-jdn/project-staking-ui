@@ -8,7 +8,7 @@ import Validators from "src/components/Validator/Validators";
 import { IValidator } from "@ankr.com/bas-javascript-sdk";
 import { statusToStatusId } from "src/utils/helpers";
 
-const StakingEmergency = observer(() => {
+const StakingRecovery = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
@@ -90,7 +90,7 @@ const StakingEmergency = observer(() => {
               validators={validators}
               refresh={handleRefresh}
               loading={isLoading}
-              isEmergency
+              forceActionButtonsEnabled
             />
           </div>
         </div>
@@ -99,4 +99,4 @@ const StakingEmergency = observer(() => {
   );
 });
 
-export default StakingEmergency;
+export default StakingRecovery;

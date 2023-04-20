@@ -4,9 +4,8 @@ import {
   MinusOutlined,
   PlusOutlined,
   WalletOutlined,
-  WarningOutlined,
 } from "@ant-design/icons";
-import { Col, Row } from "antd";
+import { Col, Row, message } from "antd";
 import BigNumber from "bignumber.js";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
@@ -21,11 +20,15 @@ import "./ValidatorCollapseContent.css";
 interface IValidatorCollapseContentProps {
   validator?: IValidator;
   refresh?: () => unknown;
-  isEmergency?: boolean;
+  forceActionButtonsEnabled?: boolean;
 }
 
 const ValidatorCollapseContent = observer(
-  ({ validator, refresh, isEmergency }: IValidatorCollapseContentProps) => {
+  ({
+    validator,
+    refresh,
+    forceActionButtonsEnabled,
+  }: IValidatorCollapseContentProps) => {
     /* -------------------------------------------------------------------------- */
     /*                                   States                                   */
     /* -------------------------------------------------------------------------- */
@@ -65,6 +68,24 @@ const ValidatorCollapseContent = observer(
       await setStakingAmount(await getMyStaking(stakingProvider));
     };
 
+    const handleClaimRecovery = async () => {
+      if (!validator) return;
+
+      try {
+        setIsLoading(true);
+        const tx = await store
+          .getBasSdk()
+          .getStaking()
+          .claimDelegatorFee(validator?.validator);
+        await tx.receipt;
+        store.updateWalletBalance();
+        message.success("Claim reward was done!");
+      } catch (err: any) {
+        message.error(`Something went wrong ${err.message || ""}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     const handleClaim = async (isStaking = false) => {
       if (!validator) return;
 
@@ -175,19 +196,28 @@ const ValidatorCollapseContent = observer(
             <div className="validator-collapse-content-card">
               <span className="col-title">Staking Reward</span>
               <div>
-                <div className="value">
-                  {Number(stakingReward).toLocaleString(undefined, {
-                    minimumFractionDigits: 5,
-                    maximumFractionDigits: 5,
-                  })}{" "}
-                  <JfinCoin />
-                </div>
+                {!forceActionButtonsEnabled ? (
+                  <div className="value">
+                    {Number(stakingReward).toLocaleString(undefined, {
+                      minimumFractionDigits: 5,
+                      maximumFractionDigits: 5,
+                    })}{" "}
+                    <JfinCoin />
+                  </div>
+                ) : (
+                  <div>RECOVERY REWARD</div>
+                )}
                 <button
                   className="button secondary lg"
                   disabled={
-                    (!store.walletAccount || !stakingReward) && !isEmergency
+                    (!store.walletAccount || !stakingReward) &&
+                    !forceActionButtonsEnabled
                   }
-                  onClick={() => handleClaim()}
+                  onClick={() =>
+                    forceActionButtonsEnabled
+                      ? handleClaimRecovery()
+                      : handleClaim()
+                  }
                   type="button"
                 >
                   {isLoading ? <LoadingOutlined spin /> : "Claim"}
@@ -196,67 +226,63 @@ const ValidatorCollapseContent = observer(
             </div>
           </Col>
           <Col className="staking" lg={10} sm={24} xs={24}>
-            <div className="validator-collapse-content-card">
-              <span className="col-title">Staked</span>
-              <div>
-                <div className="value">
-                  {Number(stakingAmount).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}{" "}
-                  <JfinCoin />
-                </div>
+            {!forceActionButtonsEnabled && (
+              <div className="validator-collapse-content-card">
+                <span className="col-title">Staked</span>
                 <div>
-                  <div style={{ textAlign: "right" }}>
-                    {store.getValidatorStatus(validator!.status).status ===
-                      "Active" && (
+                  <div className="value">
+                    {Number(stakingAmount).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    <JfinCoin />
+                  </div>
+                  <div>
+                    <div style={{ textAlign: "right" }}>
+                      {store.getValidatorStatus(validator!.status).status ===
+                        "Active" && (
+                        <button
+                          className="button secondary lg"
+                          disabled={!store.walletAccount || !!stakingReward}
+                          onClick={handleAdd}
+                          type="button"
+                        >
+                          <PlusOutlined />
+                        </button>
+                      )}
+
                       <button
                         className="button secondary lg"
-                        disabled={
-                          (!store.walletAccount || !!stakingReward) &&
-                          !isEmergency
-                        }
-                        onClick={handleAdd}
+                        disabled={!store.walletAccount || !!stakingReward}
+                        onClick={handleUnStaking}
+                        style={{ marginLeft: "10px" }}
                         type="button"
                       >
-                        <PlusOutlined />
+                        <MinusOutlined />
                       </button>
-                    )}
-
-                    <button
-                      className="button secondary lg"
-                      disabled={
-                        (!store.walletAccount || !!stakingReward) &&
-                        !isEmergency
-                      }
-                      onClick={handleUnStaking}
-                      style={{ marginLeft: "10px" }}
-                      type="button"
-                    >
-                      <MinusOutlined />
-                    </button>
-                  </div>
-                  {stakingReward ? (
-                    <div
-                      style={{
-                        marginTop: "5px",
-                        marginLeft: "1rem",
-                        fontSize: "0.7rem",
-                        textAlign: "right",
-                        opacity: 0.75,
-                        lineHeight: 1,
-                      }}
-                    >
-                      <span>
-                        Please claim all pending reward before staking.
-                      </span>
                     </div>
-                  ) : (
-                    <></>
-                  )}
+                    {stakingReward ? (
+                      <div
+                        style={{
+                          marginTop: "5px",
+                          marginLeft: "1rem",
+                          fontSize: "0.7rem",
+                          textAlign: "right",
+                          opacity: 0.75,
+                          lineHeight: 1,
+                        }}
+                      >
+                        <span>
+                          Please claim all pending reward before staking.
+                        </span>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </Col>
         </Row>
       </div>
