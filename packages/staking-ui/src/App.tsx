@@ -56,39 +56,41 @@ const Main = observer(() => {
         </Suspense>
       </div>
 
-      <CookieConsent
-        overlay
-        buttonStyle={{
-          color: "#fff",
-          backgroundColor: "#c60000",
-          fontSize: "13px",
-          borderRadius: "30px",
-          padding: "4px 16px",
-          margin: "auto",
-        }}
-        buttonText="ยอมรับข้อตกลง"
-        contentClasses="condition-page"
-        contentStyle={{
-          margin: "0",
-          display: "block",
-          flex: "none",
-          with: "auto",
-        }}
-        cookieName="jfinstk"
-        expires={365}
-        location="top"
-        style={{
-          background: "#2e3338",
-          display: "block",
-          padding: "32px",
-          maxWidth: "600px",
-          position: "relative",
-          margin: "20px auto",
-          borderRadius: "16px",
-        }}
-      >
-        <Conditions />
-      </CookieConsent>
+      {process.env.NODE_ENV === "production" && (
+        <CookieConsent
+          overlay
+          buttonStyle={{
+            color: "#fff",
+            backgroundColor: "#c60000",
+            fontSize: "13px",
+            borderRadius: "30px",
+            padding: "4px 16px",
+            margin: "auto",
+          }}
+          buttonText="ยอมรับข้อตกลง"
+          contentClasses="condition-page"
+          contentStyle={{
+            margin: "0",
+            display: "block",
+            flex: "none",
+            with: "auto",
+          }}
+          cookieName="jfinstk"
+          expires={365}
+          location="top"
+          style={{
+            background: "#2e3338",
+            display: "block",
+            padding: "32px",
+            maxWidth: "600px",
+            position: "relative",
+            margin: "20px auto",
+            borderRadius: "16px",
+          }}
+        >
+          <Conditions />
+        </CookieConsent>
+      )}
     </div>
   );
 });
