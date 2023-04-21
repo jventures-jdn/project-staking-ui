@@ -92,7 +92,7 @@ export class Staking {
     return {active: activeValidators.length, total: allValidators.length}
   }
 
-  public async getValidatorHistory(validator: Web3Address, beforeEpoch?: number, limit: number = 30): Promise<IValidator[]> {
+  public async getValidatorHistory(validator: Web3Address, beforeEpoch?: number, limit = 30): Promise<IValidator[]> {
     if (!beforeEpoch) {
       beforeEpoch = await this.keyProvider.getCurrentEpoch()
     }

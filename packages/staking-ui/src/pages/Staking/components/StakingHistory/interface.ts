@@ -1,4 +1,4 @@
-import {Web3Uint256, Web3Address, IEventData} from "@ankr.com/bas-javascript-sdk";
+import {Web3Uint256, Web3Address, IEventData} from "jfin-staking-sdk";
 
 export interface IHistoryData {
   type: string;

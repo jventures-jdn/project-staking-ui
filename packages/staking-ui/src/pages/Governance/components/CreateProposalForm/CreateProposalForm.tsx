@@ -2,7 +2,7 @@ import {PlusOutlined} from "@ant-design/icons";
 import {Button, Col, Form, Input, Row, Select, Typography, message} from "antd";
 import {observer} from "mobx-react";
 import {useState} from "react";
-import {useBasStore} from "src/stores";
+import { useBasStore } from "../../../../stores";
 
 export interface IGenerateThresholdKeyFormProps {
   isLoading?: boolean;

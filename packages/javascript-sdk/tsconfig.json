@@ -1,8 +1,9 @@
 {
-  "include": ["src"],
-  "extends": "../../tsconfig.json",
+  "extends": "@config/typescript-config/react-lib.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "lib",
-    "rootDir": "src"
-  }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "__tests__"],
 }

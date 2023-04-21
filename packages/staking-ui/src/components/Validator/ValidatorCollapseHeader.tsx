@@ -1,16 +1,16 @@
-import { IValidator } from "@ankr.com/bas-javascript-sdk";
+import { IValidator } from "jfin-staking-sdk";
 import { Col, Row, Tooltip } from "antd";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-import { useBasStore } from "src/stores";
-import { VALIDATOR_WALLETS } from "src/utils/const";
-import defaultValidatorImg from "src/assets/images/partners/default.png";
+import defaultValidatorImg from "../../assets/images/partners/default.png";
 import CopyToClipboard from "react-copy-to-clipboard";
 import {
   CopyOutlined,
   DownOutlined,
   SafetyCertificateOutlined,
 } from "@ant-design/icons";
+import { useBasStore } from "../../stores";
+import { VALIDATOR_WALLETS } from "../../utils/const";
 
 interface IValidatorCollapseHeader {
   validator: IValidator;

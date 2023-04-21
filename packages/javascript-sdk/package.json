@@ -1,18 +1,14 @@
 {
-  "name": "@ankr.com/bas-javascript-sdk",
+  "name": "jfin-staking-sdk",
   "version": "0.0.2",
   "description": "",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "./src/index.ts",
   "repository": "",
-  "author": "Dmitry Savonin <dmitry@ankr.com>",
+  "author": "JVenture Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "lib"
-  ],
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",
     "@types/pretty-time": "^1.1.2",
@@ -22,8 +18,14 @@
     "web3-eth-contract": "^1.7.1",
     "web3-utils": "^1.7.1"
   },
+  "devDependencies": {
+    "@config/eslint-config": "workspace:*",
+    "@config/typescript-config": "workspace:*",
+    "@types/jest": "^29.5.1"
+  },
   "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
     "start": "tsc -w --preserveWatchOutput",
-    "build": "tsc --build"
+    "build": "pnpm lint && tsc"
   }
 }

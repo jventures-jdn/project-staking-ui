@@ -1,58 +1,24 @@
-import { Button, Divider, Dropdown, Menu } from "antd";
-import { Link, useLocation } from "react-router-dom";
-import "./Navbar.css";
-import logo from "../../assets/images/logo.svg";
-import { useEffect, useState } from "react";
-import {
-  CloseOutlined,
-  MenuOutlined,
-} from "@ant-design/icons";
-import { getCurrentEnv, useBasStore } from "src/stores";
-import { observer } from "mobx-react";
-import { NavHashLink } from "react-router-hash-link";
-import { Web3Button } from "@web3modal/react";
+import { Link, useLocation } from 'react-router-dom'
+import './Navbar.css'
+import logo from '../../assets/images/logo.svg'
+import { useState } from 'react'
+import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
+import { observer } from 'mobx-react'
+import { NavHashLink } from 'react-router-hash-link'
+import { Web3Button } from '@web3modal/react'
+import { getCurrentEnv, useBasStore } from '../../stores'
 
 const Navbar = observer(() => {
-  /* -------------------------------------------------------------------------- */
-  /*                                   States                                   */
-  /* -------------------------------------------------------------------------- */
-  const [isBurgerActive, setIsBurgerActive] = useState(false);
-  const [isWalletLoading, setIsWalletLoading] = useState(false);
-  const [walletAccount, setWalletAccount] = useState<string>();
-  const location = useLocation();
-  const store = useBasStore();
+  /* --------------------------------- States --------------------------------- */
+  const [isBurgerActive, setIsBurgerActive] = useState(false)
+  const location = useLocation()
 
-  /* -------------------------------------------------------------------------- */
-  /*                                   Methods                                  */
-  /* -------------------------------------------------------------------------- */
-
-
-  const handleDisconnect = async () => {
-    await store.disconnect();
-  };
-
+  /* --------------------------------- Methods -------------------------------- */
   const handleRoute = () => {
-    setIsBurgerActive(false);
-  };
+    setIsBurgerActive(false)
+  }
 
-  /* -------------------------------------------------------------------------- */
-  /*                                   Watches                                  */
-  /* -------------------------------------------------------------------------- */
-  useEffect(() => {
-    setWalletAccount(store.getWalletAccount());
-  }, [store.walletAccount]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                    DOMS                                    */
-  /* -------------------------------------------------------------------------- */
-  const WalletOverlay = (
-    <div className="wallet-overlay">
-      <a onClick={handleDisconnect} role="button" tabIndex={0}>
-        Logout
-      </a>
-    </div>
-  );
-
+  /* ---------------------------------- Doms ---------------------------------- */
   return (
     <>
       <div className="navbar-container">
@@ -66,20 +32,20 @@ const Navbar = observer(() => {
           <div className="navbar-menu">
             <Link
               className={`${
-                ["/", "/staking"].includes(location.pathname) && "active"
+                ['/', '/staking'].includes(location?.pathname) && 'active'
               }`}
               to="/staking"
             >
               Staking
             </Link>
             <Link
-              className={`${location.pathname === "/governance" && "active"}`}
+              className={`${location?.pathname === '/governance' && 'active'}`}
               to="/governance"
             >
               Governance
             </Link>
             <Link
-              className={`${location.pathname === "/assets" && "active"}`}
+              className={`${location?.pathname === '/assets' && 'active'}`}
               to="/assets"
             >
               Assets
@@ -87,17 +53,17 @@ const Navbar = observer(() => {
             <span>|</span>
             <a
               href={`https://exp.${
-                getCurrentEnv() === "jfin" ? "" : "testnet."
+                getCurrentEnv() === 'jfin' ? '' : 'testnet.'
               }jfinchain.com/`}
               rel="noreferrer"
               target="_blank"
             >
               Explorer
             </a>
-            {getCurrentEnv() === "jfintest" && (
+            {getCurrentEnv() === 'jfintest' && (
               <a
                 href={`https://faucet.${
-                  getCurrentEnv() === "jfin" ? "" : "testnet."
+                  getCurrentEnv() === 'jfin' ? '' : 'testnet.'
                 }jfinchain.com/`}
                 rel="noreferrer"
                 target="_blank"
@@ -111,7 +77,7 @@ const Navbar = observer(() => {
             <Web3Button />
           </div>
 
-          <div className={`navbar-burger ${isBurgerActive && "active"}`}>
+          <div className={`navbar-burger ${isBurgerActive && 'active'}`}>
             <button
               className="burger-button"
               onClick={() => setIsBurgerActive(!isBurgerActive)}
@@ -122,10 +88,10 @@ const Navbar = observer(() => {
           </div>
         </div>
       </div>
-      <div className={`navbar-overlay ${isBurgerActive && "active"}`}>
+      <div className={`navbar-overlay ${isBurgerActive && 'active'}`}>
         <NavHashLink
           className={`${
-            ["/", "/staking"].includes(location.pathname) && "active"
+            ['/', '/staking'].includes(location.pathname) && 'active'
           }`}
           onClick={handleRoute}
           to="/staking#view-point1"
@@ -133,14 +99,14 @@ const Navbar = observer(() => {
           Staking
         </NavHashLink>
         <NavHashLink
-          className={`${location.pathname === "/governance" && "active"}`}
+          className={`${location.pathname === '/governance' && 'active'}`}
           onClick={handleRoute}
           to="/governance#view-point2"
         >
           Governance
         </NavHashLink>
         <NavHashLink
-          className={`${location.pathname === "/assets" && "active"}`}
+          className={`${location.pathname === '/assets' && 'active'}`}
           onClick={handleRoute}
           to="/assets#view-point3"
         >
@@ -148,7 +114,7 @@ const Navbar = observer(() => {
         </NavHashLink>
         <a
           href={`https://exp.${
-            getCurrentEnv() === "jfin" ? "" : "testnet."
+            getCurrentEnv() === 'jfin' ? '' : 'testnet.'
           }jfinchain.com/`}
           rel="noreferrer"
           target="_blank"
@@ -156,10 +122,10 @@ const Navbar = observer(() => {
           Explorer
         </a>
 
-        {getCurrentEnv() === "jfintest" && (
+        {getCurrentEnv() === 'jfintest' && (
           <a
             href={`https://faucet.${
-              getCurrentEnv() === "jfin" ? "" : "testnet."
+              getCurrentEnv() === 'jfin' ? '' : 'testnet.'
             }jfinchain.com/`}
             rel="noreferrer"
             target="_blank"
@@ -167,12 +133,12 @@ const Navbar = observer(() => {
             Faucet
           </a>
         )}
-        <div style={{ paddingBottom: "1rem" }}>
+        <div style={{ paddingBottom: '1rem' }}>
           <Web3Button />
         </div>
       </div>
     </>
-  );
-});
+  )
+})
 
-export default Navbar;
+export default Navbar

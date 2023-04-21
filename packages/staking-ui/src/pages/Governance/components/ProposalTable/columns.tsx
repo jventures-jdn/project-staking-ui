@@ -1,7 +1,7 @@
 import {
   IGovernanceProposal,
   TGovernanceProposalStatus,
-} from "@ankr.com/bas-javascript-sdk";
+} from "jfin-staking-sdk";
 import { Button, Tag } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import { ReactElement } from "react";

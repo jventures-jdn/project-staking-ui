@@ -1,4 +1,4 @@
-import { Web3Uint256, Web3Address } from "@ankr.com/bas-javascript-sdk";
+import { Web3Uint256, Web3Address } from "jfin-staking-sdk";
 
 export interface IDelegatedAssetsData {
   amount: Web3Uint256;

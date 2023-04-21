@@ -2,7 +2,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-import { useModalStore } from "src/stores";
+import { useModalStore } from "../../stores";
 import "./GlobalModal.css";
 
 interface IModal {

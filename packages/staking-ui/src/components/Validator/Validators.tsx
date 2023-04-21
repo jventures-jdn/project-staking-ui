@@ -1,11 +1,11 @@
-import { IValidator } from "@ankr.com/bas-javascript-sdk";
+import { IValidator } from "jfin-staking-sdk";
 import { Col, Collapse, Row } from "antd";
 import { observer } from "mobx-react";
 import "./Validators.css";
 import { LoadingOutlined } from "@ant-design/icons";
-import { getCurrentEnv } from "src/stores";
 import ValidatorCollapseContent from "./ValidatorCollapseContent";
 import ValidatorCollapseHeader from "./ValidatorCollapseHeader";
+import { getCurrentEnv } from "../../stores";
 
 interface IValidatorsProps {
   validators: undefined | IValidator[];

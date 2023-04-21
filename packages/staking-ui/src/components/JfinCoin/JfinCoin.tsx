@@ -1,4 +1,4 @@
-import coin from "src/assets/images/logo.png";
+import coin from "../../assets/images/logo.png";
 import "./JfinCoin.css";
 
 const JfinCoin = () => {

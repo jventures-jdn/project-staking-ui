@@ -1,5 +1,5 @@
-import { MobXProviderContext } from "mobx-react";
-import React from "react";
+import { MobXProviderContext } from 'mobx-react'
+import React from 'react'
 
 import {
   BasStore,
@@ -11,34 +11,33 @@ import {
   MRFOX_CONFIG,
   makeDefaultConfig,
   CONFIGS,
-} from "./BasStore";
-import ModalStore from "./ModalStore";
-import WalletConnectStore from "./WalletConnectStore";
+} from './BasStore'
+import ModalStore from './ModalStore'
+import WalletConnectStore from './WalletConnectStore'
 
-let currentEnvironment =
-  process?.env?.REACT_APP_ENVIRONMENT || "${REACT_APP_ENVIRONMENT}";
+let currentEnvironment = process.env.REACT_APP_ENVIRONMENT
 
-let config = LOCAL_CONFIG;
+let config = LOCAL_CONFIG
 
 switch (currentEnvironment) {
-  case "local":
-    config = LOCAL_CONFIG;
-    break;
-  case "devnet":
-    config = DEV_CONFIG;
-    break;
-  case "mrfox":
-    config = MRFOX_CONFIG;
-    break;
-  case "jfin":
-    config = JFIN_CONFIG;
-    break;
-  case "jfintest":
-    config = JFIN_TESTNET_CONFIG;
-    break;
+  case 'local':
+    config = LOCAL_CONFIG
+    break
+  case 'devnet':
+    config = DEV_CONFIG
+    break
+  case 'mrfox':
+    config = MRFOX_CONFIG
+    break
+  case 'jfin':
+    config = JFIN_CONFIG
+    break
+  case 'jfintest':
+    config = JFIN_TESTNET_CONFIG
+    break
   default:
-    config = LOCAL_CONFIG;
-    break;
+    config = LOCAL_CONFIG
+    break
 }
 
 // let force switch network using url params
@@ -46,48 +45,48 @@ if (window.location.search.length > 0) {
   const searchParams = Object.fromEntries(
     window.location.search
       .substring(1)
-      .split("&")
-      .map((v) => v.split("="))
-  );
+      .split('&')
+      .map((v) => v.split('=')),
+  )
   if (searchParams.config && CONFIGS[searchParams.config.toLowerCase()]) {
-    config = CONFIGS[searchParams.config.toLowerCase()];
-    currentEnvironment = "url";
+    config = CONFIGS[searchParams.config.toLowerCase()]
+    currentEnvironment = 'url'
   }
 }
 
 // console.log(`Current env is: ${currentEnvironment}`)
 
-if (currentEnvironment === "env") {
+if (currentEnvironment === 'env') {
   config = makeDefaultConfig(
-    Number("${CHAIN_ID}"),
-    "${CHAIN_NAME}",
-    "${CHAIN_RPC}",
+    Number('${CHAIN_ID}'),
+    '${CHAIN_NAME}',
+    '${CHAIN_RPC}',
     {
-      homePage: "${EXPLORER_HOME_URL}",
-      txUrl: "${EXPLORER_TX_URL}",
-      addressUrl: "${EXPLORER_ADDRESS_URL}",
-      blockUrl: "${EXPLORER_BLOCK_URL}",
-    }
-  );
+      homePage: '${EXPLORER_HOME_URL}',
+      txUrl: '${EXPLORER_TX_URL}',
+      addressUrl: '${EXPLORER_ADDRESS_URL}',
+      blockUrl: '${EXPLORER_BLOCK_URL}',
+    },
+  )
 }
 
-const basStore = new BasStore(config);
-const modalStore = new ModalStore();
-const walletConnectStore = new WalletConnectStore(config);
+const basStore = new BasStore(config)
+const modalStore = new ModalStore()
+const walletConnectStore = new WalletConnectStore(config)
 
-basStore.connectProvider();
-basStore.listenAccountChange();
-basStore.listenChainChange();
+basStore.connectProvider()
+basStore.listenAccountChange()
+basStore.listenChainChange()
 
 export const getCurrentEnv = () => {
-  return currentEnvironment;
-};
+  return currentEnvironment
+}
 
 export const useStores: any = () => {
-  return React.useContext(MobXProviderContext as any);
-};
+  return React.useContext(MobXProviderContext as any)
+}
 
-export const useBasStore = () => basStore;
-export const useModalStore = () => modalStore;
-export const getConfig = () => config;
-export const useWallectConnect = () => walletConnectStore;
+export const useBasStore = () => basStore
+export const useModalStore = () => modalStore
+export const getConfig = () => config
+export const useWallectConnect = () => walletConnectStore

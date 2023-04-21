@@ -1,4 +1,4 @@
-import { IStakingRewards } from "@ankr.com/bas-javascript-sdk";
+import { IStakingRewards } from "jfin-staking-sdk";
 import {Table, Typography} from "antd";
 import {observer} from "mobx-react";
 

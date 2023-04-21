@@ -4,13 +4,13 @@ import {
   WalletOutlined,
 } from "@ant-design/icons";
 import "./Assets.css";
-import MyValidators from "src/components/MyValidators/MyValidators";
-import StakingHistory from "src/components/StakingHistory/StakingHistory";
-import { useBasStore } from "src/stores";
 import { useEffect, useMemo, useState } from "react";
-import { IValidator } from "@ankr.com/bas-javascript-sdk";
+import { IValidator } from "jfin-staking-sdk";
 import { observer } from "mobx-react";
-import JfinCoin from "src/components/JfinCoin/JfinCoin";
+import { useBasStore } from "../../stores";
+import JfinCoin from "../../components/JfinCoin/JfinCoin";
+import MyValidators from "../../components/MyValidators/MyValidators";
+import StakingHistory from "../../components/StakingHistory/StakingHistory";
 
 export interface IMyValidators {
   amount: number;

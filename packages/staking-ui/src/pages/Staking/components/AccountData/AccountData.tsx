@@ -1,7 +1,7 @@
 import { Spin, Typography } from "antd";
 import { observer } from "mobx-react";
-import { useBasStore } from "src/stores";
-import { useLocalFetchDataStore } from "src/stores/FetchDataStore";
+import { useBasStore } from "../../../../stores";
+import { useLocalFetchDataStore } from "../../../../stores/FetchDataStore";
 
 const { Title, Text } = Typography;
 

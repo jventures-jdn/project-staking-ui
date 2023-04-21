@@ -2,7 +2,7 @@ import {
   GAS_LIMIT_CLAIM,
   GAS_PRICE,
   IValidator,
-} from "@ankr.com/bas-javascript-sdk";
+} from "jfin-staking-sdk";
 import {
   AlertOutlined,
   LoadingOutlined,
@@ -11,8 +11,8 @@ import {
 import { message } from "antd";
 import { observer } from "mobx-react";
 import { FormEvent, useEffect, useState } from "react";
-import JfinCoin from "src/components/JfinCoin/JfinCoin";
-import { useBasStore, useModalStore } from "src/stores";
+import JfinCoin from "../../../components/JfinCoin/JfinCoin";
+import { useBasStore, useModalStore } from "../../../stores";
 import {
   usePrepareSendTransaction,
   useSendTransaction,

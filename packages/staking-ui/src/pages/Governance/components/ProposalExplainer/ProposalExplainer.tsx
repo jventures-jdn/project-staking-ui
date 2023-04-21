@@ -1,4 +1,4 @@
-import {IGovernanceProposal, IGovernanceVote} from "@ankr.com/bas-javascript-sdk"
+import {IGovernanceProposal} from "jfin-staking-sdk"
 import {Descriptions, Divider, Table} from "antd"
 
 import {renderStatus} from "../ProposalTable/columns"

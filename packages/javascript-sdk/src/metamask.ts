@@ -99,7 +99,7 @@ export const sendTransactionAsync = async (
   // console.log('gas estimate', await web3.eth.estimateGas({from: sendOptions.from, value: sendOptions.value, gas: GAS_LIMIT_CLAIM}))
 
   // declear transaction payload
-  let tx = {
+  const tx = {
     from: sendOptions.from,
     to: sendOptions.to,
     value: numberToHex(sendOptions.value || "0"),

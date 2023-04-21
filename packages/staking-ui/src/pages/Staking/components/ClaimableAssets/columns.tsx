@@ -1,9 +1,9 @@
-import {IStakingRewards, IValidator} from "@ankr.com/bas-javascript-sdk";
+import {IStakingRewards, IValidator} from "jfin-staking-sdk";
 import {Button} from "antd";
 import {ColumnProps} from "antd/lib/table";
 import {BigNumber} from "bignumber.js";
-import {BasStore} from "src/stores/BasStore";
-import {claimRewards} from "src/utils/helpers";
+import { BasStore } from "../../../../stores/BasStore";
+import { claimRewards } from "../../../../utils/helpers";
 
 export const createTableColumns = (store: BasStore): ColumnProps<any>[] => {
 

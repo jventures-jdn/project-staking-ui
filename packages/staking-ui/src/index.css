@@ -1,4 +1,4 @@
-@import "~antd/dist/antd.css";
+@import "antd/dist/antd.css";
 
 /*body {*/
 /*  margin: 0;*/
@@ -136,7 +136,7 @@ h1.ant-typography {
 
 .app-container {
   min-height: 100%;
-  background-image: url(jfin-bg.png);
+  background-image: url('./assets/images/background/jfin-bg.png');
   background-size: 100%;
   background-position: 0 -40%;
   background-repeat: no-repeat;

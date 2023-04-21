@@ -1,9 +1,9 @@
 import { Button } from "antd";
 import { ColumnProps } from "antd/lib/table";
-import { BasStore } from "src/stores/BasStore";
-import { undelegate, delegate } from "src/utils/helpers";
 
 import { IDelegatedAssetsData } from "./interface";
+import { BasStore } from "../../../../stores/BasStore";
+import { delegate, undelegate } from "../../../../utils/helpers";
 
 export const createTableColumns = (store: BasStore): ColumnProps<any>[]  => {
   

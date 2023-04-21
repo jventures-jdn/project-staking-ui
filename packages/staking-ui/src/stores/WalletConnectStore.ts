@@ -1,26 +1,22 @@
-import { Chain, configureChains, createClient } from "wagmi";
-import {
-  EthereumClient,
-  w3mConnectors,
-  w3mProvider,
-} from "@web3modal/ethereum";
-import { makeAutoObservable } from "mobx";
-import { IConfig } from "@ankr.com/bas-javascript-sdk";
+import { Chain, configureChains, createClient } from 'wagmi'
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { makeAutoObservable } from 'mobx'
+import { IConfig } from 'jfin-staking-sdk'
 
 export default class WalletConnectStore {
-  private readonly config;
-  public chains;
-  public wagmiClient;
-  public configure;
-  public jsonRpcProvider;
-  public ethereumClient;
+  private readonly config
+  public chains
+  public wagmiClient: any
+  public configure: ReturnType<typeof configureChains>
+  public jsonRpcProvider: ReturnType<typeof this.configure.provider>
+  public ethereumClient
 
   public projectId =
-    process.env.REACT_APP_PROJECT_ID || "2dc0abd48b692cc1375af974f7533524";
+    process.env.REACT_APP_PROJECT_ID || '2dc0abd48b692cc1375af974f7533524'
 
   constructor(_config: IConfig) {
-    makeAutoObservable(this);
-    this.config = _config;
+    makeAutoObservable(this)
+    this.config = _config
 
     // 1. Init jfin chain
     this.chains = [
@@ -39,21 +35,21 @@ export default class WalletConnectStore {
         },
         blockExplorers: {
           etherscan: {
-            name: "BlockScout",
-            url: _config.explorerConfig?.homePage || "",
+            name: 'BlockScout',
+            url: _config.explorerConfig?.homePage || '',
           },
           default: {
-            name: "BlockScout",
-            url: _config.explorerConfig?.homePage || "",
+            name: 'BlockScout',
+            url: _config.explorerConfig?.homePage || '',
           },
         },
       },
-    ] as Chain[];
+    ] as Chain[]
 
     // 2. Get configure from configureChains
     this.configure = configureChains(this.chains, [
       w3mProvider({ projectId: this.projectId }),
-    ]);
+    ])
 
     // 3. Create wagmiClient from web3modal
     this.wagmiClient = createClient({
@@ -66,12 +62,12 @@ export default class WalletConnectStore {
         }),
       ],
       provider: this.configure.provider,
-    });
+    })
 
-    this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains);
+    this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains)
     this.jsonRpcProvider = this.configure.provider({
       chainId: this.config.chainId,
-    });
+    })
   }
 
   /* -------------------------------------------------------------------------- */

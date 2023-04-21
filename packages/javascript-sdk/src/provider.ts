@@ -7,14 +7,15 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import prettyTime from 'pretty-time'
 import BigNumber from "bignumber.js";
 
-const STAKING_ABI = require('../src/abi/Staking.json')
-const SLASHING_INDICATOR_ABI = require('../src/abi/SlashingIndicator.json')
-const SYSTEM_REWARD_ABI = require('../src/abi/SystemReward.json')
-const STAKING_POOL_ABI = require('../src/abi/StakingPool.json')
-const GOVERNANCE_ABI = require('../src/abi/Governance.json')
-const CHAIN_CONFIG_ABI = require('../src/abi/ChainConfig.json')
-const RUNTIME_UPGRADE_ABI = require('../src/abi/RuntimeUpgrade.json')
-const DEPLOYER_PROXY_ABI = require('../src/abi/DeployerProxy.json')
+import STAKING_ABI from '../src/abi/Staking.json';
+import SLASHING_INDICATOR_ABI from '../src/abi/SlashingIndicator.json';
+import SYSTEM_REWARD_ABI from '../src/abi/SystemReward.json';
+import STAKING_POOL_ABI from '../src/abi/StakingPool.json';
+import GOVERNANCE_ABI from '../src/abi/Governance.json';
+import CHAIN_CONFIG_ABI from '../src/abi/ChainConfig.json';
+import RUNTIME_UPGRADE_ABI from '../src/abi/RuntimeUpgrade.json';
+import DEPLOYER_PROXY_ABI from '../src/abi/DeployerProxy.json';
+
 
 export class KeyProvider implements IKeyProvider {
 
@@ -71,14 +72,14 @@ export class KeyProvider implements IKeyProvider {
     this.runtimeUpgradeAddress = this.config.runtimeUpgradeAddress;
     this.deployerProxyAddress = this.config.deployerProxyAddress;
     // contracts
-    this.stakingContract = new web3.eth.Contract(STAKING_ABI, this.config.stakingAddress);
-    this.slashingIndicatorContract = new web3.eth.Contract(SLASHING_INDICATOR_ABI, this.config.slashingIndicatorAddress);
-    this.systemRewardContract = new web3.eth.Contract(SYSTEM_REWARD_ABI, this.config.systemRewardAddress);
-    this.stakingPoolContract = new web3.eth.Contract(STAKING_POOL_ABI, this.config.stakingPoolAddress);
-    this.governanceContract = new web3.eth.Contract(GOVERNANCE_ABI, this.config.governanceAddress);
-    this.chainConfigContract = new web3.eth.Contract(CHAIN_CONFIG_ABI, this.config.chainConfigAddress);
-    this.runtimeUpgradeContract = new web3.eth.Contract(RUNTIME_UPGRADE_ABI, this.config.runtimeUpgradeAddress);
-    this.deployerProxyContract = new web3.eth.Contract(DEPLOYER_PROXY_ABI, this.config.deployerProxyAddress);
+    this.stakingContract = new web3.eth.Contract(STAKING_ABI as any, this.config.stakingAddress);
+    this.slashingIndicatorContract = new web3.eth.Contract(SLASHING_INDICATOR_ABI as any, this.config.slashingIndicatorAddress);
+    this.systemRewardContract = new web3.eth.Contract(SYSTEM_REWARD_ABI as any, this.config.systemRewardAddress);
+    this.stakingPoolContract = new web3.eth.Contract(STAKING_POOL_ABI as any, this.config.stakingPoolAddress);
+    this.governanceContract = new web3.eth.Contract(GOVERNANCE_ABI as any, this.config.governanceAddress);
+    this.chainConfigContract = new web3.eth.Contract(CHAIN_CONFIG_ABI as any, this.config.chainConfigAddress);
+    this.runtimeUpgradeContract = new web3.eth.Contract(RUNTIME_UPGRADE_ABI as any, this.config.runtimeUpgradeAddress);
+    this.deployerProxyContract = new web3.eth.Contract(DEPLOYER_PROXY_ABI as any, this.config.deployerProxyAddress);
   }
 
   public async connectFromInjected(): Promise<void> {
@@ -143,14 +144,14 @@ export class KeyProvider implements IKeyProvider {
       minValidatorStakeAmount,
       minStakingAmount,
     ] = await Promise.all([
-      this.chainConfigContract!.methods.getActiveValidatorsLength().call(),
-      this.chainConfigContract!.methods.getEpochBlockInterval().call(),
-      this.chainConfigContract!.methods.getMisdemeanorThreshold().call(),
-      this.chainConfigContract!.methods.getFelonyThreshold().call(),
-      this.chainConfigContract!.methods.getValidatorJailEpochLength().call(),
-      this.chainConfigContract!.methods.getUndelegatePeriod().call(),
-      this.chainConfigContract!.methods.getMinValidatorStakeAmount().call(),
-      this.chainConfigContract!.methods.getMinStakingAmount().call(),
+      this.chainConfigContract?.methods.getActiveValidatorsLength().call(),
+      this.chainConfigContract?.methods.getEpochBlockInterval().call(),
+      this.chainConfigContract?.methods.getMisdemeanorThreshold().call(),
+      this.chainConfigContract?.methods.getFelonyThreshold().call(),
+      this.chainConfigContract?.methods.getValidatorJailEpochLength().call(),
+      this.chainConfigContract?.methods.getUndelegatePeriod().call(),
+      this.chainConfigContract?.methods.getMinValidatorStakeAmount().call(),
+      this.chainConfigContract?.methods.getMinStakingAmount().call(),
     ])
     return {
       activeValidatorsLength,
@@ -166,9 +167,9 @@ export class KeyProvider implements IKeyProvider {
 
   public async getChainParams(): Promise<IChainParams> {
     const blockNumber = await this.getBlockNumber(),
-      epochBlockInterval = await this.chainConfigContract!.methods.getEpochBlockInterval().call()
-    let startBlock = ((blockNumber / epochBlockInterval) | 0) * epochBlockInterval,
-      endBlock = startBlock + Number(epochBlockInterval)
+      epochBlockInterval = await this.chainConfigContract?.methods.getEpochBlockInterval().call()
+    const startBlock = ((blockNumber / epochBlockInterval) | 0) * epochBlockInterval,
+    endBlock = startBlock + Number(epochBlockInterval)
     const blockTime = 3;
     return {
       blockNumber: blockNumber,

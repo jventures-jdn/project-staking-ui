@@ -3,7 +3,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Col, Collapse, Row } from "antd";
 import { observer } from "mobx-react";
 import { Link } from "react-router-dom";
-import { IMyValidators } from "src/pages/Assets/Assets";
+import { IMyValidators } from "../../pages/Assets/Assets";
 import ValidatorCollapseContent from "../Validator/ValidatorCollapseContent";
 import ValidatorCollapseHeader from "../Validator/ValidatorCollapseHeader";
 import "../Validator/Validators.css";

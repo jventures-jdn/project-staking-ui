@@ -2,15 +2,15 @@ import {
   GAS_LIMIT_GENERAL,
   GAS_PRICE,
   IValidator,
-} from "@ankr.com/bas-javascript-sdk";
+} from "jfin-staking-sdk";
 import { LoadingOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import BigNumber from "bignumber.js";
 import { observer } from "mobx-react";
 import { FormEvent, useEffect, useState } from "react";
-import JfinCoin from "src/components/JfinCoin/JfinCoin";
-import { useBasStore, useModalStore } from "src/stores";
-import { GWEI } from "src/utils/const";
+import JfinCoin from "../../../components/JfinCoin/JfinCoin";
+import { useBasStore, useModalStore } from "../../../stores";
+import { GWEI } from "../../../utils/const";
 import {
   usePrepareSendTransaction,
   useSendTransaction,

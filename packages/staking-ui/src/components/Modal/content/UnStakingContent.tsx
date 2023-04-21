@@ -2,20 +2,20 @@ import {
   GAS_LIMIT_GENERAL,
   GAS_PRICE,
   IValidator,
-} from "@ankr.com/bas-javascript-sdk";
+} from "jfin-staking-sdk";
 import { LoadingOutlined, WarningOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react";
 import { FormEvent, useEffect, useState } from "react";
-import JfinCoin from "src/components/JfinCoin/JfinCoin";
-import { getCurrentEnv, useBasStore, useModalStore } from "src/stores";
+import { getCurrentEnv, useBasStore, useModalStore } from "../../../stores";
 import { message } from "antd";
-import { GWEI } from "src/utils/const";
+import { GWEI } from "../../../utils/const";
 import BigNumber from "bignumber.js";
 import {
   usePrepareSendTransaction,
   useSendTransaction,
   useWaitForTransaction,
 } from "wagmi";
+import JfinCoin from "../../JfinCoin/JfinCoin";
 
 interface IUnStakingContent {
   validator: IValidator;

@@ -1,12 +1,10 @@
-import { IGovernanceProposal } from "@ankr.com/bas-javascript-sdk";
+import { IGovernanceProposal } from "jfin-staking-sdk";
 import { Table } from "antd";
 import { observer } from "mobx-react";
-import { useBasStore } from "src/stores";
-import { useLocalGridStore } from "src/stores/LocalGridStore";
-
-import { ProposalExplainer } from "../ProposalExplainer";
-
+import * as ProposalExplainer from "../ProposalExplainer";
 import { createTableColumns } from "./columns";
+import { useLocalGridStore } from "../../../../stores/LocalGridStore";
+import { useBasStore } from "../../../../stores";
 
 const ProposalTable = observer(() => {
   const store = useBasStore();
@@ -28,7 +26,7 @@ const ProposalTable = observer(() => {
       dataSource={grid.items}
       expandable={{
         expandedRowRender: (event: IGovernanceProposal) => {
-          return <ProposalExplainer event={event} />;
+          return <ProposalExplainer.ProposalExplainer event={event} />;
         },
       }}
       loading={grid.isLoading}

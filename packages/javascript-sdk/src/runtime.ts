@@ -8,7 +8,7 @@ export class RuntimeUpgrade {
   ) {
   }
 
-  public async upgradeRuntime(contract: Web3Address, byteCode: string, applyFunction: string = '0x'): Promise<IPendingTx> {
+  public async upgradeRuntime(contract: Web3Address, byteCode: string, applyFunction = '0x'): Promise<IPendingTx> {
     const data = this.keyProvider.runtimeUpgradeContract?.methods
       .upgradeSystemSmartContract(contract, byteCode, applyFunction)
       .encodeABI()

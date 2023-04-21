@@ -1,7 +1,7 @@
-import { IChainConfig, IChainParams } from "@ankr.com/bas-javascript-sdk";
+import { IChainConfig, IChainParams } from "jfin-staking-sdk";
 import { Col, Row } from "antd";
 import { useEffect, useState } from "react";
-import { useBasStore } from "src/stores";
+import { useBasStore } from "../../stores";
 import prettyTime from "pretty-time";
 import "./BlockInfo.css";
 import { observer } from "mobx-react";

@@ -1,4 +1,4 @@
-import { IValidator, Staking } from "@ankr.com/bas-javascript-sdk";
+import { IValidator, Staking } from "jfin-staking-sdk";
 import {
   LoadingOutlined,
   MinusOutlined,
@@ -9,8 +9,8 @@ import { Col, Row } from "antd";
 import BigNumber from "bignumber.js";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-import { getCurrentEnv, useBasStore, useModalStore } from "src/stores";
-import { GWEI } from "src/utils/const";
+import { getCurrentEnv, useBasStore, useModalStore } from "../../stores";
+import { GWEI } from "../../utils/const";
 import JfinCoin from "../JfinCoin/JfinCoin";
 import AddStakingContent from "../Modal/content/AddStakingContent";
 import ClaimStakingContent from "../Modal/content/ClaimStakingContent";

@@ -1,34 +1,34 @@
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Drawer } from "antd";
-import { observer } from "mobx-react";
-import { ReactElement, useEffect, useState } from "react";
-import { useBasStore } from "src/stores";
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Drawer } from 'antd'
+import { observer } from 'mobx-react'
+import { ReactElement, useEffect, useState } from 'react'
 
-import "../index.css";
+import '../index.css'
 
-import CreateProposalForm from "./components/CreateProposalForm/CreateProposalForm";
-import ProposalTable from "./components/ProposalTable/ProposalTable";
+import CreateProposalForm from './components/CreateProposalForm/CreateProposalForm'
+import ProposalTable from './components/ProposalTable/ProposalTable'
+import { useBasStore } from '../../stores'
 
 export const GovernanceNav = observer((): ReactElement => {
-  const store = useBasStore();
-  const [drawerVisible, setDrawerVisible] = useState(false);
-  const [loading, setIsLoading] = useState(true);
+  const store = useBasStore()
+  const [drawerVisible, setDrawerVisible] = useState(false)
+  const [loading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (store.chainInfo) setIsLoading(false);
+    if (store.chainInfo) setIsLoading(false)
 
-    return () => setIsLoading(true);
-  }, [store.chainInfo]);
+    return () => setIsLoading(true)
+  }, [store.chainInfo])
 
   return (
     <div>
       <Drawer
         bodyStyle={{ paddingBottom: 80 }}
         title="Create proposal"
-        visible={drawerVisible}
+        open={drawerVisible}
         width={500}
         onClose={() => {
-          setDrawerVisible(false);
+          setDrawerVisible(false)
         }}
       >
         <CreateProposalForm />
@@ -37,10 +37,10 @@ export const GovernanceNav = observer((): ReactElement => {
       {loading ? (
         <div
           style={{
-            textAlign: "center",
-            background: "#16191d",
-            padding: "32px",
-            borderRadius: "10px",
+            textAlign: 'center',
+            background: '#16191d',
+            padding: '32px',
+            borderRadius: '10px',
           }}
         >
           <LoadingOutlined spin />
@@ -54,7 +54,7 @@ export const GovernanceNav = observer((): ReactElement => {
             style={{ margin: 10 }}
             type="primary"
             onClick={() => {
-              setDrawerVisible(true);
+              setDrawerVisible(true)
             }}
           >
             Create Proposal
@@ -62,5 +62,5 @@ export const GovernanceNav = observer((): ReactElement => {
         </div>
       )}
     </div>
-  );
-});
+  )
+})

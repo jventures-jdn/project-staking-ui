@@ -1,4 +1,4 @@
-import {IEventData} from "@ankr.com/bas-javascript-sdk";
+import {IEventData} from "jfin-staking-sdk";
 import { Table, Typography } from "antd";
 import BigNumber from "bignumber.js";
 import { observer } from "mobx-react";

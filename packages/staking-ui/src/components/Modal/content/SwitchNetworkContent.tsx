@@ -1,9 +1,7 @@
 import { WarningOutlined } from "@ant-design/icons";
-import { Divider } from "antd";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-import JfinCoin from "src/components/JfinCoin/JfinCoin";
-import { getConfig, useBasStore } from "src/stores";
+import { getConfig, useBasStore } from "../../../stores";
 import { numberToHex } from "web3-utils";
 
 const SwitchNetworkContent = observer(() => {

@@ -1,4 +1,4 @@
-import {TablePaginationConfig} from "antd";
+import * as antd from "antd";
 import {action, computed, makeAutoObservable} from "mobx";
 import {DependencyList, useEffect, useMemo} from "react";
 
@@ -21,10 +21,10 @@ export class LocalGridStore<T> {
   }
 
   @computed
-  get paginationConfig(): TablePaginationConfig {
+  get paginationConfig(): antd.TablePaginationConfig {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this;
-    const config: TablePaginationConfig = {
+    const config: antd.TablePaginationConfig = {
       current: this.currentPage + 1,
       onChange(page: number, pageSize?: number) {
         // noinspection JSIgnoredPromiseFromCall

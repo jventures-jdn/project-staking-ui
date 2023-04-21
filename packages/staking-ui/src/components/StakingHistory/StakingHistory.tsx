@@ -4,7 +4,7 @@ import { ColumnProps } from "antd/lib/table";
 import { observer } from "mobx-react";
 import moment from "moment";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { getCurrentEnv, useBasStore } from "src/stores";
+import { getCurrentEnv, useBasStore } from "../../stores";
 
 interface IStakingHistory {
   data: IMyTransactionHistory[] | undefined;
