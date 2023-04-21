@@ -6,7 +6,7 @@ import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button } from '@web3modal/react'
-import { getCurrentEnv, useBasStore } from '../../stores'
+import { getCurrentEnv } from '../../stores'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
