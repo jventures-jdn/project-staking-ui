@@ -15,7 +15,12 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "removeComments": true
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "preserveSymlinks": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist", "libs"]
 }

@@ -1,0 +1,21 @@
+{
+  "name": "@utils/chain",
+  "main": "./index.ts",
+  "dependencies": {
+    "abitype": "^0.8.0",
+    "datejs": "1.0.0-rc3",
+    "ethers": "^5.0.0",
+    "wagmi": "^0.12.12"
+  },
+  "devDependencies": {
+    "@config/eslint-config": "workspace:*",
+    "@config/typescript-config": "workspace:*",
+    "@types/node": "^18.16.0",
+    "react": "^17.0.2",
+    "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
+    "build": "tsc --build"
+  }
+}
