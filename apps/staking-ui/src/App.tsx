@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react'
 import React, { Suspense, useEffect } from 'react'
-import CookieConsent from 'react-cookie-consent'
 
 import BlockInfo from './components/BlockInfo/BlockInfo'
 import Conditions from './components/Conditions'
@@ -16,16 +15,15 @@ import Navbar from './components/Navbar/Navbar'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { fetchBlockNumber, readContracts } from 'wagmi/actions'
 
+
 const Staking = React.lazy(() => import('./pages/Staking/Staking'))
 const Governance = React.lazy(() => import('./pages/Governance/Governance'))
 const Assets = React.lazy(() => import('./pages/Assets/Assets'))
-const config = getConfig()
 
 const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const store = useBasStore()
   const client = useClient()
-
   const { address, isConnected } = useAccount()
 
   // const { data } = useBlockNumber()
@@ -43,13 +41,13 @@ const App = observer(() => {
   // contract2?.getActiveValidatorsLength()
 
   /* --------------------------------- Watches -------------------------------- */
-  // useEffect(() => {
-  //   fetch()
-  // }, [])
+  useEffect(() => {
+    fetch()
+  }, [])
 
-  // const fetch = async () => {
-  //   console.log(await fetchBlockNumber())
-  // }
+  const fetch = async () => {
+    console.log(await fetchBlockNumber())
+  }
 
   // useEffect(() => {
   //   if (!isConnected) return;
