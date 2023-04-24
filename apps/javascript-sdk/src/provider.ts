@@ -1,24 +1,32 @@
-import {IConfig} from "./config";
-import {IChainConfig, IChainParams, IKeyProvider, IPendingTx, Web3Address, Web3Uint256} from "./types";
+import { IConfig } from "./config";
+import {
+  IChainConfig,
+  IChainParams,
+  IKeyProvider,
+  IPendingTx,
+  Web3Address,
+  Web3Uint256,
+} from "./types";
 import Web3 from "web3";
-import {sendTransactionAsync, waitForExpectedNetworkOrThrow} from "./metamask";
-import {Contract} from "web3-eth-contract";
+import {
+  sendTransactionAsync,
+  waitForExpectedNetworkOrThrow,
+} from "./metamask";
+import { Contract } from "web3-eth-contract";
 import detectEthereumProvider from "@metamask/detect-provider";
-import prettyTime from 'pretty-time'
+import prettyTime from "pretty-time";
 import BigNumber from "bignumber.js";
 
-import STAKING_ABI from '../src/abi/Staking.json';
-import SLASHING_INDICATOR_ABI from '../src/abi/SlashingIndicator.json';
-import SYSTEM_REWARD_ABI from '../src/abi/SystemReward.json';
-import STAKING_POOL_ABI from '../src/abi/StakingPool.json';
-import GOVERNANCE_ABI from '../src/abi/Governance.json';
-import CHAIN_CONFIG_ABI from '../src/abi/ChainConfig.json';
-import RUNTIME_UPGRADE_ABI from '../src/abi/RuntimeUpgrade.json';
-import DEPLOYER_PROXY_ABI from '../src/abi/DeployerProxy.json';
-
+import STAKING_ABI from "../src/abi/Staking.json";
+import SLASHING_INDICATOR_ABI from "../src/abi/SlashingIndicator.json";
+import SYSTEM_REWARD_ABI from "../src/abi/SystemReward.json";
+import STAKING_POOL_ABI from "../src/abi/StakingPool.json";
+import GOVERNANCE_ABI from "../src/abi/Governance.json";
+import CHAIN_CONFIG_ABI from "../src/abi/ChainConfig.json";
+import RUNTIME_UPGRADE_ABI from "../src/abi/RuntimeUpgrade.json";
+import DEPLOYER_PROXY_ABI from "../src/abi/DeployerProxy.json";
 
 export class KeyProvider implements IKeyProvider {
-
   public accounts?: Web3Address[];
   public web3?: Web3;
 
@@ -41,21 +49,22 @@ export class KeyProvider implements IKeyProvider {
   public runtimeUpgradeContract?: Contract;
   public deployerProxyContract?: Contract;
 
-  constructor(
-    private readonly config: IConfig,
-  ) {
-  }
+  constructor(private readonly config: IConfig) {}
 
   public isConnected(): boolean {
     return !!this.web3;
   }
 
-  public async connect(web3: Web3, withoutWallet?: boolean, address?: string): Promise<void> {
+  public async connect(
+    web3: Web3,
+    withoutWallet?: boolean,
+    address?: string
+  ): Promise<void> {
     const remoteChainId = await web3.eth.getChainId();
     if (remoteChainId != this.config.chainId) {
       await waitForExpectedNetworkOrThrow(web3, this.config);
     }
-    this.accounts = address ? [address] : undefined
+    this.accounts = address ? [address] : undefined;
     // init web3 state
     if (!withoutWallet) {
       this.accounts = await this.unlockAccounts(web3);
@@ -72,24 +81,48 @@ export class KeyProvider implements IKeyProvider {
     this.runtimeUpgradeAddress = this.config.runtimeUpgradeAddress;
     this.deployerProxyAddress = this.config.deployerProxyAddress;
     // contracts
-    this.stakingContract = new web3.eth.Contract(STAKING_ABI as any, this.config.stakingAddress);
-    this.slashingIndicatorContract = new web3.eth.Contract(SLASHING_INDICATOR_ABI as any, this.config.slashingIndicatorAddress);
-    this.systemRewardContract = new web3.eth.Contract(SYSTEM_REWARD_ABI as any, this.config.systemRewardAddress);
-    this.stakingPoolContract = new web3.eth.Contract(STAKING_POOL_ABI as any, this.config.stakingPoolAddress);
-    this.governanceContract = new web3.eth.Contract(GOVERNANCE_ABI as any, this.config.governanceAddress);
-    this.chainConfigContract = new web3.eth.Contract(CHAIN_CONFIG_ABI as any, this.config.chainConfigAddress);
-    this.runtimeUpgradeContract = new web3.eth.Contract(RUNTIME_UPGRADE_ABI as any, this.config.runtimeUpgradeAddress);
-    this.deployerProxyContract = new web3.eth.Contract(DEPLOYER_PROXY_ABI as any, this.config.deployerProxyAddress);
+    this.stakingContract = new web3.eth.Contract(
+      STAKING_ABI as any,
+      this.config.stakingAddress
+    );
+    this.slashingIndicatorContract = new web3.eth.Contract(
+      SLASHING_INDICATOR_ABI as any,
+      this.config.slashingIndicatorAddress
+    );
+    this.systemRewardContract = new web3.eth.Contract(
+      SYSTEM_REWARD_ABI as any,
+      this.config.systemRewardAddress
+    );
+    this.stakingPoolContract = new web3.eth.Contract(
+      STAKING_POOL_ABI as any,
+      this.config.stakingPoolAddress
+    );
+    this.governanceContract = new web3.eth.Contract(
+      GOVERNANCE_ABI as any,
+      this.config.governanceAddress
+    );
+    this.chainConfigContract = new web3.eth.Contract(
+      CHAIN_CONFIG_ABI as any,
+      this.config.chainConfigAddress
+    );
+    this.runtimeUpgradeContract = new web3.eth.Contract(
+      RUNTIME_UPGRADE_ABI as any,
+      this.config.runtimeUpgradeAddress
+    );
+    this.deployerProxyContract = new web3.eth.Contract(
+      DEPLOYER_PROXY_ABI as any,
+      this.config.deployerProxyAddress
+    );
   }
 
   public async connectFromInjected(): Promise<void> {
-    const provider = await detectEthereumProvider({'mustBeMetaMask': true})
-    if (!provider) throw new Error(`There is no injected provider`)
+    const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+    if (!provider) throw new Error(`There is no injected provider`);
     const web3 = new Web3(provider as any);
     try {
-      await web3.eth.requestAccounts()
+      await web3.eth.requestAccounts();
     } catch (e) {
-      console.error(e)
+      console.error(e);
       throw new Error(`Can't request provider's account`);
     }
     return this.connect(web3);
@@ -101,11 +134,11 @@ export class KeyProvider implements IKeyProvider {
       unlockedAccounts = await web3.eth.requestAccounts();
     } catch (e) {
       console.error(e);
-      throw new Error('User denied access to account');
+      throw new Error("User denied access to account");
     }
     console.log(`Unlocked accounts: ${unlockedAccounts}`);
     if (!unlockedAccounts.length || !unlockedAccounts[0]) {
-      throw new Error('Unable to detect unlocked MetaMask account');
+      throw new Error("Unable to detect unlocked MetaMask account");
     }
     return unlockedAccounts;
   }
@@ -116,21 +149,21 @@ export class KeyProvider implements IKeyProvider {
   }
 
   public getAccounts(): Web3Address[] {
-    return this.accounts || []
+    return this.accounts || [];
   }
 
   public getMyAddress(): Web3Address {
-    const [account] = this.accounts || []
-    return account
+    const [account] = this.accounts || [];
+    return account;
   }
 
   public async getMyBalance(): Promise<Web3Uint256> {
-    const myAddress = this.getMyAddress()
-    return this.web3!.eth.getBalance(myAddress)
+    const myAddress = this.getMyAddress();
+    return this.web3!.eth.getBalance(myAddress);
   }
 
   public async getBlockNumber(): Promise<number> {
-    return this.web3!.eth.getBlockNumber()
+    return this.web3!.eth.getBlockNumber();
   }
 
   public async getChainConfig(): Promise<IChainConfig> {
@@ -152,7 +185,8 @@ export class KeyProvider implements IKeyProvider {
       this.chainConfigContract?.methods.getUndelegatePeriod().call(),
       this.chainConfigContract?.methods.getMinValidatorStakeAmount().call(),
       this.chainConfigContract?.methods.getMinStakingAmount().call(),
-    ])
+    ]);
+
     return {
       activeValidatorsLength,
       epochBlockInterval,
@@ -160,39 +194,54 @@ export class KeyProvider implements IKeyProvider {
       felonyThreshold,
       validatorJailEpochLength,
       undelegatePeriod,
-      minValidatorStakeAmount: new BigNumber(minValidatorStakeAmount).dividedBy(10 ** 18),
+      minValidatorStakeAmount: new BigNumber(minValidatorStakeAmount).dividedBy(
+        10 ** 18
+      ),
       minStakingAmount: new BigNumber(minStakingAmount).dividedBy(10 ** 18),
     };
   }
 
   public async getChainParams(): Promise<IChainParams> {
     const blockNumber = await this.getBlockNumber(),
-      epochBlockInterval = await this.chainConfigContract?.methods.getEpochBlockInterval().call()
-    const startBlock = ((blockNumber / epochBlockInterval) | 0) * epochBlockInterval,
-    endBlock = startBlock + Number(epochBlockInterval)
+      epochBlockInterval = await this.chainConfigContract?.methods
+        .getEpochBlockInterval()
+        .call();
+    const startBlock =
+        ((blockNumber / epochBlockInterval) | 0) * epochBlockInterval,
+      endBlock = startBlock + Number(epochBlockInterval);
     const blockTime = 3;
+
     return {
       blockNumber: blockNumber,
       epoch: (blockNumber / epochBlockInterval) | 0,
-      nextEpochIn: prettyTime((endBlock - blockNumber) * blockTime * 1000 * 1000 * 1000, 's'),
+      nextEpochIn: prettyTime(
+        (endBlock - blockNumber) * blockTime * 1000 * 1000 * 1000,
+        "s"
+      ),
       nextEpochBlock: endBlock,
       blockTime: blockTime,
     };
   }
 
   public async getCurrentEpoch(): Promise<number> {
-    const chainParams = await this.getChainParams()
-    return chainParams.epoch
+    const chainParams = await this.getChainParams();
+    return chainParams.epoch;
   }
 
-  public async sendTx(sendOptions: { to: string; data?: string; value?: string; gasLimit?: string; gasPrice?: string }): Promise<IPendingTx> {
+  public async sendTx(sendOptions: {
+    to: string;
+    data?: string;
+    value?: string;
+    gasLimit?: string;
+    gasPrice?: string;
+  }): Promise<IPendingTx> {
     return await sendTransactionAsync(this.web3!, {
       from: this.accounts![0],
       to: sendOptions.to,
       value: sendOptions.value,
       data: sendOptions.data,
       gasLimit: sendOptions.gasLimit,
-      gasPrice: sendOptions.gasPrice
-    })
+      gasPrice: sendOptions.gasPrice,
+    });
   }
 }
