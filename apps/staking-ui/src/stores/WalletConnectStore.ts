@@ -2,6 +2,7 @@ import { Chain, configureChains, createClient } from 'wagmi'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
 import { IConfig } from 'jfin-staking-sdk'
+import { CHAIN_DECIMAL_UNIT } from '@utils/chain/src/chain'
 
 export default class WalletConnectStore {
   private readonly config
@@ -25,7 +26,7 @@ export default class WalletConnectStore {
         name: _config.chainName,
         network: _config.chainName,
         nativeCurrency: {
-          decimals: 18,
+          decimals: CHAIN_DECIMAL_UNIT,
           name: _config.chainName,
           symbol: _config.chainName,
         },
@@ -62,6 +63,7 @@ export default class WalletConnectStore {
         }),
       ],
       provider: this.configure.provider,
+      webSocketProvider: this.configure.webSocketProvider,
     })
 
     this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains)

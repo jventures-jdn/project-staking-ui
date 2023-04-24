@@ -4,10 +4,17 @@ import CookieConsent from 'react-cookie-consent'
 
 import BlockInfo from './components/BlockInfo/BlockInfo'
 import Conditions from './components/Conditions'
-import { useAccount } from 'wagmi'
+import {
+  useAccount,
+  useBlockNumber,
+  useClient,
+  useConnect,
+  useContract,
+} from 'wagmi'
 import { getConfig, useBasStore } from './stores'
 import Navbar from './components/Navbar/Navbar'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { fetchBlockNumber, readContracts } from 'wagmi/actions'
 
 const Staking = React.lazy(() => import('./pages/Staking/Staking'))
 const Governance = React.lazy(() => import('./pages/Governance/Governance'))
@@ -17,12 +24,32 @@ const config = getConfig()
 const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const store = useBasStore()
+  const client = useClient()
+
   const { address, isConnected } = useAccount()
+
+  // const { data } = useBlockNumber()
+
+  // const { data, isError, isLoading } = useBlockNumber()
+  // const contract = useContract({
+  //   address: config.chainConfigAddress,
+  //   abi: CHAIN_CONFIG_ABI,
+  // })
+
+  // const contract2 = useContract({
+  //   ...chainConfigObject,
+  // })
+
+  // contract2?.getActiveValidatorsLength()
 
   /* --------------------------------- Watches -------------------------------- */
   // useEffect(() => {
-  //   store.connectProvider(address);
-  // }, []);
+  //   fetch()
+  // }, [])
+
+  // const fetch = async () => {
+  //   console.log(await fetchBlockNumber())
+  // }
 
   // useEffect(() => {
   //   if (!isConnected) return;
@@ -30,6 +57,43 @@ const App = observer(() => {
   //     switchNetwork({ chainId: config.chainId });
   //   }
   // }, [isConnected]);
+
+  // const fetch = async () => {
+  //   const chainConfigObject2 = {
+  //     address: config.chainConfigAddress as Address,
+  //     abi: CHAIN_CONFIG_ABI,
+  //   }
+  //   const [
+  //     _activeValidatorsLength,
+  //     _epochBlockInterval,
+  //     _misdemeanorThreshold,
+  //     _felonyThreshold,
+  //     _validatorJailEpochLength,
+  //     _undelegatePeriod,
+  //     _minValidatorStakeAmount,
+  //     _minStakingAmount,
+  //   ] = await readContracts({
+  //     contracts: [
+  //       {
+  //         ...chainConfigObject2,
+  //         functionName: 'getActiveValidatorsLength',
+  //       },
+  //       { ...chainConfigObject2, functionName: 'getEpochBlockInterval' },
+  //       { ...chainConfigObject2, functionName: 'getMisdemeanorThreshold' },
+  //       { ...chainConfigObject2, functionName: 'getFelonyThreshold' },
+  //       { ...chainConfigObject2, functionName: 'getValidatorJailEpochLength' },
+  //       { ...chainConfigObject2, functionName: 'getUndelegatePeriod' },
+  //       { ...chainConfigObject2, functionName: 'getMinValidatorStakeAmount' },
+  //       { ...chainConfigObject2, functionName: 'getMinStakingAmount' },
+  //     ],
+  //   })
+
+  //   console.log(_activeValidatorsLength)
+  // }
+
+  // useEffect(() => {
+  //   ChainConfig.fetch().then((resp) => console.log(resp))
+  // }, [])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (

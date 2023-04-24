@@ -258,7 +258,7 @@ export class BasStore {
     this.chainInfo = chain
   }
 
-  public async getMyValidator() {
+  public async getMyValidator(): Promise<any> {
     if (!this.walletAccount) return
     const myValidator = await await this.sdk
       .getStaking()

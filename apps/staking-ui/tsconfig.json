@@ -2,13 +2,12 @@
   "extends": "@config/typescript-config/react-lib.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "build",
+    "outDir": "dist",
     "paths": {
       "@": ["./src"]
     }
   },
   "types": ["vite/client"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "vite.config.ts"],
-  "exclude": ["node_modules", "dist"],
-  "typeRoots": ["./node_modules/@types", "./src/types"]
+  "exclude": ["node_modules", "dist"]
 }

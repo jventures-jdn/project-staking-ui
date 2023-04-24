@@ -1,12 +1,20 @@
 import { Provider } from 'mobx-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Web3Modal } from '@web3modal/react'
-import { WagmiConfig } from 'wagmi'
-import { useWallectConnect } from './stores'
+import {
+  Chain,
+  WagmiConfig,
+  configureChains,
+  createClient,
+  useConnect,
+  useContract,
+  useClient,
+} from 'wagmi'
+import { getConfig, useWallectConnect } from './stores'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
 import './index.css'
@@ -17,7 +25,10 @@ import './assets/css/pagination.css'
 import { BrowserRouter } from 'react-router-dom'
 
 Sentry.init({
-  dsn: 'https://6fdd78509c3e443f85dffd333976349e@o4505033136537600.ingest.sentry.io/4505033142108160',
+  dsn:
+    process.env.NODE_ENV === 'production'
+      ? 'https://6fdd78509c3e443f85dffd333976349e@o4505033136537600.ingest.sentry.io/4505033142108160'
+      : '',
   integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
   // Performance Monitoring
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 1.0 : 0.0, // Capture 100% of the transactions, reduce in production!
@@ -30,13 +41,13 @@ Sentry.init({
 
 const Main = () => {
   /* --------------------------------- States --------------------------------- */
-  const { wagmiClient, projectId, ethereumClient, chains } = useWallectConnect()
+  const { projectId, ethereumClient, chains, wagmiClient } = useWallectConnect()
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <React.StrictMode>
-      <BrowserRouter>
-        <WagmiConfig client={wagmiClient}>
+      <WagmiConfig client={wagmiClient}>
+        <BrowserRouter>
           <Provider>
             <GlobalModal />
             <App />
@@ -53,8 +64,8 @@ const Main = () => {
               defaultChain={chains[0]}
             />
           </Provider>
-        </WagmiConfig>
-      </BrowserRouter>
+        </BrowserRouter>
+      </WagmiConfig>
     </React.StrictMode>
   )
 }
