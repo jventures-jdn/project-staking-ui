@@ -46,26 +46,26 @@ const Main = () => {
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <React.StrictMode>
-      <WagmiConfig client={wagmiClient}>
-        <BrowserRouter>
-          <Provider>
-            <GlobalModal />
+      <BrowserRouter>
+        <Provider>
+          <GlobalModal />
+          <WagmiConfig client={wagmiClient}>
             <App />
-            <Web3Modal
-              projectId={projectId}
-              ethereumClient={ethereumClient}
-              themeVariables={{
-                '--w3m-accent-color': '#ed0000',
-                '--w3m-accent-fill-color': '#fff',
-                '--w3m-background-color': ' #0b0d0f',
-              }}
-              chainImages={{ 3501: '/jfin-light.png' }}
-              tokenImages={{ JFIN: '/jfin-light.png' }}
-              defaultChain={chains[0]}
-            />
-          </Provider>
-        </BrowserRouter>
-      </WagmiConfig>
+          </WagmiConfig>
+          <Web3Modal
+            projectId={projectId}
+            ethereumClient={ethereumClient}
+            themeVariables={{
+              '--w3m-accent-color': '#ed0000',
+              '--w3m-accent-fill-color': '#fff',
+              '--w3m-background-color': ' #0b0d0f',
+            }}
+            chainImages={{ 3501: '/jfin-light.png' }}
+            tokenImages={{ JFIN: '/jfin-light.png' }}
+            defaultChain={chains[0]}
+          />
+        </Provider>
+      </BrowserRouter>
     </React.StrictMode>
   )
 }
