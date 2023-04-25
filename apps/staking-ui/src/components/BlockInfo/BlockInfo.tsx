@@ -1,64 +1,29 @@
-import { IChainConfig, IChainParams } from 'jfin-staking-sdk'
 import { Col, Row } from 'antd'
-import { useEffect, useState } from 'react'
-import { useBasStore } from '../../stores'
+import { useEffect } from 'react'
 import './BlockInfo.css'
 import { observer } from 'mobx-react'
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
 import { useAccount } from 'wagmi'
-import { ChainConfig } from '@utils/chain/src/contract'
 import prettyTime from 'pretty-time'
+import { useChainConfig } from '@utils/chain/src/contract'
 
 const BlockInfo = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const { isDisconnected } = useAccount()
-  const {
-    activeValidatorsLength,
-    blockNumber,
-    epoch,
-    endBlock,
-    epochBlockInterval,
-    blockSec,
-    nextEpochIn,
-    minValidatorStakeAmount,
-    minStakingAmount,
-    felonyThreshold,
-    undelegatePeriod,
-    validatorJailEpochLength,
-    epochBlockIntervalSec,
-    undelegateIntervalSec,
-    validatorJailIntervalSec,
-  } = ChainConfig
-
-  const store = useBasStore()
-  const [chainInfo, setChainInfo] = useState<
-    (IChainConfig & IChainParams) | undefined
-  >()
+  const { isConnected } = useAccount()
+  const config = useChainConfig()
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
-  const fetchChain = async () => {
-    const data = await store.getChainConfig()
-    setChainInfo(data)
-  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-
   useEffect(() => {
-    if (!store.isConnected) return
-    fetchChain()
-    const inital = async () => {
-      setInterval(async () => {
-        fetchChain()
-      }, 5000)
-    }
-    inital()
-  }, [store.isConnected])
+    config.fetch()
+  }, [])
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
@@ -67,7 +32,7 @@ const BlockInfo = observer(() => {
   return (
     <div className="block-info-container">
       {/* show alert message incase not connect metamask */}
-      {isDisconnected && (
+      {!isConnected && (
         <div className="wallet-warning" style={{ textAlign: 'right' }}>
           <span> Please connect wallet for staking </span>
           <WarningOutlined />
@@ -81,21 +46,25 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Block Number: </b>
                 <span>
-                  {blockNumber?.toLocaleString() || <LoadingOutlined spin />}
+                  {config.blockNumber?.toLocaleString() || (
+                    <LoadingOutlined spin />
+                  )}
                 </span>
               </div>
               <div>
                 <b> Current Epoch: </b>
                 <span>
-                  {epoch?.toLocaleString() || <LoadingOutlined spin />}
+                  {config.epoch?.toLocaleString() || <LoadingOutlined spin />}
                 </span>
               </div>
               <div>
                 <b> Next Epoch Block: </b>
-                {endBlock ? (
+                {config.endBlock ? (
                   <span>
-                    {endBlock?.toLocaleString()} (
-                    {prettyTime(nextEpochIn * 10e8, 's')})
+                    {config.endBlock?.toLocaleString()} (
+                    {config.nextEpochIn &&
+                      prettyTime(config.nextEpochIn * 10e8, 's')}
+                    )
                   </span>
                 ) : (
                   <LoadingOutlined spin />
@@ -103,7 +72,7 @@ const BlockInfo = observer(() => {
               </div>
               <div>
                 <b>Block Time: </b>
-                {blockSec || <LoadingOutlined spin />}s
+                {config.blockSec || <LoadingOutlined spin />}s
               </div>
             </div>
           </div>
@@ -114,16 +83,19 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Active Validators Length: </b>
                 <span>
-                  {activeValidatorsLength || <LoadingOutlined spin />}
+                  {config.activeValidatorsLength || <LoadingOutlined spin />}
                 </span>
               </div>
               <div>
                 <b>Epoch Block Interval: </b>
-                {epochBlockInterval ? (
+                {config.epochBlockInterval ? (
                   <>
-                    <span>{epochBlockInterval}</span>
+                    <span>{config.epochBlockInterval}</span>
                     <span>
-                      ({prettyTime(epochBlockIntervalSec * 10e8, 'h')})
+                      (
+                      {config.epochBlockIntervalSec &&
+                        prettyTime(config.epochBlockIntervalSec * 10e8, 'h')}
+                      )
                     </span>
                   </>
                 ) : (
@@ -132,7 +104,9 @@ const BlockInfo = observer(() => {
               </div>
               <div>
                 <b>Penalty Threshold: </b>
-                <span>{felonyThreshold || <LoadingOutlined spin />}</span>
+                <span>
+                  {config.felonyThreshold || <LoadingOutlined spin />}
+                </span>
               </div>
             </div>
           </div>
@@ -142,11 +116,14 @@ const BlockInfo = observer(() => {
             <div className="block-info-item-content">
               <div>
                 <b>Validator Jail Epoch Length: </b>
-                {validatorJailEpochLength ? (
+                {config.validatorJailEpochLength ? (
                   <>
-                    <span>{validatorJailEpochLength}</span>
+                    <span>{config.validatorJailEpochLength}</span>
                     <span>
-                      ({prettyTime(validatorJailIntervalSec * 10e8, 'h')})
+                      (
+                      {config.validatorJailIntervalSec &&
+                        prettyTime(config.validatorJailIntervalSec * 10e8, 'h')}
+                      )
                     </span>
                   </>
                 ) : (
@@ -156,11 +133,14 @@ const BlockInfo = observer(() => {
 
               <div>
                 <b>Undelegate Period: </b>
-                {undelegatePeriod ? (
+                {config.undelegatePeriod ? (
                   <>
-                    <span>{undelegatePeriod}</span>
+                    <span>{config.undelegatePeriod}</span>
                     <span>
-                      ({prettyTime(undelegateIntervalSec * 10e8, 'h')})
+                      (
+                      {config.undelegateIntervalSec &&
+                        prettyTime(config.undelegateIntervalSec * 10e8, 'h')}
+                      )
                     </span>
                   </>
                 ) : (
@@ -170,12 +150,14 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Min Validator Stake Amount: </b>
                 <span>
-                  {minValidatorStakeAmount || <LoadingOutlined spin />}
+                  {config.minValidatorStakeAmount || <LoadingOutlined spin />}
                 </span>
               </div>
               <div>
                 <b>Min Staking Amount: </b>
-                <span>{minStakingAmount || <LoadingOutlined spin />}</span>
+                <span>
+                  {config.minStakingAmount || <LoadingOutlined spin />}
+                </span>
               </div>
             </div>
           </div>

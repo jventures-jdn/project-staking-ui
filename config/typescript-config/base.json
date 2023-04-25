@@ -20,7 +20,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "preserveSymlinks": true
+    "preserveSymlinks": true,
+    "useDefineForClassFields": true
   },
   "exclude": ["node_modules", "dist", "libs"]
 }

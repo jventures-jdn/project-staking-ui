@@ -4,6 +4,7 @@
   "dependencies": {
     "abitype": "^0.8.0",
     "ethers": "^5",
+    "mobx": "^6.5.0",
     "pretty-time": "^1.1.0",
     "wagmi": "0.12.12"
   },

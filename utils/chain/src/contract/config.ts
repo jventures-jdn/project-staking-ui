@@ -1,12 +1,43 @@
 import { fetchBlockNumber, readContracts } from "wagmi/actions";
 import { chainConfigObject } from ".";
 import { CHAIN_DECIMAL } from "../chain";
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from "mobx";
 
 /**
  * All config calculate base on javascript sdk
  */
 export class Config {
   /* -------------------------------- Property -------------------------------- */
+  constructor() {
+    makeObservable(this, {
+      epoch: observable,
+      nextEpochIn: observable,
+      endBlock: observable,
+      startBlock: observable,
+      blockNumber: observable,
+      activeValidatorsLength: observable,
+      epochBlockInterval: observable,
+      misdemeanorThreshold: observable,
+      felonyThreshold: observable,
+      validatorJailEpochLength: observable,
+      undelegatePeriod: observable,
+      minValidatorStakeAmount: observable,
+      minStakingAmount: observable,
+      epochBlockIntervalSec: observable,
+      undelegateIntervalSec: observable,
+      validatorJailIntervalSec: observable,
+      getConfig: computed,
+      fetch: action,
+      update: action,
+    });
+  }
+
   public blockSec = 3; // base on sdk
   public epoch: number;
   public nextEpochIn: number;
@@ -24,10 +55,6 @@ export class Config {
   public epochBlockIntervalSec: number;
   public undelegateIntervalSec: number;
   public validatorJailIntervalSec: number;
-
-  constructor() {
-    this.fetch();
-  }
 
   /* --------------------------------- Methods -------------------------------- */
   private calcStartBlock() {
@@ -67,7 +94,7 @@ export class Config {
   /**
    * get all chain propperty
    */
-  public getConfig() {
+  public get getConfig() {
     return {
       blockSec: this.blockSec,
       epoch: this.epoch,
@@ -94,6 +121,7 @@ export class Config {
    *
    * https://wagmi.sh/core/actions/readContracts
    */
+
   public async fetch() {
     // prepare promises fetch
     const promiseFetchBlockNumber = fetchBlockNumber();
@@ -129,26 +157,40 @@ export class Config {
     ] = await Promise.all([promiseFetchBlockNumber, promiseReadContracts]);
 
     // mapping fetch result to property
-    this.blockNumber = _blockNumber;
-    this.activeValidatorsLength = _activeValidatorsLength;
-    this.epochBlockInterval = _epochBlockInterval;
-    this.misdemeanorThreshold = _misdemeanorThreshold;
-    this.felonyThreshold = _felonyThreshold;
-    this.validatorJailEpochLength = _validatorJailEpochLength;
-    this.undelegatePeriod = _undelegatePeriod;
-    this.minValidatorStakeAmount = _minValidatorStakeAmount
-      .div(CHAIN_DECIMAL)
-      .toNumber();
-    this.minStakingAmount = _minStakingAmount.div(CHAIN_DECIMAL).toNumber();
+    runInAction(() => {
+      this.blockNumber = _blockNumber;
+      this.activeValidatorsLength = _activeValidatorsLength;
+      this.epochBlockInterval = _epochBlockInterval;
+      this.misdemeanorThreshold = _misdemeanorThreshold;
+      this.felonyThreshold = _felonyThreshold;
+      this.validatorJailEpochLength = _validatorJailEpochLength;
+      this.undelegatePeriod = _undelegatePeriod;
+      this.minValidatorStakeAmount = _minValidatorStakeAmount
+        .div(CHAIN_DECIMAL)
+        .toNumber();
+      this.minStakingAmount = _minStakingAmount.div(CHAIN_DECIMAL).toNumber();
+      this.startBlock = this.calcStartBlock();
+      this.endBlock = this.calcEndBlock();
+      this.epoch = this.calcEpoch();
+      this.nextEpochIn = this.calcNextEpochIn();
+      this.epochBlockIntervalSec = this.calcBlockIntervalSec();
+      this.undelegateIntervalSec = this.calcUndelegateIntervalSec();
+      this.validatorJailIntervalSec = this.calcValidatorJailIntervalSec();
+    });
+
+    // return all chain config
+    return this.getConfig;
+  }
+
+  /**
+   * Get the latest block number and update the relevant propperty
+   */
+  public async update() {
+    // prepare promises fetch
+    this.blockNumber = await fetchBlockNumber();
     this.startBlock = this.calcStartBlock();
     this.endBlock = this.calcEndBlock();
     this.epoch = this.calcEpoch();
     this.nextEpochIn = this.calcNextEpochIn();
-    this.epochBlockIntervalSec = this.calcBlockIntervalSec();
-    this.undelegateIntervalSec = this.calcUndelegateIntervalSec();
-    this.validatorJailIntervalSec = this.calcValidatorJailIntervalSec();
-
-    // return all chain config
-    return this.getConfig();
   }
 }

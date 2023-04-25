@@ -48,6 +48,7 @@ importers:
       '@config/typescript-config': workspace:*
       '@sentry/react': ^7.48.0
       '@types/node': ^18.16.0
+      '@types/pretty-time': ^1.1.2
       '@types/react': ^17.0.2
       '@types/react-copy-to-clipboard': ^5.0.4
       '@types/react-dom': ^17.0.2
@@ -111,6 +112,7 @@ importers:
       '@config/eslint-config': link:../../config/eslint-config
       '@config/typescript-config': link:../../config/typescript-config
       '@types/node': 18.16.0
+      '@types/pretty-time': 1.1.2
       '@types/react': 17.0.58
       '@types/react-copy-to-clipboard': 5.0.4
       '@types/react-dom': 17.0.19
@@ -160,6 +162,7 @@ importers:
       '@types/node': ^18.16.0
       abitype: ^0.8.0
       ethers: ^5
+      mobx: ^6.5.0
       pretty-time: ^1.1.0
       react: ^17.0.2
       typescript: ^5.0.4
@@ -167,6 +170,7 @@ importers:
     dependencies:
       abitype: 0.8.0_typescript@5.0.4
       ethers: 5.7.2
+      mobx: 6.9.0
       pretty-time: 1.1.0
       wagmi: 0.12.12_3k36ym4j55tosb2grw5ovc5d2q
     devDependencies:
@@ -1708,7 +1712,7 @@ packages:
       '@tanstack/react-query': 4.29.5
     dependencies:
       '@tanstack/query-persist-client-core': 4.29.5
-      '@tanstack/react-query': 4.29.5_react@17.0.2
+      '@tanstack/react-query': 4.29.5_sfoxds7t5ydpegc3knd667wn6m
     dev: false
 
   /@tanstack/react-query/4.29.5_react@17.0.2:
@@ -1857,7 +1861,6 @@ packages:
 
   /@types/pretty-time/1.1.2:
     resolution: {integrity: sha512-4i+Y+O5H80Rh01lY/3Z0hB/UWc4R64ReE83joEpVsIG3iQWpYx66k6pQh1amJNZquKtJQyu/RcfkTtvL0KwssA==}
-    dev: false
 
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}

@@ -82,8 +82,9 @@ export const chainConfigContract = getContract(chainConfigObject);
 export const runtimeUpgradeContract = getContract(runtimeUpgradeObject);
 export const deployerProxyContract = getContract(deployerProxyObject);
 
+export const chainConfig = new Config();
 
-export const ChainConfig = new Config();
+export const useChainConfig = () => chainConfig;
 
 export {
   STAKING_ABI,
