@@ -7,9 +7,9 @@ import { CHAIN_DECIMAL } from "../chain";
  */
 export class Config {
   /* -------------------------------- Property -------------------------------- */
-  public blockTimeSec = 3; // base on sdk
+  public blockSec = 3; // base on sdk
   public epoch: number;
-  public nextEpochIn: any;
+  public nextEpochIn: number;
   public endBlock: number;
   public startBlock: number;
   public blockNumber: number;
@@ -21,7 +21,9 @@ export class Config {
   public undelegatePeriod: number;
   public minValidatorStakeAmount: number;
   public minStakingAmount: number;
-  public epochBlockIntervalTime: any;
+  public epochBlockIntervalSec: number;
+  public undelegateIntervalSec: number;
+  public validatorJailIntervalSec: number;
 
   constructor() {
     this.fetch();
@@ -30,12 +32,13 @@ export class Config {
   /* --------------------------------- Methods -------------------------------- */
   private calcStartBlock() {
     return (
-      (this.blockNumber / this.epochBlockInterval) * this.epochBlockInterval
+      ((this.blockNumber / this.epochBlockInterval) | 0) *
+      this.epochBlockInterval
     );
   }
 
   private calcEndBlock() {
-    return this.startBlock + this.epochBlockInterval;
+    return this.startBlock + Number(this.epochBlockInterval);
   }
 
   private calcEpoch() {
@@ -44,11 +47,21 @@ export class Config {
 
   private calcNextEpochIn() {
     const blockRemain = this.endBlock - this.blockNumber;
-    return blockRemain;
+    return blockRemain * this.blockSec;
   }
 
   private calcBlockIntervalSec() {
-    return this.epochBlockInterval * this.blockTimeSec;
+    return this.epochBlockInterval * this.blockSec;
+  }
+
+  private calcUndelegateIntervalSec() {
+    return this.undelegatePeriod * this.epochBlockInterval * this.blockSec;
+  }
+
+  private calcValidatorJailIntervalSec() {
+    return (
+      this.validatorJailEpochLength * this.epochBlockInterval * this.blockSec
+    );
   }
 
   /**
@@ -56,7 +69,7 @@ export class Config {
    */
   public getConfig() {
     return {
-      blockTimeSec: this.blockTimeSec,
+      blockSec: this.blockSec,
       epoch: this.epoch,
       endBlock: this.endBlock,
       startBlock: this.startBlock,
@@ -70,7 +83,9 @@ export class Config {
       minValidatorStakeAmount: this.minValidatorStakeAmount,
       minStakingAmount: this.minStakingAmount,
       nextEpochIn: this.nextEpochIn,
-      epochBlockIntervalTime: this.epochBlockIntervalTime,
+      epochBlockIntervalSec: this.epochBlockIntervalSec,
+      undelegateIntervalSec: this.undelegateIntervalSec,
+      validatorJailIntervalSec: this.validatorJailIntervalSec,
     };
   }
 
@@ -129,7 +144,9 @@ export class Config {
     this.endBlock = this.calcEndBlock();
     this.epoch = this.calcEpoch();
     this.nextEpochIn = this.calcNextEpochIn();
-    this.epochBlockIntervalTime = this.calcBlockIntervalSec();
+    this.epochBlockIntervalSec = this.calcBlockIntervalSec();
+    this.undelegateIntervalSec = this.calcUndelegateIntervalSec();
+    this.validatorJailIntervalSec = this.calcValidatorJailIntervalSec();
 
     // return all chain config
     return this.getConfig();
