@@ -1,6 +1,6 @@
 {
   "name": "@config/typescript-config",
   "dependencies": {
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   }
 }

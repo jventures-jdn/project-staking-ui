@@ -1,13 +1,13 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { Col, Row } from "antd";
-import { observer } from "mobx-react";
-import "./ValidatorInfo.css";
+import { LoadingOutlined } from '@ant-design/icons'
+import { Col, Row } from 'antd'
+import { observer } from 'mobx-react'
+import './ValidatorInfo.css'
 
 interface IValidatorProps {
-  activeValidators: number;
-  totalValidators: number;
-  bondedTokens: string;
-  isLoading: boolean;
+  activeValidators: number
+  totalValidators: number
+  totalDelegated: number
+  isLoading: boolean
 }
 
 const ValidatorInfo = observer((props: IValidatorProps) => {
@@ -35,12 +35,7 @@ const ValidatorInfo = observer((props: IValidatorProps) => {
           <div>
             <span>Bonded Tokens</span>
             {!props.isLoading ? (
-              <b>
-                {(+(+props.bondedTokens).toFixed(2)).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </b>
+              <b>{props.totalDelegated.toLocaleString()}</b>
             ) : (
               <div>
                 <LoadingOutlined spin />
@@ -50,7 +45,7 @@ const ValidatorInfo = observer((props: IValidatorProps) => {
         </Col>
       </Row>
     </div>
-  );
-});
+  )
+})
 
-export default ValidatorInfo;
+export default ValidatorInfo

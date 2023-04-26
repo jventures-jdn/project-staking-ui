@@ -1,65 +1,47 @@
-import "./Staking.css";
-import { LockOutlined } from "@ant-design/icons";
-import { observer } from "mobx-react";
-import { useEffect, useState } from "react";
+import './Staking.css'
+import { LockOutlined } from '@ant-design/icons'
+import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
+import { useChainStaking } from '@utils/chain/src/contract'
+import { getProvider } from 'wagmi/actions'
+import ValidatorInfo from '@/components/ValidatorInfo/ValidatorInfo'
+import Validators from '@/components/Validator/Validators'
 
 const Staking = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  // const store = useBasStore();
-  // const [activeValidators, setActiveValidators] = useState(0);
-  // const [validators, setValidators] = useState<IValidator[]>();
-  // const [totalValidators, setTotalValidators] = useState(0);
-  // const [bondedTokens, setBondedTokens] = useState("N/A");
-  // const [isLoading, setIsLoading] = useState(true);
+  const provider = getProvider()
+  const chainStaking = useChainStaking()
+  const [loading, setLoading] = useState(false)
+  const [totalDelegated, setTotalDelegated] = useState(0)
+  const [validators, setValidators] = useState<typeof chainStaking.validators>(
+    [],
+  )
+  const [activeValidators, setActiveValidators] = useState<
+    typeof chainStaking.validators
+  >([])
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
-  // const inital = async () => {
-  //   const currentValidators = await store
-  //     .getBasSdk()
-  //     .getStaking()
-  //     .getAllValidators();
-  //   const filterValidators = currentValidators.filter((v) =>
-  //     [ statusToStatusId('ACTIVE'), statusToStatusId('JAILED')].includes(
-  //       v.status
-  //     )
-  //   );
-
-  //   const active = await filterValidators.filter((v) => v.status === statusToStatusId('ACTIVE'));
-  //   const totalDelegatedTokens = await store
-  //     .getBasSdk()
-  //     .getStaking()
-  //     .getTotalDelegatedAmount();
-
-  //   setValidators(filterValidators);
-  //   setBondedTokens(totalDelegatedTokens.toFixed());
-  //   setTotalValidators(filterValidators.length);
-  //   setActiveValidators(active.length);
-  //   setIsLoading(false);
-  // };
-
-  // const handleRefresh = async () => {
-  //   setIsLoading(true);
-  //   inital();
-  //   setIsLoading(false);
-  // };
+  const initial = async () => {
+    setLoading(true)
+    const validatorEvents = await chainStaking.getAllValidatorEvents()
+    const validators = await chainStaking.getValidators(validatorEvents)
+    setValidators(validators)
+    setActiveValidators(chainStaking.activeValidator)
+    setTotalDelegated(chainStaking.totalDelegated.toNumber())
+    setLoading(false)
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  // useEffect(() => {
-  //   if (store.isConnected) {
-  //     inital();
-  //   }
-
-  //   // on unmounted
-  //   return () => {
-  //     setIsLoading(true);
-  //   };
-  // }, [store.isConnected]);
+  useEffect(() => {
+    chainStaking.setProvider(provider)
+    initial()
+  }, [])
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
@@ -72,25 +54,21 @@ const Staking = observer(() => {
             <LockOutlined /> <span>Validators</span>
           </b>
         </div>
-        {/* <div className="card-body">
+        <div className="card-body">
           <ValidatorInfo
-            activeValidators={activeValidators}
-            bondedTokens={bondedTokens}
-            isLoading={isLoading}
-            totalValidators={totalValidators}
+            activeValidators={activeValidators?.length || 0}
+            totalDelegated={totalDelegated}
+            isLoading={loading}
+            totalValidators={validators?.length || 0}
           />
 
           <div id="view-point1">
-            <Validators
-              validators={validators}
-              refresh={handleRefresh}
-              loading={isLoading}
-            />
+            <Validators validators={activeValidators} loading={loading} />
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
-  );
-});
+  )
+})
 
-export default Staking;
+export default Staking

@@ -8,6 +8,8 @@ import CHAIN_CONFIG_ABI from "../abi/ChainConfig";
 import RUNTIME_UPGRADE_ABI from "../abi/RuntimeUpgrade.json";
 import DEPLOYER_PROXY_ABI from "../abi/DeployerProxy.json";
 import { getContract } from "wagmi/actions";
+import { Config } from "./config";
+import { Staking } from "./staking";
 
 import {
   CHAIN_CONFIG_ADDRESS,
@@ -18,7 +20,6 @@ import {
   STAKING_ADDRESS,
   SYSTEM_REWARD_ADDRESS,
 } from "../chain";
-import { Config } from "./config";
 
 /**
  * Contract declearation
@@ -83,8 +84,10 @@ export const runtimeUpgradeContract = getContract(runtimeUpgradeObject);
 export const deployerProxyContract = getContract(deployerProxyObject);
 
 export const chainConfig = new Config();
+export const chainStaking = new Staking();
 
 export const useChainConfig = () => chainConfig;
+export const useChainStaking = () => chainStaking;
 
 export {
   STAKING_ABI,

@@ -4,6 +4,8 @@ import {
   CHAIN_NAME,
   CHAIN_RPC,
   Chain,
+  VALIDATOR_STATUS_ENUM,
+  VALIDATOR_STATUS_MAPPING,
 } from "./const";
 
 /**
@@ -29,4 +31,22 @@ export const getChain = (chain: Chain) => {
     chainRpc: CHAIN_RPC[chain],
     chainExplorer: getChainExplorer(chain),
   };
+};
+
+/**
+ * Get status property from giving validator status
+ */
+export const getValidatorStatus = (status: VALIDATOR_STATUS_ENUM) => {
+  switch (status) {
+    case VALIDATOR_STATUS_ENUM.NOT_FOUND:
+      return { status: VALIDATOR_STATUS_MAPPING[status], color: "#2e3338" };
+    case VALIDATOR_STATUS_ENUM.ACTIVE:
+      return { status: VALIDATOR_STATUS_MAPPING[status], color: "green" };
+    case VALIDATOR_STATUS_ENUM.PENDING:
+      return { status: VALIDATOR_STATUS_MAPPING[status], color: "orange" };
+    case VALIDATOR_STATUS_ENUM.JAILED:
+      return { status: VALIDATOR_STATUS_MAPPING[status], color: "red" };
+    default:
+      return { status: "NOT_FOUND", color: "#2e3338" };
+  }
 };

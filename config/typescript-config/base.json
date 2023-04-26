@@ -3,7 +3,6 @@
   "display": "Base TS config",
   "compilerOptions": {
     "composite": false,
-    "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -15,13 +14,7 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "strictPropertyInitialization": false,
-    "preserveSymlinks": true,
-    "useDefineForClassFields": true
+    "strictPropertyInitialization": false
   },
   "exclude": ["node_modules", "dist", "libs"]
 }

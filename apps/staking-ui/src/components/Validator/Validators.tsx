@@ -1,71 +1,66 @@
-import { IValidator } from "jfin-staking-sdk";
-import { Col, Collapse, Row } from "antd";
-import { observer } from "mobx-react";
-import "./Validators.css";
-import { LoadingOutlined } from "@ant-design/icons";
-import ValidatorCollapseContent from "./ValidatorCollapseContent";
-import ValidatorCollapseHeader from "./ValidatorCollapseHeader";
-import { getCurrentEnv } from "../../stores";
+import { Col, Collapse, Row } from 'antd'
+import { observer } from 'mobx-react'
+import './Validators.css'
+import { LoadingOutlined } from '@ant-design/icons'
+import ValidatorCollapseHeader from './ValidatorCollapseHeader'
+import { getCurrentEnv } from '../../stores'
+import { chainStaking } from '@utils/chain/src/contract'
 
 interface IValidatorsProps {
-  validators: undefined | IValidator[];
-  refresh?: () => unknown;
-  loading: boolean;
+  validators: typeof chainStaking.validators
+  loading: boolean
 }
 
-const Validators = observer(
-  ({ validators, refresh, loading }: IValidatorsProps) => {
-    /* -------------------------------------------------------------------------- */
-    /*                                   States                                   */
-    /* -------------------------------------------------------------------------- */
-    const { Panel } = Collapse;
+const Validators = observer(({ validators, loading }: IValidatorsProps) => {
+  /* -------------------------------------------------------------------------- */
+  /*                                   States                                   */
+  /* -------------------------------------------------------------------------- */
+  const { Panel } = Collapse
+  const loadingValidator = Array.from(
+    Array(getCurrentEnv() === 'jfin' ? 7 : 3).keys(),
+  ).map((v, i) => (
+    <Panel
+      key={`loading-validator-${i + 1}`}
+      className="validators-item"
+      header={
+        <Row style={{ width: '100%' }}>
+          <Col className="item-brand" xs={24} sm={24} md={24} lg={24} xl={24}>
+            <div
+              className="items-center justify-center"
+              style={{ width: '100%', textAlign: 'center', height: '44px' }}
+            >
+              <LoadingOutlined spin />
+            </div>
+          </Col>
+        </Row>
+      }
+    />
+  ))
 
-    const loadingValidator = Array.from(
-      Array(getCurrentEnv() === "jfin" ? 7 : 3).keys()
-    ).map((v, i) => (
-      <Panel
-        key={`loading-validator-${i + 1}`}
-        className="validators-item"
-        header={
-          <Row style={{ width: "100%" }}>
-            <Col className="item-brand" xs={24} sm={24} md={24} lg={24} xl={24}>
-              <div
-                className="items-center justify-center"
-                style={{ width: "100%", textAlign: "center", height: "44px" }}
-              >
-                <LoadingOutlined spin />
-              </div>
-            </Col>
-          </Row>
-        }
-      />
-    ));
-
-    return (
-      <div className="validators-container">
-        <div className="validators-wrapper">
-          <Collapse ghost bordered={false}>
-            {validators && !loading
-              ? validators.map((v, index) => {
-                  return (
-                    <Panel
-                      key={`validator-${index + 1}`}
-                      className="validators-item"
-                      header={<ValidatorCollapseHeader validator={v} />}
-                    >
-                      <ValidatorCollapseContent
-                        validator={v}
-                        refresh={refresh}
-                      />
-                    </Panel>
-                  );
-                })
-              : loadingValidator}
-          </Collapse>
-        </div>
+  return (
+    <div className="validators-container">
+      <div className="validators-wrapper">
+        <Collapse ghost bordered={false}>
+          {validators && !loading
+            ? validators.map((validator, index) => {
+                return (
+                  <Panel
+                    key={`validator-${index + 1}`}
+                    className="validators-item"
+                    header={<ValidatorCollapseHeader validator={validator} />}
+                  >
+                    {/* <ValidatorCollapseContent
+                      validator={validator}
+                      refresh={refresh}
+                    /> */}
+                  </Panel>
+                )
+              })
+            : loadingValidator}
+        </Collapse>
       </div>
-    );
-  }
-);
+    </div>
+  )
+})
 
-export default Validators;
+export default Validators

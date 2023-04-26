@@ -1,6 +1,7 @@
 import { fetchBlockNumber, readContracts } from "wagmi/actions";
 import { chainConfigObject } from ".";
 import { CHAIN_DECIMAL } from "../chain";
+import { BigNumber } from "bignumber.js";
 import {
   action,
   computed,
@@ -165,10 +166,14 @@ export class Config {
       this.felonyThreshold = _felonyThreshold;
       this.validatorJailEpochLength = _validatorJailEpochLength;
       this.undelegatePeriod = _undelegatePeriod;
-      this.minValidatorStakeAmount = _minValidatorStakeAmount
+      this.minValidatorStakeAmount = BigNumber(
+        _minValidatorStakeAmount.toString()
+      )
         .div(CHAIN_DECIMAL)
         .toNumber();
-      this.minStakingAmount = _minStakingAmount.div(CHAIN_DECIMAL).toNumber();
+      this.minStakingAmount = BigNumber(_minStakingAmount.toString())
+        .div(CHAIN_DECIMAL)
+        .toNumber();
       this.startBlock = this.calcStartBlock();
       this.endBlock = this.calcEndBlock();
       this.epoch = this.calcEpoch();

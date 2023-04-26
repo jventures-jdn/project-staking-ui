@@ -1,19 +1,22 @@
-import { IValidator } from "jfin-staking-sdk";
-import { Col, Row, Tooltip } from "antd";
-import { observer } from "mobx-react";
-import { useEffect, useState } from "react";
-import defaultValidatorImg from "../../assets/images/partners/default.png";
-import CopyToClipboard from "react-copy-to-clipboard";
+import { Col, Row, Tooltip } from 'antd'
+import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
+import defaultValidatorImg from '../../assets/images/partners/default.png'
+import CopyToClipboard from 'react-copy-to-clipboard'
 import {
   CopyOutlined,
   DownOutlined,
+  LoadingOutlined,
   SafetyCertificateOutlined,
-} from "@ant-design/icons";
-import { useBasStore } from "../../stores";
-import { VALIDATOR_WALLETS } from "../../utils/const";
+} from '@ant-design/icons'
+import { useBasStore } from '../../stores'
+import { VALIDATOR_WALLETS } from '../../utils/const'
+import { chainStaking } from '@utils/chain/src/contract'
+import { getValidatorStatus } from '@utils/chain/src/chain'
+import BigNumber from 'bignumber.js'
 
 interface IValidatorCollapseHeader {
-  validator: IValidator;
+  validator: Awaited<ReturnType<typeof chainStaking.getValidator>>
 }
 
 const ValidatorCollapseHeader = observer(
@@ -21,27 +24,32 @@ const ValidatorCollapseHeader = observer(
     /* -------------------------------------------------------------------------- */
     /*                                   States                                   */
     /* -------------------------------------------------------------------------- */
-    const store = useBasStore();
-    const [myStaked, setMyStaked] = useState<number>();
-    const [myReward, setMyReward] = useState<number>();
-    const [isLoading, setIsLoading] = useState(true);
+    const [loading, setLoading] = useState(true)
+    const [apr, setApr] = useState<number>(0)
+    const [myStakingReward, setMyStakingReward] = useState<BigNumber>(
+      BigNumber(0),
+    )
+    const [myStakingAmount, setMyStakingAmount] = useState<BigNumber>(
+      BigNumber(0),
+    )
 
     /* -------------------------------------------------------------------------- */
     /*                                   Methods                                  */
     /* -------------------------------------------------------------------------- */
     const inital = async () => {
-      setIsLoading(true);
-      setMyReward(await store.getMyValidatorReward(validator));
-      setMyStaked(await store.getMyValidatorStaked(validator));
-      setIsLoading(false);
-    };
+      setLoading(true)
+      setMyStakingReward(await chainStaking.getMyStakingRewards(validator))
+      setMyStakingAmount(await chainStaking.getMyStakingAmount(validator))
+      setApr(chainStaking.calcValidatorApr(validator))
+      setLoading(false)
+    }
 
     /* -------------------------------------------------------------------------- */
     /*                                   Watches                                  */
     /* -------------------------------------------------------------------------- */
     useEffect(() => {
-      inital();
-    }, [store.isConnected]);
+      inital()
+    }, [])
 
     /* -------------------------------------------------------------------------- */
     /*                                    DOMS                                    */
@@ -53,37 +61,37 @@ const ValidatorCollapseHeader = observer(
           {/* validator brand */}
           <img
             alt={`validator ${
-              VALIDATOR_WALLETS[validator.validator]?.name || "validator"
+              VALIDATOR_WALLETS[validator.ownerAddress]?.name || 'validator'
             }`}
             src={`${
-              VALIDATOR_WALLETS[validator.validator]?.image ||
+              VALIDATOR_WALLETS[validator.ownerAddress]?.image ||
               defaultValidatorImg
             }`}
           />
 
           <b>
-            {/* validator name or wallet */}
-            {VALIDATOR_WALLETS[validator.validator]?.name ||
+            {/* validator name or address */}
+            {VALIDATOR_WALLETS[validator.ownerAddress]?.name ||
               [
-                validator.validator.slice(0, 5),
-                validator.validator.slice(-4),
-              ].join("...")}
-            <CopyToClipboard text={validator.validator}>
+                validator.ownerAddress.slice(0, 5),
+                validator.ownerAddress.slice(-4),
+              ].join('...')}
+            <CopyToClipboard text={validator.ownerAddress}>
               <CopyOutlined
                 className="copy-clipboard"
-                style={{ marginLeft: "5px" }}
+                style={{ marginLeft: '5px' }}
               />
             </CopyToClipboard>
 
             {/* validator status */}
             <Tooltip
               placement="right"
-              title={store.getValidatorStatus(validator.status).status}
+              title={getValidatorStatus(validator.status).status}
             >
               <div
                 className="brand-status"
                 style={{
-                  background: store.getValidatorStatus(validator.status).color,
+                  background: getValidatorStatus(validator.status).color,
                 }}
               />
             </Tooltip>
@@ -92,7 +100,7 @@ const ValidatorCollapseHeader = observer(
 
         {/* cert */}
         <Col className="item-cert" lg={3} sm={4} xs={8}>
-          {VALIDATOR_WALLETS[validator.validator]?.name && (
+          {VALIDATOR_WALLETS[validator.ownerAddress]?.name && (
             <div>
               <SafetyCertificateOutlined /> <span>JFIN</span>
             </div>
@@ -104,8 +112,8 @@ const ValidatorCollapseHeader = observer(
           <div>
             <span className="col-title">Total Stake</span>
             <div>
-              {store
-                .getValidatorTotalStake(validator)
+              {validator.totalDelegated
+                .toNumber()
                 .toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -119,47 +127,58 @@ const ValidatorCollapseHeader = observer(
           <div>
             <span className="col-title">APR</span>
             <div>
-              {store.getValidatorsApr(validator).toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }) || 0}
-              %
+              {loading ? (
+                <LoadingOutlined spin />
+              ) : apr === Infinity ? (
+                '-'
+              ) : (
+                `${apr.toFixed(2)}%`
+              )}
             </div>
           </div>
         </Col>
 
-        {/* earn */}
+        {/* my reward */}
         <Col className="item-staking" lg={3} sm={4}>
           <div>
             <span className="col-title">Reward</span>
             <div>
-              {myReward
-                ? Number(myReward).toLocaleString(undefined, {
-                    minimumFractionDigits: 5,
-                    maximumFractionDigits: 5,
-                  })
-                : "-"}
+              {loading ? (
+                <LoadingOutlined spin />
+              ) : myStakingReward.isZero() ? (
+                '-'
+              ) : (
+                myStakingReward.toFixed(5)
+              )}
             </div>
           </div>
         </Col>
 
-        {/* staked */}
+        {/* my staking */}
         <Col className="item-staking" lg={4} sm={2}>
           <div>
             <span className="col-title">Staked</span>
-            <div>{myStaked ? Number(myStaked).toFixed(2) : "-"}</div>
+            <div>
+              {loading ? (
+                <LoadingOutlined spin />
+              ) : myStakingAmount.isZero() ? (
+                '-'
+              ) : (
+                myStakingAmount.toFixed(2)
+              )}
+            </div>
           </div>
         </Col>
 
         {/* icon */}
-        <Col lg={1} sm={1} style={{ textAlign: "right" }} xs={1}>
-          <div style={{ width: "100%" }}>
+        <Col lg={1} sm={1} style={{ textAlign: 'right' }} xs={1}>
+          <div style={{ width: '100%' }}>
             <DownOutlined />
           </div>
         </Col>
       </Row>
-    );
-  }
-);
+    )
+  },
+)
 
-export default ValidatorCollapseHeader;
+export default ValidatorCollapseHeader

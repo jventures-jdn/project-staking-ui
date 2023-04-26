@@ -1,8 +1,10 @@
 {
   "name": "@utils/chain",
   "main": "./index.ts",
+  "type": "./index.ts",
   "dependencies": {
     "abitype": "^0.8.0",
+    "bignumber.js": "^9.0.2",
     "ethers": "^5",
     "mobx": "^6.5.0",
     "pretty-time": "^1.1.0",
@@ -12,8 +14,9 @@
     "@config/eslint-config": "workspace:*",
     "@config/typescript-config": "workspace:*",
     "@types/node": "^18.16.0",
+    "@wagmi/core": "^0.10.10",
     "react": "^17.0.2",
-    "typescript": "^5.0.4"
+    "typescript": "^4.9.5"
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
