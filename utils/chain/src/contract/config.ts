@@ -13,7 +13,7 @@ import {
  * All config calculate base on javascript sdk
  */
 export class Config {
-  /* -------------------------------- Property -------------------------------- */
+  /* ------------------------------- Properties ------------------------------- */
   constructor() {
     makeObservable(this, {
       epoch: observable,

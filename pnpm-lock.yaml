@@ -1712,7 +1712,7 @@ packages:
       '@tanstack/react-query': 4.29.5
     dependencies:
       '@tanstack/query-persist-client-core': 4.29.5
-      '@tanstack/react-query': 4.29.5_sfoxds7t5ydpegc3knd667wn6m
+      '@tanstack/react-query': 4.29.5_react@17.0.2
     dev: false
 
   /@tanstack/react-query/4.29.5_react@17.0.2:
