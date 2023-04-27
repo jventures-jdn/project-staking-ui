@@ -1,97 +1,67 @@
-import {
-  GAS_LIMIT_GENERAL,
-  GAS_PRICE,
-  IValidator,
-} from "jfin-staking-sdk";
-import { LoadingOutlined } from "@ant-design/icons";
-import { message } from "antd";
-import BigNumber from "bignumber.js";
-import { observer } from "mobx-react";
-import { FormEvent, useEffect, useState } from "react";
-import JfinCoin from "../../../components/JfinCoin/JfinCoin";
-import { useBasStore, useModalStore } from "../../../stores";
-import { GWEI } from "../../../utils/const";
-import {
-  usePrepareSendTransaction,
-  useSendTransaction,
-  useWaitForTransaction,
-import { Validator } from '@utils/chain/src/contract'
+import { LoadingOutlined } from '@ant-design/icons'
+import { message } from 'antd'
+import BigNumber from 'bignumber.js'
+import { observer } from 'mobx-react'
+import { FormEvent, useEffect, useState } from 'react'
+import JfinCoin from '../../../components/JfinCoin/JfinCoin'
+import { useModalStore } from '../../../stores'
+import { Address } from 'wagmi'
+import { Validator, chainStaking } from '@utils/chain/src/contract'
+import { fetchBalance, getAccount } from 'wagmi/actions'
+import { CHAIN_DECIMAL } from '@utils/chain/src/chain'
 
 interface IAddStakingContent {
   validator: Validator
+  amount?: number
 }
 const AddStakingContent = observer((props: IAddStakingContent) => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const store = useBasStore();
-  const sdk = store.getBasSdk();
-  const keyProvider = sdk.getKeyProvider();
-  const modalStore = useModalStore();
-  const [stakingAmount, setStakingAmount] = useState(props.amount || 0);
-  const [error, setError] = useState<string>();
-
-  /* -------------------------------------------------------------------------- */
-  /*                                    Web3                                    */
-  /* -------------------------------------------------------------------------- */
-  const tx = usePrepareSendTransaction({
-    request: {
-      to: keyProvider.stakingAddress!,
-      data: keyProvider
-        .stakingContract!.methods.delegate(props.validator.validator)
-        .encodeABI(),
-      gasPrice: GAS_PRICE,
-      gasLimit: GAS_LIMIT_GENERAL,
-      value: new BigNumber(stakingAmount).multipliedBy(GWEI).toString(10),
-    },
-    chainId: store.config.chainId,
-  });
-
-  const { data, sendTransaction, isError } = useSendTransaction(tx.config);
-  useWaitForTransaction({
-    hash: data?.hash,
-    chainId: store.config.chainId,
-    onSuccess: async () => {
-      if (props.onSuccess) props.onSuccess();
-      modalStore.setIsLoading(false);
-      modalStore.setVisible(false);
-      store.updateWalletBalance();
-      message.success("Staking was done!");
-    },
-    onError: (error) => {
-      modalStore.setIsLoading(false);
-      message.error(`Something went wrong ${error.message || ""}`);
-    },
-  });
+  const modalStore = useModalStore()
+  const [stakingAmount, setStakingAmount] = useState(props.amount || 0)
+  const [balance, setBalance] = useState('0')
+  const [error, setError] = useState<string>()
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!sendTransaction) return;
-    if (!stakingAmount) return;
 
-    setError(undefined);
-    if (stakingAmount < 1) return setError("Stake amount must be more 1");
-    if (stakingAmount > Number(store.walletBalance) / GWEI)
-      return setError(`Insufficient Balance`);
-    modalStore.setIsLoading(true);
-    sendTransaction();
-  };
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setError(undefined)
+
+    if (stakingAmount < 1) return setError('Stake amount must be more 1')
+    if (stakingAmount > Number(balance)) return setError(`Insufficient Balance`)
+
+    try {
+      modalStore.setIsLoading(true)
+      await chainStaking.stakeToValidator(props.validator, stakingAmount)
+      modalStore.setVisible(false)
+      message.success(`Staked was done!`)
+    } catch (e: any) {
+      message.error(`Something went wrong ${e.message || ''}`)
+    } finally {
+      modalStore.setIsLoading(false)
+    }
+  }
+
+  const initial = async () => {
+    modalStore.setIsLoading(true)
+    const account = await getAccount()
+    const { value } = await fetchBalance({
+      address: account.address as Address,
+    })
+    setBalance(new BigNumber(value.toString()).div(CHAIN_DECIMAL).toFixed(5))
+    modalStore.setIsLoading(false)
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
   useEffect(() => {
-    modalStore.setIsLoading(false);
-  }, []);
-
-  // handle transaction reject
-  useEffect(() => {
-    if (!isError) return;
-    modalStore.setIsLoading(false);
-  }, [isError]);
+    initial()
+  }, [])
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
@@ -108,14 +78,14 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
             className="staking-input"
             disabled={modalStore.isLoading}
             onChange={(e) => setStakingAmount(+e.target.value)}
-            style={{ marginTop: "15px" }}
+            style={{ marginTop: '15px' }}
             type="number"
             value={stakingAmount}
           />
           <div className="staking-sub-input justify-between ">
             <span className="wallet-warning">{error}</span>
             <span className="col-title">
-              Your balance: {store.getWalletBalance()}
+              Your balance: <span>{balance}</span>
             </span>
           </div>
         </div>
@@ -125,11 +95,11 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
           disabled={modalStore.isLoading}
           type="submit"
         >
-          {modalStore.isLoading ? <LoadingOutlined spin /> : "Confirm"}
+          {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm'}
         </button>
       </form>
     </div>
-  );
-});
+  )
+})
 
-export default AddStakingContent;
+export default AddStakingContent

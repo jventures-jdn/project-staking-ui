@@ -1,107 +1,61 @@
-import {
-  GAS_LIMIT_GENERAL,
-  GAS_PRICE,
-  IValidator,
-} from "jfin-staking-sdk";
-import { LoadingOutlined, WarningOutlined } from "@ant-design/icons";
-import { observer } from "mobx-react";
-import { FormEvent, useEffect, useState } from "react";
-import { getCurrentEnv, useBasStore, useModalStore } from "../../../stores";
-import { message } from "antd";
-import { GWEI } from "../../../utils/const";
-import BigNumber from "bignumber.js";
-import {
-  usePrepareSendTransaction,
-  useSendTransaction,
-  useWaitForTransaction,
-} from "wagmi";
-import JfinCoin from "../../JfinCoin/JfinCoin";
+import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
+import { observer } from 'mobx-react'
+import { FormEvent, useEffect, useState } from 'react'
+import { getCurrentEnv, useModalStore } from '../../../stores'
+import { message } from 'antd'
+import JfinCoin from '../../JfinCoin/JfinCoin'
+import { Validator, chainStaking } from '@utils/chain/src/contract'
 
 interface IUnStakingContent {
-  validator: IValidator;
-  amount?: number;
-  onSuccess?: () => void;
+  validator: Validator
+  amount?: number
 }
 
 const UnStakingContent = observer((props: IUnStakingContent) => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const store = useBasStore();
-  const sdk = store.getBasSdk();
-  const keyProvider = sdk.getKeyProvider();
-  const modalStore = useModalStore();
-  const [stakedAmount, setStakedAmount] = useState<number>();
-  const [unStakingAmount, setUnStakingAmount] = useState(props.amount || 0);
-  const [error, setError] = useState<string>();
-
-  /* -------------------------------------------------------------------------- */
-  /*                                    Web3                                    */
-  /* -------------------------------------------------------------------------- */
-  const tx = usePrepareSendTransaction({
-    chainId: store.config.chainId,
-    request: {
-      to: keyProvider.stakingAddress!,
-      data: keyProvider
-        .stakingContract!.methods.undelegate(
-          props.validator.validator,
-          new BigNumber(unStakingAmount).multipliedBy(GWEI).toString(10)
-        )
-        .encodeABI(),
-      gasLimit: GAS_LIMIT_GENERAL,
-      gasPrice: GAS_PRICE,
-      value: "0x0",
-    },
-  });
-
-  const { data, sendTransaction, isError } = useSendTransaction(tx.config);
-  useWaitForTransaction({
-    hash: data?.hash,
-    chainId: store.config.chainId,
-    onSuccess: async () => {
-      if (props.onSuccess) props.onSuccess();
-      modalStore.setIsLoading(false);
-      modalStore.setVisible(false);
-      store.updateWalletBalance();
-      message.success("Un-Staking was done!");
-    },
-    onError: (error) => {
-      modalStore.setIsLoading(false);
-      message.error(`Something went wrong ${error.message || ""}`);
-    },
-  });
+  const modalStore = useModalStore()
+  const [stakedAmount, setStakedAmount] = useState<number>()
+  const [unStakingAmount, setUnStakingAmount] = useState(props.amount || 0)
+  const [error, setError] = useState<string>()
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(undefined);
-    if (!sendTransaction) return;
-    if (!unStakingAmount) return;
-    if (unStakingAmount < 1) return setError("Un-Stake amount must be more 1");
+    e.preventDefault()
+    setError(undefined)
+
+    if (unStakingAmount < 1) return setError('Un-Stake amount must be more 1')
     if (unStakingAmount > Number(stakedAmount))
       return setError(
-        `Un-Stake amount must be lower or equal to ${stakedAmount}`
-      );
-    sendTransaction();
-    modalStore.setIsLoading(true);
-  };
+        `Un-Stake amount must be lower or equal to ${stakedAmount}`,
+      )
+    try {
+      modalStore.setIsLoading(true)
+      await chainStaking.unstakeFromValidator(props.validator, unStakingAmount)
+      modalStore.setVisible(false)
+      message.success(`Un-Stake was done!`)
+    } catch (e: any) {
+      message.error(`Something went wrong ${e.message || ''}`)
+    } finally {
+      modalStore.setIsLoading(false)
+    }
+  }
 
-  const inital = async () => {
-    modalStore.setIsLoading(false);
-    setStakedAmount(await store.getMyValidatorStaked(props.validator));
-  };
+  const initial = async () => {
+    modalStore.setIsLoading(true)
+    setStakedAmount(
+      (await chainStaking.getMyStakingAmount(props.validator)).toNumber(),
+    )
+    modalStore.setIsLoading(false)
+  }
 
+  /* --------------------------------- Watches -------------------------------- */
   useEffect(() => {
-    inital();
-  }, [store.isConnected]);
-
-  // handle transaction reject
-  useEffect(() => {
-    if (!isError) return;
-    modalStore.setIsLoading(false);
-  }, [isError]);
+    initial()
+  }, [])
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
@@ -119,7 +73,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
             className="staking-input"
             disabled={modalStore.isLoading}
             onChange={(e) => setUnStakingAmount(+e.target.value)}
-            style={{ marginTop: "15px" }}
+            style={{ marginTop: '15px' }}
             type="number"
             value={unStakingAmount}
           />
@@ -133,7 +87,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
           <WarningOutlined />
           After complete the transaction, your staking will be returned in the
           form of a staking reward within 1 Epoch (
-          {getCurrentEnv() === "jfin" ? "1hr" : "10min"}).
+          {getCurrentEnv() === 'jfin' ? '1hr' : '10min'}).
         </div>
 
         <button
@@ -141,11 +95,11 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
           disabled={modalStore.isLoading}
           type="submit"
         >
-          {modalStore.isLoading ? <LoadingOutlined spin /> : "Confirm"}
+          {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm'}
         </button>
       </form>
     </div>
-  );
-});
+  )
+})
 
-export default UnStakingContent;
+export default UnStakingContent

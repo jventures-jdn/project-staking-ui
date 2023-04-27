@@ -25,22 +25,17 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
   const [error, setError] = useState<string>()
 
   /* -------------------------------------------------------------------------- */
-  /*                                    Web3                                    */
-  /* -------------------------------------------------------------------------- */
-
-  /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(undefined)
-    modalStore.setIsLoading(true)
 
     try {
-      await chainStaking.claimMyValidatorReward(props.validator)
+      modalStore.setIsLoading(true)
+      await chainStaking.claimValidatorReward(props.validator)
       modalStore.setVisible(false)
       message.success('Claim reward was done!')
-      await chainStaking.updateValidators()
     } catch (e: any) {
       message.error(`Something went wrong ${e.message || ''}`)
     } finally {
