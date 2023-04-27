@@ -5,6 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import ValidatorCollapseHeader from './ValidatorCollapseHeader'
 import { getCurrentEnv } from '../../stores'
 import { chainStaking } from '@utils/chain/src/contract'
+import ValidatorCollapseContent from './ValidatorCollapseContent'
 
 interface IValidatorsProps {
   validators: typeof chainStaking.validators
@@ -49,10 +50,7 @@ const Validators = observer(({ validators, loading }: IValidatorsProps) => {
                     className="validators-item"
                     header={<ValidatorCollapseHeader validator={validator} />}
                   >
-                    {/* <ValidatorCollapseContent
-                      validator={validator}
-                      refresh={refresh}
-                    /> */}
+                    <ValidatorCollapseContent validator={validator} />
                   </Panel>
                 )
               })

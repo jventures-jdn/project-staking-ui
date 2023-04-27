@@ -1,7 +1,7 @@
 import './Staking.css'
 import { LockOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useChainStaking } from '@utils/chain/src/contract'
 import { getProvider } from 'wagmi/actions'
 import ValidatorInfo from '@/components/ValidatorInfo/ValidatorInfo'
@@ -16,7 +16,6 @@ const Staking = observer(() => {
   const { chain } = useNetwork()
   const provider = getProvider()
   const chainStaking = useChainStaking()
-  const [loading, setLoading] = useState(false)
   const [totalDelegated, setTotalDelegated] = useState(0)
   const [validators, setValidators] = useState<typeof chainStaking.validators>(
     [],
@@ -30,22 +29,25 @@ const Staking = observer(() => {
   /* -------------------------------------------------------------------------- */
   const initial = async () => {
     chainStaking.setProvider(provider)
-    setLoading(true)
-    const validatorEvents = await chainStaking.getAllValidatorEvents()
-    const validators = await chainStaking.getValidators(validatorEvents)
+    const validators = await chainStaking.fetchValidators()
     setValidators(validators)
     setActiveValidators(chainStaking.activeValidator)
     setTotalDelegated(chainStaking.totalDelegated.toNumber())
-    setLoading(false)
   }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
 
-  // on connected or disconnected re-initial
-  useMemo(() => {
+  // init validators
+  useEffect(() => {
     initial()
+  }, [])
+
+  // on connected or disconnected update validators
+  useEffect(() => {
+    if (!chainStaking.validators?.length) return
+    chainStaking.updateValidators()
   }, [isConnected, chain?.id])
 
   /* -------------------------------------------------------------------------- */
@@ -63,12 +65,15 @@ const Staking = observer(() => {
           <ValidatorInfo
             activeValidators={activeValidators?.length || 0}
             totalDelegated={totalDelegated}
-            isLoading={loading}
+            isLoading={chainStaking.isFetchingValidators}
             totalValidators={validators?.length || 0}
           />
 
           <div id="view-point1">
-            <Validators validators={activeValidators} loading={loading} />
+            <Validators
+              validators={activeValidators}
+              loading={chainStaking.isFetchingValidators}
+            />
           </div>
         </div>
       </div>

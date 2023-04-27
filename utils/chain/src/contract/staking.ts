@@ -1,11 +1,20 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { Validator, stakingContract } from ".";
-import { BigNumber as $BigNumber, Event, ethers } from "ethers";
+import { BigNumber as $BigNumber, Event, Signer, ethers } from "ethers";
 import { Address } from "abitype";
-import { CHAIN_DECIMAL, VALIDATOR_STATUS_ENUM } from "../chain";
+import {
+  CHAIN_DECIMAL,
+  VALIDATOR_STATUS_ENUM,
+} from "../chain";
 import { BigNumber } from "bignumber.js";
-import { Provider, getAccount } from "@wagmi/core";
+import {
+  Provider,
+  fetchSigner,
+  getAccount,
+} from "@wagmi/core";
 import { chainConfig } from ".";
+import { GAS_PRICE } from "../gas";
+import { GAS_LIMIT_CLAIM } from "../gas";
 
 export class Staking {
   constructor() {
@@ -13,7 +22,10 @@ export class Staking {
       provider: observable,
       contract: observable,
       validators: observable,
-      getValidators: action,
+      isFetchingValidators: observable,
+      getAllValidatorEvents: action,
+      fetchValidators: action,
+      updateValidators: action,
       activeValidator: computed,
       jailedValidator: computed,
       pendingValidator: computed,
@@ -21,9 +33,11 @@ export class Staking {
     });
   }
   /* ------------------------------- Properties ------------------------------- */
+  public isFetchingValidators: boolean;
   public provider: Provider;
   public contract = stakingContract;
-  public validators: Validator[]
+  public validators: Validator[];
+  private validatorEvents: Event[];
 
   /* --------------------------------- Methods -------------------------------- */
   private isProviderValid() {
@@ -85,7 +99,14 @@ export class Staking {
         this.getJailedValidatorEvents(),
       ]);
 
-    return [...addedValidators, ...removedValidators, ...jailedValidators];
+    const validatorEvents = [
+      ...addedValidators,
+      ...removedValidators,
+      ...jailedValidators,
+    ];
+
+    this.validatorEvents = validatorEvents;
+    return validatorEvents;
   }
 
   /**
@@ -111,14 +132,16 @@ export class Staking {
   /**
    * get all validators data from giving validator events
    */
-  public async getValidators(validatorEvents: Event[]) {
+  public async fetchValidators() {
     this.isProviderValid();
+    this.isFetchingValidators = true;
     // get chain config if epoch is not valid
     if (!chainConfig.epoch) {
       await chainConfig.fetchChainConfig();
     }
 
     const epoch = $BigNumber.from(chainConfig.epoch);
+    const validatorEvents = await this.getAllValidatorEvents();
     const validators = await Promise.all(
       validatorEvents.map((validatorEvent) =>
         this.fetchValidator(validatorEvent, epoch)
@@ -132,15 +155,45 @@ export class Staking {
     );
 
     this.validators = sortValidators;
+    this.isFetchingValidators = false;
+    return sortValidators;
+  }
+
+  public async updateValidators() {
+    if (!this.validatorEvents.length) {
+      throw new Error(
+        "No validatorEvents found. Ensure you have set fetch validator with `fetchValidators()`"
+      );
+    }
+    this.isFetchingValidators = true;
+
+    // get chain config if epoch is not valid
+    if (!chainConfig.epoch) {
+      await chainConfig.fetchChainConfig();
+    }
+    const epoch = $BigNumber.from(chainConfig.epoch);
+
+    const validators = await Promise.all(
+      this.validatorEvents.map((validatorEvent) =>
+        this.fetchValidator(validatorEvent, epoch)
+      )
+    );
+
+    // sort validator base on blockNumber
+    const sortValidators = validators.sort(
+      (prev, curr) =>
+        prev.validatorEvent.blockNumber - curr.validatorEvent.blockNumber
+    );
+
+    this.validators = sortValidators;
+    this.isFetchingValidators = false;
     return sortValidators;
   }
 
   /**
    * get user staking reward from giving validator address
    */
-  public async getMyStakingRewards(
-    validator: Validator
-  ) {
+  public async getMyStakingRewards(validator: Validator) {
     this.isProviderValid();
 
     const delegator = getAccount().address;
@@ -157,9 +210,7 @@ export class Staking {
   /**
    * get user staking amount from giving validator address
    */
-  public async getMyStakingAmount(
-    validator: Validator
-  ) {
+  public async getMyStakingAmount(validator: Validator) {
     this.isProviderValid();
 
     const delegator = getAccount().address;
@@ -174,13 +225,27 @@ export class Staking {
     return BigNumber(amount.delegatedAmount.toString()).div(CHAIN_DECIMAL);
   }
 
+  public async claimMyValidatorReward(validator: Validator) {
+    this.isProviderValid();
+    const signer = await fetchSigner();
+    const staking = this.contract.connect(signer as Signer);
+    const transaction = await staking.claimDelegatorFee(
+      validator.ownerAddress,
+      {
+        gasPrice: $BigNumber.from(GAS_PRICE),
+        gasLimit: $BigNumber.from(GAS_LIMIT_CLAIM),
+      }
+    );
+    const receip = await transaction.wait();
+    this.fetchValidators();
+    return receip;
+  }
+
   /**
    * calculate validator apr from giving validator
    * *this calc base on sdk library
    */
-  public calcValidatorApr(
-    validator: Validator
-  ) {
+  public calcValidatorApr(validator: Validator) {
     const blockReward = this.calcValidatorBlockReward(
       this.activeValidator.length
     );

@@ -1,83 +1,59 @@
-import {
-  GAS_LIMIT_CLAIM,
-  GAS_PRICE,
-  IValidator,
-} from "jfin-staking-sdk";
+import { GAS_LIMIT_CLAIM } from 'jfin-staking-sdk'
 import {
   AlertOutlined,
   LoadingOutlined,
   WarningOutlined,
-import { Validator } from '@utils/chain/src/contract'
+} from '@ant-design/icons'
+import { observer } from 'mobx-react'
+import { FormEvent, useEffect, useState } from 'react'
+import JfinCoin from '../../../components/JfinCoin/JfinCoin'
+import { useModalStore } from '../../../stores'
+import { Validator, chainStaking } from '@utils/chain/src/contract'
+import BigNumber from 'bignumber.js'
+import { message } from 'antd'
 
 interface IClaimStakingContent {
+  isStaking?: boolean
   validator: Validator
+  amount?: BigNumber
 }
 const ClaimStakingContent = observer((props: IClaimStakingContent) => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const store = useBasStore();
-  const sdk = store.getBasSdk();
-  const keyProvider = sdk.getKeyProvider();
-  const modalStore = useModalStore();
-  const [error, setError] = useState<string>();
+  const modalStore = useModalStore()
+  const [error, setError] = useState<string>()
 
   /* -------------------------------------------------------------------------- */
   /*                                    Web3                                    */
   /* -------------------------------------------------------------------------- */
-  const tx = usePrepareSendTransaction({
-    request: {
-      to: keyProvider.stakingAddress!,
-      data: keyProvider
-        .stakingContract!.methods.claimDelegatorFee(props.validator?.validator)
-        .encodeABI(),
-      gasLimit: GAS_LIMIT_CLAIM,
-      gasPrice: GAS_PRICE,
-    },
-    chainId: store.config.chainId,
-  });
-
-  const { data, sendTransaction, isError } = useSendTransaction(tx.config);
-  useWaitForTransaction({
-    hash: data?.hash,
-    chainId: store.config.chainId,
-    onSuccess: async () => {
-      if (props.onSuccess) await props.onSuccess(); // callback function
-      modalStore.setIsLoading(false);
-      modalStore.setVisible(false);
-      store.updateWalletBalance();
-      message.success("Claim reward was done!");
-    },
-    onError: (error) => {
-      modalStore.setIsLoading(false);
-      message.error(`Something went wrong ${error.message || ""}`);
-    },
-  });
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!sendTransaction) return;
-    setError(undefined);
-    modalStore.setIsLoading(true);
-    sendTransaction();
-  };
+    e.preventDefault()
+    setError(undefined)
+    modalStore.setIsLoading(true)
+
+    try {
+      await chainStaking.claimMyValidatorReward(props.validator)
+      modalStore.setVisible(false)
+      message.success('Claim reward was done!')
+      await chainStaking.updateValidators()
+    } catch (e: any) {
+      message.error(`Something went wrong ${e.message || ''}`)
+    } finally {
+      modalStore.setIsLoading(false)
+    }
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
   useEffect(() => {
-    modalStore.setIsLoading(false);
-  }, []);
-
-  
-  // handle transaction reject
-  useEffect(() => {
-    if (!isError) return;
-    modalStore.setIsLoading(false);
-  }, [isError]);
+    modalStore.setIsLoading(false)
+  }, [])
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
@@ -93,12 +69,9 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
           <input
             className="staking-input"
             disabled
-            style={{ marginTop: "15px" }}
+            style={{ marginTop: '15px' }}
             type="text"
-            value={props.amount?.toLocaleString(undefined, {
-              minimumFractionDigits: 5,
-              maximumFractionDigits: 5,
-            })}
+            value={props.amount?.toFixed(5)}
           />
           <div className="staking-sub-input justify-between ">
             <span className="wallet-warning">{error}</span>
@@ -124,11 +97,11 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
           disabled={modalStore.isLoading}
           type="submit"
         >
-          {modalStore.isLoading ? <LoadingOutlined spin /> : "Claim Reward"}
+          {modalStore.isLoading ? <LoadingOutlined spin /> : 'Claim Reward'}
         </button>
       </form>
     </div>
-  );
-});
+  )
+})
 
-export default ClaimStakingContent;
+export default ClaimStakingContent
