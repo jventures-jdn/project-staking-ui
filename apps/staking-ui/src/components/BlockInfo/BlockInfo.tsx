@@ -12,17 +12,24 @@ const BlockInfo = observer(() => {
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
   const { isConnected } = useAccount()
-  const config = useChainConfig()
+  const chainConfig = useChainConfig()
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
+  const initial = async () => {
+    await chainConfig.getChainConfig()
+
+    setInterval(() => {
+      chainConfig.updateChainConfig()
+    }, 5000)
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
   useEffect(() => {
-    config.fetch()
+    initial()
   }, [])
 
   /* -------------------------------------------------------------------------- */
@@ -46,7 +53,7 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Block Number: </b>
                 <span>
-                  {config.blockNumber?.toLocaleString() || (
+                  {chainConfig.blockNumber?.toLocaleString() || (
                     <LoadingOutlined spin />
                   )}
                 </span>
@@ -54,16 +61,18 @@ const BlockInfo = observer(() => {
               <div>
                 <b> Current Epoch: </b>
                 <span>
-                  {config.epoch?.toLocaleString() || <LoadingOutlined spin />}
+                  {chainConfig.epoch?.toLocaleString() || (
+                    <LoadingOutlined spin />
+                  )}
                 </span>
               </div>
               <div>
                 <b> Next Epoch Block: </b>
-                {config.endBlock ? (
+                {chainConfig.endBlock ? (
                   <span>
-                    {config.endBlock?.toLocaleString()} (
-                    {config.nextEpochIn &&
-                      prettyTime(config.nextEpochIn * 10e8, 's')}
+                    {chainConfig.endBlock?.toLocaleString()} (
+                    {chainConfig.nextEpochIn &&
+                      prettyTime(chainConfig.nextEpochIn * 10e8, 's')}
                     )
                   </span>
                 ) : (
@@ -72,7 +81,7 @@ const BlockInfo = observer(() => {
               </div>
               <div>
                 <b>Block Time: </b>
-                {config.blockSec || <LoadingOutlined spin />}s
+                {chainConfig.blockSec || <LoadingOutlined spin />}s
               </div>
             </div>
           </div>
@@ -83,18 +92,23 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Active Validators Length: </b>
                 <span>
-                  {config.activeValidatorsLength || <LoadingOutlined spin />}
+                  {chainConfig.activeValidatorsLength || (
+                    <LoadingOutlined spin />
+                  )}
                 </span>
               </div>
               <div>
                 <b>Epoch Block Interval: </b>
-                {config.epochBlockInterval ? (
+                {chainConfig.epochBlockInterval ? (
                   <>
-                    <span>{config.epochBlockInterval}</span>
+                    <span>{chainConfig.epochBlockInterval}</span>
                     <span>
                       (
-                      {config.epochBlockIntervalSec &&
-                        prettyTime(config.epochBlockIntervalSec * 10e8, 'h')}
+                      {chainConfig.epochBlockIntervalSec &&
+                        prettyTime(
+                          chainConfig.epochBlockIntervalSec * 10e8,
+                          'h',
+                        )}
                       )
                     </span>
                   </>
@@ -105,7 +119,7 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Penalty Threshold: </b>
                 <span>
-                  {config.felonyThreshold || <LoadingOutlined spin />}
+                  {chainConfig.felonyThreshold || <LoadingOutlined spin />}
                 </span>
               </div>
             </div>
@@ -116,13 +130,16 @@ const BlockInfo = observer(() => {
             <div className="block-info-item-content">
               <div>
                 <b>Validator Jail Epoch Length: </b>
-                {config.validatorJailEpochLength ? (
+                {chainConfig.validatorJailEpochLength ? (
                   <>
-                    <span>{config.validatorJailEpochLength}</span>
+                    <span>{chainConfig.validatorJailEpochLength}</span>
                     <span>
                       (
-                      {config.validatorJailIntervalSec &&
-                        prettyTime(config.validatorJailIntervalSec * 10e8, 'h')}
+                      {chainConfig.validatorJailIntervalSec &&
+                        prettyTime(
+                          chainConfig.validatorJailIntervalSec * 10e8,
+                          'h',
+                        )}
                       )
                     </span>
                   </>
@@ -133,13 +150,16 @@ const BlockInfo = observer(() => {
 
               <div>
                 <b>Undelegate Period: </b>
-                {config.undelegatePeriod ? (
+                {chainConfig.undelegatePeriod ? (
                   <>
-                    <span>{config.undelegatePeriod}</span>
+                    <span>{chainConfig.undelegatePeriod}</span>
                     <span>
                       (
-                      {config.undelegateIntervalSec &&
-                        prettyTime(config.undelegateIntervalSec * 10e8, 'h')}
+                      {chainConfig.undelegateIntervalSec &&
+                        prettyTime(
+                          chainConfig.undelegateIntervalSec * 10e8,
+                          'h',
+                        )}
                       )
                     </span>
                   </>
@@ -150,13 +170,15 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Min Validator Stake Amount: </b>
                 <span>
-                  {config.minValidatorStakeAmount || <LoadingOutlined spin />}
+                  {chainConfig.minValidatorStakeAmount || (
+                    <LoadingOutlined spin />
+                  )}
                 </span>
               </div>
               <div>
                 <b>Min Staking Amount: </b>
                 <span>
-                  {config.minStakingAmount || <LoadingOutlined spin />}
+                  {chainConfig.minStakingAmount || <LoadingOutlined spin />}
                 </span>
               </div>
             </div>

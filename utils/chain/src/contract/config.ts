@@ -10,9 +10,7 @@ import {
   runInAction,
 } from "mobx";
 
-/**
- * All config calculate base on javascript sdk
- */
+// All config calculate base on javascript sdk
 export class Config {
   /* ------------------------------- Properties ------------------------------- */
   constructor() {
@@ -34,8 +32,8 @@ export class Config {
       undelegateIntervalSec: observable,
       validatorJailIntervalSec: observable,
       getConfig: computed,
-      fetch: action,
-      update: action,
+      getChainConfig: action,
+      updateChainConfig: action,
     });
   }
 
@@ -93,37 +91,12 @@ export class Config {
   }
 
   /**
-   * get all chain propperty
-   */
-  public get getConfig() {
-    return {
-      blockSec: this.blockSec,
-      epoch: this.epoch,
-      endBlock: this.endBlock,
-      startBlock: this.startBlock,
-      blockNumber: this.blockNumber,
-      activeValidatorsLength: this.activeValidatorsLength,
-      epochBlockInterval: this.epochBlockInterval,
-      misdemeanorThreshold: this.misdemeanorThreshold,
-      felonyThreshold: this.felonyThreshold,
-      validatorJailEpochLength: this.validatorJailEpochLength,
-      undelegatePeriod: this.undelegatePeriod,
-      minValidatorStakeAmount: this.minValidatorStakeAmount,
-      minStakingAmount: this.minStakingAmount,
-      nextEpochIn: this.nextEpochIn,
-      epochBlockIntervalSec: this.epochBlockIntervalSec,
-      undelegateIntervalSec: this.undelegateIntervalSec,
-      validatorJailIntervalSec: this.validatorJailIntervalSec,
-    };
-  }
-
-  /**
    * Read all chain config data via readContracts
    *
    * https://wagmi.sh/core/actions/readContracts
    */
 
-  public async fetch() {
+  public async getChainConfig() {
     // prepare promises fetch
     const promiseFetchBlockNumber = fetchBlockNumber();
     const promiseReadContracts = readContracts({
@@ -190,12 +163,40 @@ export class Config {
   /**
    * Get the latest block number and update the relevant propperty
    */
-  public async update() {
-    // prepare promises fetch
-    this.blockNumber = await fetchBlockNumber();
-    this.startBlock = this.calcStartBlock();
-    this.endBlock = this.calcEndBlock();
-    this.epoch = this.calcEpoch();
-    this.nextEpochIn = this.calcNextEpochIn();
+  public async updateChainConfig() {
+    const _blockNumber = await fetchBlockNumber();
+    runInAction(() => {
+      this.blockNumber = _blockNumber;
+      this.startBlock = this.calcStartBlock();
+      this.endBlock = this.calcEndBlock();
+      this.epoch = this.calcEpoch();
+      this.nextEpochIn = this.calcNextEpochIn();
+    });
+  }
+
+  /* --------------------------------- Getters -------------------------------- */
+  /**
+   * get all chain propperty
+   */
+  public get getConfig() {
+    return {
+      blockSec: this.blockSec,
+      epoch: this.epoch,
+      endBlock: this.endBlock,
+      startBlock: this.startBlock,
+      blockNumber: this.blockNumber,
+      activeValidatorsLength: this.activeValidatorsLength,
+      epochBlockInterval: this.epochBlockInterval,
+      misdemeanorThreshold: this.misdemeanorThreshold,
+      felonyThreshold: this.felonyThreshold,
+      validatorJailEpochLength: this.validatorJailEpochLength,
+      undelegatePeriod: this.undelegatePeriod,
+      minValidatorStakeAmount: this.minValidatorStakeAmount,
+      minStakingAmount: this.minStakingAmount,
+      nextEpochIn: this.nextEpochIn,
+      epochBlockIntervalSec: this.epochBlockIntervalSec,
+      undelegateIntervalSec: this.undelegateIntervalSec,
+      validatorJailIntervalSec: this.validatorJailIntervalSec,
+    };
   }
 }
