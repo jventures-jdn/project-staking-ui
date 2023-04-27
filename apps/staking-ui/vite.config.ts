@@ -5,7 +5,18 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './',
-
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          wagmi: ['@wagmi/core', 'wagmi'],
+          ethers: ['ethers'],
+          mobx: ['mobx'],
+          antd: ['antd'],
+        },
+      },
+    },
+  },
   plugins: [
     react({
       babel: {
