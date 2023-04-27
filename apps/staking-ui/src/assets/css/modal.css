@@ -8,7 +8,7 @@
 }
 
 .ant-modal-header {
-  color: var(--SL075);
+  color: var(--SL075) !important;
   border-bottom: none;
   background: linear-gradient(to bottom right, var(--S075), var(--SD100));
   border-top-left-radius: 15px;

@@ -19,7 +19,7 @@ const BlockInfo = observer(() => {
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
   const initial = async () => {
-    await chainConfig.getChainConfig()
+    await chainConfig.fetchChainConfig()
 
     setInterval(() => {
       chainConfig.updateChainConfig()

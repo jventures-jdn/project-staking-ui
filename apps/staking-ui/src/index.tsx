@@ -22,6 +22,7 @@ import './assets/css/button.css'
 import './assets/css/healper.css'
 import './assets/css/input.css'
 import './assets/css/pagination.css'
+import './assets/css/modal.css'
 import { BrowserRouter } from 'react-router-dom'
 
 Sentry.init({
@@ -48,8 +49,8 @@ const Main = () => {
     <React.StrictMode>
       <BrowserRouter>
         <Provider>
-          <GlobalModal />
           <WagmiConfig client={wagmiClient}>
+            <GlobalModal />
             <App />
           </WagmiConfig>
           <Web3Modal
