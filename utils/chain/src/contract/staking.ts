@@ -115,7 +115,7 @@ export class Staking {
     this.isProviderValid();
     // get chain config if epoch is not valid
     if (!chainConfig.epoch) {
-      await chainConfig.fetch();
+      await chainConfig.getChainConfig();
     }
 
     const epoch = $BigNumber.from(chainConfig.epoch);

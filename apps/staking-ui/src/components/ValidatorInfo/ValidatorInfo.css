@@ -7,7 +7,7 @@
   text-align: center;
 }
 
-.validator-info-wrapper > div > div span {
+.validator-info-wrapper > div > div > span {
   color: var(--SD010);
 }
 .validator-info-wrapper > div > div b {

@@ -2,6 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { Col, Row } from 'antd'
 import { observer } from 'mobx-react'
 import './ValidatorInfo.css'
+import CountUpMemo from '../Countup'
 
 interface IValidatorProps {
   activeValidators: number
@@ -35,7 +36,7 @@ const ValidatorInfo = observer((props: IValidatorProps) => {
           <div>
             <span>Bonded Tokens</span>
             {!props.isLoading ? (
-              <b>{props.totalDelegated.toLocaleString()}</b>
+              <b>{<CountUpMemo end={props.totalDelegated} duration={1} />}</b>
             ) : (
               <div>
                 <LoadingOutlined spin />

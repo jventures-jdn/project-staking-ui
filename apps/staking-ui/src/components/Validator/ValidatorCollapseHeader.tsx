@@ -14,6 +14,7 @@ import { VALIDATOR_WALLETS } from '../../utils/const'
 import { chainStaking } from '@utils/chain/src/contract'
 import { getValidatorStatus } from '@utils/chain/src/chain'
 import BigNumber from 'bignumber.js'
+import CountUpMemo from '../Countup'
 
 interface IValidatorCollapseHeader {
   validator: Awaited<ReturnType<typeof chainStaking.getValidator>>
@@ -112,12 +113,15 @@ const ValidatorCollapseHeader = observer(
           <div>
             <span className="col-title">Total Stake</span>
             <div>
-              {validator.totalDelegated
-                .toNumber()
-                .toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+              {loading ? (
+                <LoadingOutlined spin />
+              ) : (
+                <CountUpMemo
+                  end={validator.totalDelegated.toNumber()}
+                  duration={1}
+                  decimals={2}
+                />
+              )}
             </div>
           </div>
         </Col>
@@ -132,7 +136,12 @@ const ValidatorCollapseHeader = observer(
               ) : apr === Infinity ? (
                 '-'
               ) : (
-                `${apr.toFixed(2)}%`
+                <CountUpMemo
+                  end={apr}
+                  decimals={2}
+                  duration={1}
+                  formattingFn={(v) => `${v.toFixed(2)}%`}
+                />
               )}
             </div>
           </div>
@@ -148,7 +157,11 @@ const ValidatorCollapseHeader = observer(
               ) : myStakingReward.isZero() ? (
                 '-'
               ) : (
-                myStakingReward.toFixed(5)
+                <CountUpMemo
+                  end={myStakingReward.toNumber()}
+                  decimals={5}
+                  duration={1}
+                />
               )}
             </div>
           </div>
@@ -164,7 +177,11 @@ const ValidatorCollapseHeader = observer(
               ) : myStakingAmount.isZero() ? (
                 '-'
               ) : (
-                myStakingAmount.toFixed(2)
+                <CountUpMemo
+                  end={myStakingAmount.toNumber()}
+                  decimals={2}
+                  duration={1}
+                />
               )}
             </div>
           </div>

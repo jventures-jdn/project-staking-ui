@@ -1,11 +1,12 @@
 import { Col, Row } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import './BlockInfo.css'
 import { observer } from 'mobx-react'
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
 import { useAccount } from 'wagmi'
 import prettyTime from 'pretty-time'
 import { useChainConfig } from '@utils/chain/src/contract'
+import CountUpMemo from '../Countup'
 
 const BlockInfo = observer(() => {
   /* -------------------------------------------------------------------------- */
@@ -32,6 +33,8 @@ const BlockInfo = observer(() => {
     initial()
   }, [])
 
+  useMemo(() => {}, [chainConfig.blockNumber])
+
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
   /* -------------------------------------------------------------------------- */
@@ -53,7 +56,9 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Block Number: </b>
                 <span>
-                  {chainConfig.blockNumber?.toLocaleString() || (
+                  {chainConfig.blockNumber ? (
+                    <CountUpMemo duration={1} end={chainConfig.blockNumber} />
+                  ) : (
                     <LoadingOutlined spin />
                   )}
                 </span>
@@ -61,7 +66,9 @@ const BlockInfo = observer(() => {
               <div>
                 <b> Current Epoch: </b>
                 <span>
-                  {chainConfig.epoch?.toLocaleString() || (
+                  {chainConfig.epoch ? (
+                    <CountUpMemo duration={1} end={chainConfig.epoch} />
+                  ) : (
                     <LoadingOutlined spin />
                   )}
                 </span>
@@ -70,9 +77,14 @@ const BlockInfo = observer(() => {
                 <b> Next Epoch Block: </b>
                 {chainConfig.endBlock ? (
                   <span>
-                    {chainConfig.endBlock?.toLocaleString()} (
-                    {chainConfig.nextEpochIn &&
-                      prettyTime(chainConfig.nextEpochIn * 10e8, 's')}
+                    {<CountUpMemo duration={1} end={chainConfig.endBlock} />}(
+                    {
+                      <CountUpMemo
+                        duration={1}
+                        end={chainConfig.nextEpochIn * 10e8}
+                        formattingFn={(v) => prettyTime(v, 's')}
+                      />
+                    }
                     )
                   </span>
                 ) : (
@@ -81,7 +93,11 @@ const BlockInfo = observer(() => {
               </div>
               <div>
                 <b>Block Time: </b>
-                {chainConfig.blockSec || <LoadingOutlined spin />}s
+                {chainConfig.blockSec ? (
+                  <CountUpMemo duration={1} end={chainConfig.blockSec} />
+                ) : (
+                  <LoadingOutlined spin />
+                )}
               </div>
             </div>
           </div>
@@ -92,7 +108,12 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Active Validators Length: </b>
                 <span>
-                  {chainConfig.activeValidatorsLength || (
+                  {chainConfig.activeValidatorsLength ? (
+                    <CountUpMemo
+                      duration={1}
+                      end={chainConfig.activeValidatorsLength}
+                    />
+                  ) : (
                     <LoadingOutlined spin />
                   )}
                 </span>
@@ -101,14 +122,19 @@ const BlockInfo = observer(() => {
                 <b>Epoch Block Interval: </b>
                 {chainConfig.epochBlockInterval ? (
                   <>
-                    <span>{chainConfig.epochBlockInterval}</span>
+                    <span>
+                      <CountUpMemo
+                        duration={1}
+                        end={chainConfig.epochBlockInterval}
+                      />
+                    </span>
                     <span>
                       (
-                      {chainConfig.epochBlockIntervalSec &&
-                        prettyTime(
-                          chainConfig.epochBlockIntervalSec * 10e8,
-                          'h',
-                        )}
+                      <CountUpMemo
+                        duration={1}
+                        end={chainConfig.epochBlockIntervalSec * 10e8}
+                        formattingFn={(v) => prettyTime(v, 'm')}
+                      />
                       )
                     </span>
                   </>
@@ -119,7 +145,14 @@ const BlockInfo = observer(() => {
               <div>
                 <b>Penalty Threshold: </b>
                 <span>
-                  {chainConfig.felonyThreshold || <LoadingOutlined spin />}
+                  {chainConfig.felonyThreshold ? (
+                    <CountUpMemo
+                      duration={1}
+                      end={chainConfig.felonyThreshold}
+                    />
+                  ) : (
+                    <LoadingOutlined spin />
+                  )}
                 </span>
               </div>
             </div>
@@ -132,14 +165,21 @@ const BlockInfo = observer(() => {
                 <b>Validator Jail Epoch Length: </b>
                 {chainConfig.validatorJailEpochLength ? (
                   <>
-                    <span>{chainConfig.validatorJailEpochLength}</span>
+                    <span>
+                      <CountUpMemo
+                        duration={1}
+                        end={chainConfig.validatorJailEpochLength}
+                        useEasing
+                      />
+                    </span>
                     <span>
                       (
-                      {chainConfig.validatorJailIntervalSec &&
-                        prettyTime(
-                          chainConfig.validatorJailIntervalSec * 10e8,
-                          'h',
-                        )}
+                      <CountUpMemo
+                        duration={1}
+                        end={chainConfig.validatorJailIntervalSec * 10e8}
+                        useEasing
+                        formattingFn={(v) => prettyTime(v, 'm')}
+                      />
                       )
                     </span>
                   </>
@@ -152,14 +192,20 @@ const BlockInfo = observer(() => {
                 <b>Undelegate Period: </b>
                 {chainConfig.undelegatePeriod ? (
                   <>
-                    <span>{chainConfig.undelegatePeriod}</span>
+                    <span>
+                      <CountUpMemo
+                        duration={1}
+                        end={chainConfig.undelegatePeriod}
+                        useEasing
+                      />
+                    </span>
                     <span>
                       (
-                      {chainConfig.undelegateIntervalSec &&
-                        prettyTime(
-                          chainConfig.undelegateIntervalSec * 10e8,
-                          'h',
-                        )}
+                      <CountUpMemo
+                        duration={1}
+                        end={chainConfig.undelegateIntervalSec * 10e8}
+                        formattingFn={(v) => prettyTime(v, 'm')}
+                      />
                       )
                     </span>
                   </>
