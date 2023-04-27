@@ -1,16 +1,19 @@
 import './Staking.css'
 import { LockOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useChainStaking } from '@utils/chain/src/contract'
 import { getProvider } from 'wagmi/actions'
 import ValidatorInfo from '@/components/ValidatorInfo/ValidatorInfo'
 import Validators from '@/components/Validator/Validators'
+import { useAccount, useNetwork } from 'wagmi'
 
 const Staking = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
+  const { isConnected } = useAccount()
+  const { chain } = useNetwork()
   const provider = getProvider()
   const chainStaking = useChainStaking()
   const [loading, setLoading] = useState(false)
@@ -26,6 +29,7 @@ const Staking = observer(() => {
   /*                                   Methods                                  */
   /* -------------------------------------------------------------------------- */
   const initial = async () => {
+    chainStaking.setProvider(provider)
     setLoading(true)
     const validatorEvents = await chainStaking.getAllValidatorEvents()
     const validators = await chainStaking.getValidators(validatorEvents)
@@ -38,10 +42,11 @@ const Staking = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  useEffect(() => {
-    chainStaking.setProvider(provider)
+
+  // on connected or disconnected re-initial
+  useMemo(() => {
     initial()
-  }, [])
+  }, [isConnected, chain?.id])
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
