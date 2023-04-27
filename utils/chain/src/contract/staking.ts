@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable } from "mobx";
-import { stakingContract } from ".";
+import { Validator, stakingContract } from ".";
 import { BigNumber as $BigNumber, Event, ethers } from "ethers";
 import { Address } from "abitype";
 import { CHAIN_DECIMAL, VALIDATOR_STATUS_ENUM } from "../chain";
@@ -23,7 +23,7 @@ export class Staking {
   /* ------------------------------- Properties ------------------------------- */
   public provider: Provider;
   public contract = stakingContract;
-  public validators: Awaited<ReturnType<typeof this.getValidators>>;
+  public validators: Validator[]
 
   /* --------------------------------- Methods -------------------------------- */
   private isProviderValid() {
@@ -91,7 +91,7 @@ export class Staking {
   /**
    * get validator data from giving validator event
    */
-  public async getValidator(validatorEvent: ethers.Event, epoch: $BigNumber) {
+  public async fetchValidator(validatorEvent: ethers.Event, epoch: $BigNumber) {
     this.isProviderValid();
     const staking = this.contract.connect(this.provider);
     const validator = await staking.getValidatorStatusAtEpoch(
@@ -115,13 +115,13 @@ export class Staking {
     this.isProviderValid();
     // get chain config if epoch is not valid
     if (!chainConfig.epoch) {
-      await chainConfig.getChainConfig();
+      await chainConfig.fetchChainConfig();
     }
 
     const epoch = $BigNumber.from(chainConfig.epoch);
     const validators = await Promise.all(
       validatorEvents.map((validatorEvent) =>
-        this.getValidator(validatorEvent, epoch)
+        this.fetchValidator(validatorEvent, epoch)
       )
     );
 
@@ -139,7 +139,7 @@ export class Staking {
    * get user staking reward from giving validator address
    */
   public async getMyStakingRewards(
-    validator: Awaited<ReturnType<typeof this.getValidator>>
+    validator: Validator
   ) {
     this.isProviderValid();
 
@@ -158,7 +158,7 @@ export class Staking {
    * get user staking amount from giving validator address
    */
   public async getMyStakingAmount(
-    validator: Awaited<ReturnType<typeof this.getValidator>>
+    validator: Validator
   ) {
     this.isProviderValid();
 
@@ -179,7 +179,7 @@ export class Staking {
    * *this calc base on sdk library
    */
   public calcValidatorApr(
-    validator: Awaited<ReturnType<typeof this.getValidator>>
+    validator: Validator
   ) {
     const blockReward = this.calcValidatorBlockReward(
       this.activeValidator.length

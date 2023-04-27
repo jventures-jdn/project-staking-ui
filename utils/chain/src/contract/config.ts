@@ -32,7 +32,7 @@ export class Config {
       undelegateIntervalSec: observable,
       validatorJailIntervalSec: observable,
       getConfig: computed,
-      getChainConfig: action,
+      fetchChainConfig: action,
       updateChainConfig: action,
     });
   }
@@ -96,7 +96,7 @@ export class Config {
    * https://wagmi.sh/core/actions/readContracts
    */
 
-  public async getChainConfig() {
+  public async fetchChainConfig() {
     // prepare promises fetch
     const promiseFetchBlockNumber = fetchBlockNumber();
     const promiseReadContracts = readContracts({

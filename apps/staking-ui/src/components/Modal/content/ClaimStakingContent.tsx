@@ -7,23 +7,10 @@ import {
   AlertOutlined,
   LoadingOutlined,
   WarningOutlined,
-} from "@ant-design/icons";
-import { message } from "antd";
-import { observer } from "mobx-react";
-import { FormEvent, useEffect, useState } from "react";
-import JfinCoin from "../../../components/JfinCoin/JfinCoin";
-import { useBasStore, useModalStore } from "../../../stores";
-import {
-  usePrepareSendTransaction,
-  useSendTransaction,
-  useWaitForTransaction,
-} from "wagmi";
+import { Validator } from '@utils/chain/src/contract'
 
 interface IClaimStakingContent {
-  isStaking?: boolean;
-  validator: IValidator;
-  amount?: number;
-  onSuccess?: () => void;
+  validator: Validator
 }
 const ClaimStakingContent = observer((props: IClaimStakingContent) => {
   /* -------------------------------------------------------------------------- */

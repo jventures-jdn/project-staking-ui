@@ -15,12 +15,10 @@ import {
   usePrepareSendTransaction,
   useSendTransaction,
   useWaitForTransaction,
-} from "wagmi";
+import { Validator } from '@utils/chain/src/contract'
 
 interface IAddStakingContent {
-  validator: IValidator;
-  amount?: number;
-  onSuccess?: () => void;
+  validator: Validator
 }
 const AddStakingContent = observer((props: IAddStakingContent) => {
   /* -------------------------------------------------------------------------- */

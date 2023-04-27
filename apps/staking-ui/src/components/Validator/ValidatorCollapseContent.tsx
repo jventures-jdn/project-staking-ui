@@ -4,22 +4,10 @@ import {
   MinusOutlined,
   PlusOutlined,
   WalletOutlined,
-} from "@ant-design/icons";
-import { Col, Row } from "antd";
-import BigNumber from "bignumber.js";
-import { observer } from "mobx-react";
-import { useEffect, useState } from "react";
-import { getCurrentEnv, useBasStore, useModalStore } from "../../stores";
-import { GWEI } from "../../utils/const";
-import JfinCoin from "../JfinCoin/JfinCoin";
-import AddStakingContent from "../Modal/content/AddStakingContent";
-import ClaimStakingContent from "../Modal/content/ClaimStakingContent";
-import UnStakingContent from "../Modal/content/UnStakingContent";
-import "./ValidatorCollapseContent.css";
+import { Validator, chainStaking } from '@utils/chain/src/contract'
 
 interface IValidatorCollapseContentProps {
-  validator?: IValidator;
-  refresh?: () => unknown;
+  validator: Validator
 }
 
 const ValidatorCollapseContent = observer(

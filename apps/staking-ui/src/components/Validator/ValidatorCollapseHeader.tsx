@@ -9,15 +9,14 @@ import {
   LoadingOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons'
-import { useBasStore } from '../../stores'
 import { VALIDATOR_WALLETS } from '../../utils/const'
-import { chainStaking } from '@utils/chain/src/contract'
+import { Validator, chainStaking } from '@utils/chain/src/contract'
 import { getValidatorStatus } from '@utils/chain/src/chain'
 import BigNumber from 'bignumber.js'
 import CountUpMemo from '../Countup'
 
 interface IValidatorCollapseHeader {
-  validator: Awaited<ReturnType<typeof chainStaking.getValidator>>
+  validator: Validator
 }
 
 const ValidatorCollapseHeader = observer(

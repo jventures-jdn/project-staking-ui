@@ -99,3 +99,5 @@ export {
   RUNTIME_UPGRADE_ABI,
   DEPLOYER_PROXY_ABI,
 };
+
+export type Validator = Awaited<ReturnType<typeof chainStaking.fetchValidator>>;
