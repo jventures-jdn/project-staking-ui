@@ -6,12 +6,46 @@ import Conditions from './components/Conditions'
 import Navbar from './components/Navbar/Navbar'
 import { Route, Switch } from 'react-router-dom'
 import CookieConsent from 'react-cookie-consent'
+import { useChainConfig, useChainStaking } from '@utils/chain/src/contract'
+import { getProvider } from 'wagmi/actions'
+import { useAccount, useNetwork } from 'wagmi'
 
 const Staking = React.lazy(() => import('./pages/Staking/Staking'))
 const Governance = React.lazy(() => import('./pages/Governance/Governance'))
 const Assets = React.lazy(() => import('./pages/Assets/Assets'))
 
 const App = observer(() => {
+  /* --------------------------------- States --------------------------------- */
+  const chainConfig = useChainConfig()
+  const chainStaking = useChainStaking()
+  const provider = getProvider()
+  const { chain } = useNetwork()
+  const { isConnected } = useAccount()
+
+  /* --------------------------------- Methods -------------------------------- */
+  const initialChainConfig = async () => {
+    await chainConfig.fetchChainConfig()
+    setInterval(() => {
+      chainConfig.updateChainConfig()
+    }, 5000)
+  }
+
+  const initialChainStaking = async () => {
+    chainStaking.setProvider(provider)
+    await chainStaking.fetchValidators()
+  }
+
+  /* --------------------------------- Watches -------------------------------- */
+  useEffect(() => {
+    initialChainConfig()
+    initialChainStaking()
+  }, [])
+
+  // on connected or disconnected update validators
+  useEffect(() => {
+    if (!chainStaking.validators?.length) return
+    chainStaking.updateValidators()
+  }, [isConnected, chain?.id])
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="app-container">
