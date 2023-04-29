@@ -20,6 +20,7 @@ import {
   STAKING_ADDRESS,
   SYSTEM_REWARD_ADDRESS,
 } from "../chain";
+import { Account } from "./account";
 
 /**
  * Contract declearation
@@ -85,9 +86,11 @@ export const deployerProxyContract = getContract(deployerProxyObject);
 
 export const chainConfig = new Config();
 export const chainStaking = new Staking();
+export const chainAccount = new Account();
 
 export const useChainConfig = () => chainConfig;
 export const useChainStaking = () => chainStaking;
+export const useChainAccount = () => chainAccount;
 
 export {
   STAKING_ABI,

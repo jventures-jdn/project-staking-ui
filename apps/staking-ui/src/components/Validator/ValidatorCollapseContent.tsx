@@ -36,9 +36,13 @@ const ValidatorCollapseContent = observer(
     /*                                   Methods                                  */
     /* -------------------------------------------------------------------------- */
     const inital = async () => {
-      setMyStakingReward(await chainStaking.getMyStakingRewards(validator))
-      setMyStakingAmount(await chainStaking.getMyStakingAmount(validator))
-      setApr(chainStaking.calcValidatorApr(validator))
+      setMyStakingReward(
+        await chainStaking.getMyStakingRewards(validator.ownerAddress),
+      )
+      setMyStakingAmount(
+        await chainStaking.getMyStakingAmount(validator.ownerAddress),
+      )
+      setApr(chainStaking.calcValidatorApr(validator.ownerAddress))
     }
 
     const handleClaim = async (isStaking = false) => {

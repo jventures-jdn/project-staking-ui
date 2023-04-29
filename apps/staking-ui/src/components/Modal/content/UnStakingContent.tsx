@@ -34,7 +34,10 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
       )
     try {
       modalStore.setIsLoading(true)
-      await chainStaking.unstakeFromValidator(props.validator, unStakingAmount)
+      await chainStaking.unstakeFromValidator(
+        props.validator.ownerAddress,
+        unStakingAmount,
+      )
       modalStore.setVisible(false)
       message.success(`Un-Stake was done!`)
     } catch (e: any) {
@@ -47,7 +50,9 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
   const initial = async () => {
     modalStore.setIsLoading(true)
     setStakedAmount(
-      (await chainStaking.getMyStakingAmount(props.validator)).toNumber(),
+      (
+        await chainStaking.getMyStakingAmount(props.validator.ownerAddress)
+      ).toNumber(),
     )
     modalStore.setIsLoading(false)
   }

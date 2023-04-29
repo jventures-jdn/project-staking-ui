@@ -39,9 +39,13 @@ const ValidatorCollapseHeader = observer(
     const inital = async () => {
       try {
         setLoading(true)
-        setMyStakingReward(await chainStaking.getMyStakingRewards(validator))
-        setMyStakingAmount(await chainStaking.getMyStakingAmount(validator))
-        setApr(chainStaking.calcValidatorApr(validator))
+        setMyStakingReward(
+          await chainStaking.getMyStakingRewards(validator.ownerAddress),
+        )
+        setMyStakingAmount(
+          await chainStaking.getMyStakingAmount(validator.ownerAddress),
+        )
+        setApr(chainStaking.calcValidatorApr(validator.ownerAddress))
       } finally {
         setLoading(false)
       }

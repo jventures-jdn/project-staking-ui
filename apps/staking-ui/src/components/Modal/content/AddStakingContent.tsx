@@ -1,14 +1,14 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { message } from 'antd'
-import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
 import { useModalStore } from '../../../stores'
-import { Address } from 'wagmi'
-import { Validator, chainStaking } from '@utils/chain/src/contract'
-import { fetchBalance, getAccount } from 'wagmi/actions'
-import { CHAIN_DECIMAL } from '@utils/chain/src/chain'
+import {
+  Validator,
+  chainStaking,
+  useChainAccount,
+} from '@utils/chain/src/contract'
 
 interface IAddStakingContent {
   validator: Validator
@@ -18,9 +18,9 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
+  const chainAccount = useChainAccount()
   const modalStore = useModalStore()
   const [stakingAmount, setStakingAmount] = useState(props.amount || 0)
-  const [balance, setBalance] = useState('0')
   const [error, setError] = useState<string>()
 
   /* -------------------------------------------------------------------------- */
@@ -32,11 +32,12 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
     setError(undefined)
 
     if (stakingAmount < 1) return setError('Stake amount must be more 1')
-    if (stakingAmount > Number(balance)) return setError(`Insufficient Balance`)
+    if (stakingAmount > chainAccount.balance.toNumber())
+      return setError(`Insufficient Balance`)
 
     try {
       modalStore.setIsLoading(true)
-      await chainStaking.stakeToValidator(props.validator, stakingAmount)
+      await chainStaking.stakeToValidator(props.validator.ownerAddress, stakingAmount)
       modalStore.setVisible(false)
       message.success(`Staked was done!`)
     } catch (e: any) {
@@ -46,22 +47,9 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
     }
   }
 
-  const initial = async () => {
-    modalStore.setIsLoading(true)
-    const account = await getAccount()
-    const { value } = await fetchBalance({
-      address: account.address as Address,
-    })
-    setBalance(new BigNumber(value.toString()).div(CHAIN_DECIMAL).toFixed(5))
-    modalStore.setIsLoading(false)
-  }
-
   /* -------------------------------------------------------------------------- */
   /*                                   Watches                                  */
   /* -------------------------------------------------------------------------- */
-  useEffect(() => {
-    initial()
-  }, [])
 
   /* -------------------------------------------------------------------------- */
   /*                                    DOMS                                    */
@@ -85,7 +73,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
           <div className="staking-sub-input justify-between ">
             <span className="wallet-warning">{error}</span>
             <span className="col-title">
-              Your balance: <span>{balance}</span>
+              Your balance: <span>{chainAccount.balance.toFixed(5)}</span>
             </span>
           </div>
         </div>

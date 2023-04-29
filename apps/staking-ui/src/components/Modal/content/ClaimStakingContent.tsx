@@ -33,7 +33,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
 
     try {
       modalStore.setIsLoading(true)
-      await chainStaking.claimValidatorReward(props.validator)
+      await chainStaking.claimValidatorReward(props.validator.ownerAddress)
       modalStore.setVisible(false)
       message.success('Claim reward was done!')
     } catch (e: any) {

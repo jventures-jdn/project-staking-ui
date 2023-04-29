@@ -1,12 +1,16 @@
 import { observer } from 'mobx-react'
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useMemo } from 'react'
 
 import BlockInfo from './components/BlockInfo/BlockInfo'
 import Conditions from './components/Conditions'
 import Navbar from './components/Navbar/Navbar'
 import { Route, Switch } from 'react-router-dom'
 import CookieConsent from 'react-cookie-consent'
-import { useChainConfig, useChainStaking } from '@utils/chain/src/contract'
+import {
+  useChainAccount,
+  useChainConfig,
+  useChainStaking,
+} from '@utils/chain/src/contract'
 import { getProvider } from 'wagmi/actions'
 import { useAccount, useNetwork } from 'wagmi'
 
@@ -18,6 +22,7 @@ const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const chainConfig = useChainConfig()
   const chainStaking = useChainStaking()
+  const chainAccount = useChainAccount()
   const provider = getProvider()
   const { chain } = useNetwork()
   const { isConnected } = useAccount()
@@ -35,17 +40,25 @@ const App = observer(() => {
     await chainStaking.fetchValidators()
   }
 
+  const initialAccount = async () => {
+    await chainAccount.getAccount()
+    await chainAccount.fetchBalance()
+  }
+
   /* --------------------------------- Watches -------------------------------- */
   useEffect(() => {
     initialChainConfig()
     initialChainStaking()
+    initialAccount()
   }, [])
 
-  // on connected or disconnected update validators
-  useEffect(() => {
+  // on connected or disconnected update validators & account
+  useMemo(() => {
+    initialAccount()
     if (!chainStaking.validators?.length) return
     chainStaking.updateValidators()
   }, [isConnected, chain?.id])
+
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="app-container">

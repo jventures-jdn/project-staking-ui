@@ -2,83 +2,62 @@ import {
   ClockCircleOutlined,
   LoadingOutlined,
   WalletOutlined,
-} from "@ant-design/icons";
-import "./Assets.css";
-import { useEffect, useMemo, useState } from "react";
-import { IValidator } from "jfin-staking-sdk";
-import { observer } from "mobx-react";
-import { useBasStore } from "../../stores";
-import JfinCoin from "../../components/JfinCoin/JfinCoin";
-import MyValidators from "../../components/MyValidators/MyValidators";
-import StakingHistory from "../../components/StakingHistory/StakingHistory";
+} from '@ant-design/icons'
+import './Assets.css'
+import { useEffect, useState } from 'react'
+import { IValidator } from 'jfin-staking-sdk'
+import { observer } from 'mobx-react'
+import JfinCoin from '../../components/JfinCoin/JfinCoin'
+import MyValidators from '../../components/MyValidators/MyValidators'
+import StakingHistory from '../../components/StakingHistory/StakingHistory'
+import { useChainStaking } from '@utils/chain/src/contract'
+import CountUpMemo from '@/components/Countup'
+import BigNumber from 'bignumber.js'
+import { useAccount, useNetwork } from 'wagmi'
 
 export interface IMyValidators {
-  amount: number;
-  event?: unknown;
-  validatorProvider: IValidator;
-  validator: string;
-  reward: number;
-  staker: string;
-  epoch: number;
+  amount: number
+  event?: unknown
+  validatorProvider: IValidator
+  validator: string
+  reward: number
+  staker: string
+  epoch: number
 }
 const Assets = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const store = useBasStore();
-  const [myValidators, setMyValidators] = useState<IMyValidators[]>();
-  const [stakingHistory, setStakingHistory] =
-    useState<IMyTransactionHistory[]>();
-  const [totalReward, setTotalReward] = useState<number>(0);
-  const [totalStaked, setTotalStaked] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
-  /* -------------------------------------------------------------------------- */
-  /*                                   Methods                                  */
-  /* -------------------------------------------------------------------------- */
-  const inital = async () => {
-    setLoading(true);
-    setMyValidators(await store.getMyValidator());
-    setStakingHistory(await store.getMyTransactionHistory());
-    setLoading(false);
-  };
+  const { isConnected } = useAccount()
+  const { chain } = useNetwork()
+  const chainStaking = useChainStaking()
+  const [totalReward, setTotalReward] = useState<BigNumber>(new BigNumber(0))
+  const [loading, setLoading] = useState(false)
 
-  const handleRefresh = async () => {
-    setLoading(true);
-    inital();
-    setLoading(false);
-  };
-  /* -------------------------------------------------------------------------- */
-  /*                                   Watches                                  */
-  /* -------------------------------------------------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
+  const initial = async () => {
+    setLoading(true)
+    await chainStaking.fetchMyStakingHistory()
+    await chainStaking.getMyStakingValidators()
+    setTotalReward(await chainStaking.getMyTotalReward())
+    setLoading(false)
+  }
+
+  /* --------------------------------- Watches -------------------------------- */
+  // on connected or disconnected update myStakingValidators, myStakingHistory
   useEffect(() => {
-    if (!store.walletAccount) return;
-    inital();
-  }, [store.walletAccount]);
+    initial()
+  }, [isConnected, chain?.id])
 
-  // timeout --> show empty msg or data
-  useEffect(() => {
-    setTimeout(() => {
-      if (loading) setLoading(false);
-    }, 7000);
-  }, [loading]);
-
-  useMemo(() => {
-    if (!myValidators || !myValidators.length) return;
-    setTotalReward(myValidators.reduce((p, c) => p + c.reward, 0));
-    setTotalStaked(myValidators.reduce((p, c) => p + c.amount, 0));
-  }, [myValidators]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                    DOMS                                    */
-  /* -------------------------------------------------------------------------- */
+  /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="assets-container">
       <div
         className=""
         style={{
-          display: "grid",
-          columnGap: "20px",
-          gridTemplateColumns: "1fr 1fr",
+          display: 'grid',
+          columnGap: '20px',
+          gridTemplateColumns: '1fr 1fr',
         }}
       >
         <div className="content-card">
@@ -90,32 +69,35 @@ const Assets = observer(() => {
           <div className="card-body">
             <div
               style={{
-                background: "#16191d",
-                padding: "1rem",
-                borderRadius: "10px",
-                textAlign: "center",
-                fontSize: "1.5rem",
-                fontWeight: "bold",
-                height: "70px",
+                background: '#16191d',
+                padding: '1rem',
+                borderRadius: '10px',
+                textAlign: 'center',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                height: '70px',
               }}
             >
-              {loading ? (
-                <LoadingOutlined spin />
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {totalStaked.toLocaleString(undefined, {
-                    minimumFractionDigits: 5,
-                    maximumFractionDigits: 5,
-                  })}
-                  <JfinCoin />
-                </div>
-              )}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {loading ? (
+                  <LoadingOutlined spin />
+                ) : (
+                  <>
+                    <CountUpMemo
+                      end={chainStaking.myTotalStake.toNumber()}
+                      decimals={2}
+                      duration={1}
+                    />
+                    <JfinCoin />
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -128,33 +110,28 @@ const Assets = observer(() => {
           <div className="card-body">
             <div
               style={{
-                background: "#16191d",
-                padding: "1rem",
-                borderRadius: "10px",
-                fontSize: "1.5rem",
-                fontWeight: "bold",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "70px",
+                background: '#16191d',
+                padding: '1rem',
+                borderRadius: '10px',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '70px',
               }}
             >
               {loading ? (
                 <LoadingOutlined spin />
               ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {totalReward.toLocaleString(undefined, {
-                    minimumFractionDigits: 5,
-                    maximumFractionDigits: 5,
-                  })}
+                <>
+                  <CountUpMemo
+                    end={totalReward.toNumber()}
+                    decimals={5}
+                    duration={1}
+                  />
                   <JfinCoin />
-                </div>
+                </>
               )}
             </div>
           </div>
@@ -168,11 +145,7 @@ const Assets = observer(() => {
           </b>
         </div>
         <div className="card-body">
-          <MyValidators
-            loading={loading}
-            refresh={handleRefresh}
-            validators={myValidators}
-          />
+          <MyValidators loading={loading} />
         </div>
       </div>
 
@@ -183,11 +156,11 @@ const Assets = observer(() => {
           </b>
         </div>
         <div className="card-body" id="view-point3">
-          <StakingHistory data={stakingHistory} loading={loading} />
+          {/* <StakingHistory data={stakingHistory} loading={loading} /> */}
         </div>
       </div>
     </div>
-  );
-});
+  )
+})
 
-export default Assets;
+export default Assets
