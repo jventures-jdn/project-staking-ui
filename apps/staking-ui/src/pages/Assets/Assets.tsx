@@ -37,7 +37,6 @@ const Assets = observer(() => {
   /* --------------------------------- Methods -------------------------------- */
   const initial = async () => {
     setLoading(true)
-    await chainStaking.fetchMyStakingHistory()
     await chainStaking.getMyStakingValidators()
     setTotalReward(await chainStaking.getMyTotalReward())
     setLoading(false)
@@ -156,7 +155,7 @@ const Assets = observer(() => {
           </b>
         </div>
         <div className="card-body" id="view-point3">
-          {/* <StakingHistory data={stakingHistory} loading={loading} /> */}
+          <StakingHistory />
         </div>
       </div>
     </div>

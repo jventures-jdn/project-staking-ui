@@ -1,179 +1,177 @@
-import { CopyOutlined } from "@ant-design/icons";
-import { Table } from "antd";
-import { ColumnProps } from "antd/lib/table";
-import { observer } from "mobx-react";
-import moment from "moment";
-import CopyToClipboard from "react-copy-to-clipboard";
-import { getCurrentEnv, useBasStore } from "../../stores";
+import { CopyOutlined } from '@ant-design/icons'
+import { Table } from 'antd'
+import { ColumnProps } from 'antd/lib/table'
+import { observer } from 'mobx-react'
+import CopyToClipboard from 'react-copy-to-clipboard'
+import { getCurrentEnv } from '../../stores'
+import { chainConfig, chainStaking } from '@utils/chain/src/contract'
+import { Event } from 'ethers'
+import { CHAIN_DECIMAL } from '@utils/chain/src/chain'
+import CountUpMemo from '../Countup'
+import BigNumber from 'bignumber.js'
+import prettyTime from 'pretty-time'
+import { VALIDATOR_WALLETS } from '@/utils/const'
+import { useEffect, useState } from 'react'
 
-interface IStakingHistory {
-  data: IMyTransactionHistory[] | undefined;
-  loading: boolean;
-}
-
-interface IStakingHistoryColumn {
-  type: string;
-  amount: number;
-}
-
-const StakingHistory = observer(({ data, loading }: IStakingHistory) => {
-  /* -------------------------------------------------------------------------- */
-  /*                                   States                                   */
-  /* -------------------------------------------------------------------------- */
-  const store = useBasStore();
-  const columns: ColumnProps<IStakingHistoryColumn>[] = [
+const StakingHistory = observer(() => {
+  /* --------------------------------- States --------------------------------- */
+  const [loading, setLoading] = useState(false)
+  const stakingHistory = chainStaking.myStakingHistoryEvents
+  const columns: ColumnProps<Event>[] = [
     {
-      title: "Type",
-      render: (v: IMyTransactionHistory) => {
-        if (v.type === "undelegation") {
-          const epochBlockInterval = +(
-            store.chainInfo?.epochBlockInterval || 0
-          );
-          const transactionBlock = +(v.event?.blockNumber || 0);
-          const nextBlock = store.chainInfo?.nextEpochBlock || 0;
-          const currentBlock = +(store.chainInfo?.blockNumber || 0);
-          const blockTime = store.chainInfo?.blockTime || 0;
+      title: 'Type',
+      key: 'type',
+      render: (v: Event) => {
+        if (v.event === 'Undelegated') {
+          const undelegatedBlock =
+            v.blockNumber + chainConfig.epochBlockInterval
 
-          const targetUndelegateBlock =
-            nextBlock - transactionBlock <= epochBlockInterval
-              ? nextBlock - currentBlock + epochBlockInterval
-              : nextBlock - currentBlock;
+          if (undelegatedBlock < chainConfig.blockNumber)
+            return (
+              <>
+                {v.event} <span style={{ color: 'green' }}>(Done)</span>
+              </>
+            )
 
-          const remain = targetUndelegateBlock * blockTime;
-          const timeRemain = moment
-            .utc(remain * 1000)
-            .format(remain < 3600 ? "mm[m] ss[s]" : "h[h] mm[m] ss[s]");
+          const undelegatedBlockRemain =
+            chainConfig.endBlock -
+            v.blockNumber +
+            chainConfig.epochBlockInterval
+
+          const undelegatedBlockRemainNs =
+            undelegatedBlockRemain * chainConfig.blockSec * 10e8
 
           return (
             <>
-              {v.type.toUpperCase()}{" "}
-              {(nextBlock - transactionBlock) / epochBlockInterval < 2 && (
-                <span style={{ color: "orange" }}>(Ready in {timeRemain})</span>
-              )}
+              {v.event}{' '}
+              <span style={{ color: 'orange' }}>
+                (Ready in {prettyTime(undelegatedBlockRemainNs, 's')})
+              </span>
             </>
-          );
+          )
         }
 
-        return <>{v.type.toUpperCase()}</>;
+        return <>{v.event}</>
       },
     },
     {
-      key: "amount",
-      dataIndex: "amount",
-      title: "Amount",
-      render: (v: number) => (
-        <>
-          {v.toLocaleString(undefined, {
-            minimumFractionDigits: 5,
-            maximumFractionDigits: 5,
-          })}
-        </>
-      ),
-    },
-    {
-      key: "validatorMask",
-      title: "Validator",
-      // responsive: ["sm"],
-      render: (v) => (
-        <div className="items-center column-validator">
-          <img
-            src={v.validatorMask.image}
-            alt={v.validatorMask.name}
-            style={{
-              width: "30px",
-              height: "30px",
-              borderRadius: "50%",
-              border: "1px solid red",
-              marginRight: "0.5rem",
-            }}
+      title: 'Amount',
+      key: 'amount',
+      render: (validator: Event) => {
+        const args = chainStaking.getValidatorEventArgs(validator.args)
+        if (!args) return 0
+        const amount = new BigNumber(args.amount.toString()).div(CHAIN_DECIMAL)
+        return (
+          <CountUpMemo
+            end={amount.toNumber()}
+            duration={1}
+            decimals={5}
+            enableScrollSpy
+            scrollSpyOnce
           />
-          <div>
-            <span>{v.validatorMask.name}</span>
-            <CopyToClipboard text={v.validator}>
-              <CopyOutlined
-                className="copy-clipboard"
-                style={{ paddingLeft: "5px" }}
-              />
-            </CopyToClipboard>
+        )
+      },
+      //   <>
+      //     {v.args}
+      //   </>
+      // ),
+    },
+    {
+      key: 'validator',
+      title: 'Validator',
+      render: (validator: Event) => {
+        const args = chainStaking.getValidatorEventArgs(validator.args)
+        if (!args) return
+        return (
+          <div className="items-center column-validator">
+            <img
+              src={VALIDATOR_WALLETS[args?.validator].image}
+              alt={VALIDATOR_WALLETS[args?.validator].name}
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+                border: '1px solid red',
+                marginRight: '0.5rem',
+              }}
+            />
+            <div>
+              <span>{VALIDATOR_WALLETS[args?.validator].name}</span>
+              <CopyToClipboard text={args?.validator}>
+                <CopyOutlined
+                  className="copy-clipboard"
+                  style={{ paddingLeft: '5px' }}
+                />
+              </CopyToClipboard>
+            </div>
           </div>
-        </div>
-      ),
-    },
-    {
-      key: "event",
-      dataIndex: "event",
-      title: "Block",
-      render: (v) => {
-        return (
-          <a
-            href={`https://exp.${
-              getCurrentEnv() === "jfin" ? "" : "testnet."
-            }jfinchain.com/block/${v.blockNumber}/transactions`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {v.blockNumber}
-          </a>
-        );
+        )
       },
     },
     {
-      key: "event",
-      dataIndex: "event",
-      title: "Hash",
-      render: (v) => {
+      key: 'block',
+      title: 'Block',
+      render: (valdiator: Event) => {
         return (
           <a
             href={`https://exp.${
-              getCurrentEnv() === "jfin" ? "" : "testnet."
-            }jfinchain.com/tx/${v.transactionHash}`}
+              getCurrentEnv() === 'jfin' ? '' : 'testnet.'
+            }jfinchain.com/block/${valdiator.blockNumber}/transactions`}
             target="_blank"
             rel="noreferrer"
           >
-            {[v.transactionHash.slice(0, 5), v.transactionHash.slice(-5)].join(
-              "...."
-            )}
+            {valdiator.blockNumber}
           </a>
-        );
+        )
       },
     },
-  ];
-  /* -------------------------------------------------------------------------- */
-  /*                                   Methods                                  */
-  /* -------------------------------------------------------------------------- */
-  // const fetchChain = async () => {
-  //   const chain = await store.getChainConfig();
-  //   setChainInfo(chain);
-  // };
-  // const inital = useCallback(() => {
-  //   if (!store.isConnected) return;
-  //   const chain = await store.getChainConfig();
-  //   setChainInfo(chain);
+    {
+      key: 'hash',
+      title: 'Hash',
+      render: (validator: Event) => {
+        return (
+          <a
+            href={`https://exp.${
+              getCurrentEnv() === 'jfin' ? '' : 'testnet.'
+            }jfinchain.com/tx/${validator.transactionHash}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {[
+              validator.transactionHash.slice(0, 5),
+              validator.transactionHash.slice(-5),
+            ].join('....')}
+          </a>
+        )
+      },
+    },
+  ]
 
-  //   setInterval(async () => {
-  //     const chain = await store.getChainConfig();
-  //     setChainInfo(chain);
-  //   }, 5000);
-  // }, [store.isConnected]);
+  /* --------------------------------- Methods -------------------------------- */
+  const initial = async () => {
+    setLoading(true)
+    await chainStaking.fetchMyStakingHistory()
+    setLoading(false)
+  }
 
-  /* -------------------------------------------------------------------------- */
-  /*                                   Watches                                  */
-  /* -------------------------------------------------------------------------- */
+  /* --------------------------------- Watches -------------------------------- */
+  useEffect(() => {
+    initial()
+  }, [])
 
-  /* -------------------------------------------------------------------------- */
-  /*                                    DOMS                                    */
-  /* -------------------------------------------------------------------------- */
+  /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="staking-history-container">
       <Table
         columns={columns}
         loading={loading}
-        dataSource={data}
-        pagination={{ size: "small" }}
+        dataSource={stakingHistory}
+        pagination={{ size: 'small' }}
         scroll={{ x: true }}
+        rowKey={(row) => row.transactionHash}
       />
     </div>
-  );
-});
+  )
+})
 
-export default StakingHistory;
+export default StakingHistory

@@ -6,7 +6,7 @@ import {
   runInAction,
 } from "mobx";
 import { Validator, chainAccount, chainStaking, stakingContract } from ".";
-import { BigNumber as $BigNumber, Event, Signer, ethers } from "ethers";
+import { BigNumber as $BigNumber, Event, Signer } from "ethers";
 import { Address } from "abitype";
 import { CHAIN_DECIMAL, VALIDATOR_STATUS_ENUM } from "../chain";
 import { BigNumber } from "bignumber.js";
@@ -62,7 +62,7 @@ export class Staking {
       );
   }
 
-  private getValidatorEventArgs(args?: Result) {
+  public getValidatorEventArgs(args?: Result) {
     if (!args) return;
     const [validator, staker, amount, epoch] = args as [
       validator: Address,
@@ -142,9 +142,12 @@ export class Staking {
 
     // sort considered events
     const sortedEvents = [...stake, ...unstake, ...claim].sort(
-      (prev, curr) => prev.blockNumber - curr.blockNumber
+      (prev, curr) => curr.blockNumber - prev.blockNumber
     );
-    this.myStakingHistoryEvents = sortedEvents;
+
+    runInAction(() => {
+      this.myStakingHistoryEvents = sortedEvents;
+    });
 
     return sortedEvents;
   }
@@ -226,8 +229,10 @@ export class Staking {
         })
       )
     ).filter((v) => !v.totalAmount.isZero() || !v.totalReward.isZero());
+    runInAction(() => {
+      this.myStakingValidators = myValidators;
+    });
 
-    this.myStakingValidators = myValidators;
     return myValidators;
   }
 
