@@ -4,7 +4,7 @@ import {
   WalletOutlined,
 } from '@ant-design/icons'
 import './Assets.css'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { IValidator } from 'jfin-staking-sdk'
 import { observer } from 'mobx-react'
 import JfinCoin from '../../components/JfinCoin/JfinCoin'
@@ -12,7 +12,6 @@ import MyValidators from '../../components/MyValidators/MyValidators'
 import StakingHistory from '../../components/StakingHistory/StakingHistory'
 import { useChainStaking } from '@utils/chain/src/contract'
 import CountUpMemo from '@/components/Countup'
-import BigNumber from 'bignumber.js'
 import { useAccount, useNetwork } from 'wagmi'
 
 export interface IMyValidators {
@@ -30,21 +29,20 @@ const Assets = observer(() => {
   /* -------------------------------------------------------------------------- */
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
-  const chainStaking = useChainStaking()
-  const [totalReward, setTotalReward] = useState<BigNumber>(new BigNumber(0))
   const [loading, setLoading] = useState(false)
+  const chainStaking = useChainStaking()
 
   /* --------------------------------- Methods -------------------------------- */
   const initial = async () => {
     setLoading(true)
-    await chainStaking.getMyStakingValidators()
-    setTotalReward(await chainStaking.getMyTotalReward())
+    await chainStaking.fetchMyStakingValidators()
+    await chainStaking.calcMyTotalReward()
     setLoading(false)
   }
 
   /* --------------------------------- Watches -------------------------------- */
   // on connected or disconnected update myStakingValidators, myStakingHistory
-  useEffect(() => {
+  useMemo(() => {
     initial()
   }, [isConnected, chain?.id])
 
@@ -89,7 +87,7 @@ const Assets = observer(() => {
                 ) : (
                   <>
                     <CountUpMemo
-                      end={chainStaking.myTotalStake.toNumber()}
+                      end={chainStaking.myTotalStake?.toNumber()}
                       decimals={2}
                       duration={1}
                     />
@@ -125,7 +123,7 @@ const Assets = observer(() => {
               ) : (
                 <>
                   <CountUpMemo
-                    end={totalReward.toNumber()}
+                    end={chainStaking.myTotalReward?.toNumber()}
                     decimals={5}
                     duration={1}
                   />
