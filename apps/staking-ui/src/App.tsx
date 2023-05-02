@@ -15,6 +15,7 @@ import { getProvider } from 'wagmi/actions'
 import { useAccount, useNetwork } from 'wagmi'
 
 const Staking = React.lazy(() => import('./pages/Staking/Staking'))
+const StakingRecovery = React.lazy(() => import('./pages/StakingRecovery/StakingRecovery'))
 const Governance = React.lazy(() => import('./pages/Governance/Governance'))
 const Assets = React.lazy(() => import('./pages/Assets/Assets'))
 
@@ -76,6 +77,12 @@ const App = observer(() => {
             <Route key="assets" path="/assets">
               <Assets />
             </Route>
+            <Route
+              key="staking-recovery"
+              exact
+              component={StakingRecovery}
+              path="/staking-recovery"
+            />
           </Suspense>
         </Switch>
       </div>

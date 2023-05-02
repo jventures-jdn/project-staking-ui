@@ -1,5 +1,5 @@
 import { MinusOutlined, PlusOutlined, WalletOutlined } from '@ant-design/icons'
-import { Col, Row } from 'antd'
+import { Col, Row, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
@@ -15,10 +15,14 @@ import { useAccount } from 'wagmi'
 
 interface IValidatorCollapseContentProps {
   validator: Validator
+  forceActionButtonsEnabled?: boolean
 }
 
 const ValidatorCollapseContent = observer(
-  ({ validator }: IValidatorCollapseContentProps) => {
+  ({
+    validator,
+    forceActionButtonsEnabled,
+  }: IValidatorCollapseContentProps) => {
     /* -------------------------------------------------------------------------- */
     /*                                   States                                   */
     /* -------------------------------------------------------------------------- */
@@ -58,6 +62,16 @@ const ValidatorCollapseContent = observer(
         />,
       )
       modalStore.setIsLoading(false)
+    }
+
+    const handleClaimRecovery = async () => {
+      if (!validator) return
+      try {
+        await chainStaking.claimValidatorReward(validator.ownerAddress)
+        message.success('Claim reward was done!')
+      } catch (e: any) {
+        message.error(`Something went wrong ${e.message || ''}`)
+      }
     }
 
     const handleAdd = async () => {
@@ -153,18 +167,30 @@ const ValidatorCollapseContent = observer(
             <div className="validator-collapse-content-card">
               <span className="col-title">Staking Reward</span>
               <div>
-                <div className="value">
-                  <CountUpMemo
-                    end={myStakingReward.toNumber()}
-                    decimals={5}
-                    duration={1}
-                  />
-                  <JfinCoin />
-                </div>
+                {!forceActionButtonsEnabled ? (
+                  <div className="value">
+                    <CountUpMemo
+                      end={myStakingReward.toNumber()}
+                      decimals={5}
+                      duration={1}
+                    />
+                    <JfinCoin />
+                  </div>
+                ) : (
+                  <div>Recovery Reward</div>
+                )}
+
                 <button
                   className="button secondary lg"
-                  disabled={!isConnected || !myStakingReward.toNumber()}
-                  onClick={() => handleClaim()}
+                  disabled={
+                    (!isConnected || !myStakingReward.toNumber()) &&
+                    !forceActionButtonsEnabled
+                  }
+                  onClick={() =>
+                    forceActionButtonsEnabled
+                      ? handleClaimRecovery()
+                      : handleClaim()
+                  }
                   type="button"
                 >
                   Claim
