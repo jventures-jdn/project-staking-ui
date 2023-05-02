@@ -28,16 +28,18 @@ export class Staking {
       unStakeEvents: observable,
       claimEvents: observable,
       myStakingValidators: observable,
+      myTotalReward: observable,
       getAllValidatorEvents: action,
       fetchValidators: action,
       updateValidators: action,
       fetchMyStakingHistory: action,
-      getMyStakingValidators: action,
+      fetchMyStakingValidators: action,
+      calcMyTotalReward: action,
+      myValidators: computed,
       activeValidator: computed,
       jailedValidator: computed,
       pendingValidator: computed,
       totalStake: computed,
-      myValidators: computed,
     });
   }
   /* ------------------------------- Properties ------------------------------- */
@@ -45,9 +47,10 @@ export class Staking {
   public provider: Provider;
   public contract = stakingContract;
   public validators: Validator[];
+  public myTotalReward: BigNumber;
   public myStakingHistoryEvents: Event[];
   public myStakingValidators: Awaited<
-    ReturnType<typeof this.getMyStakingValidators>
+    ReturnType<typeof this.fetchMyStakingValidators>
   >;
   public stakeEvents: Event[];
   public unStakeEvents: Event[];
@@ -55,13 +58,9 @@ export class Staking {
   private validatorEvents: Event[];
 
   /* --------------------------------- Methods -------------------------------- */
-  private isProviderValid() {
-    if (!this.provider)
-      throw new Error(
-        "No wagmi provider found. Ensure you have set up a provider with `setProvider()`"
-      );
-  }
-
+  /* -------------------------------------------------------------------------- */
+  /*                                   Helper                                   */
+  /* -------------------------------------------------------------------------- */
   public getValidatorEventArgs(args?: Result) {
     if (!args) return;
     const [validator, staker, amount, epoch] = args as [
@@ -78,58 +77,104 @@ export class Staking {
     };
   }
 
+  private isProviderValid() {
+    if (!this.provider)
+      throw new Error(
+        "No wagmi provider found. Ensure you have set up a provider with `setProvider()`"
+      );
+  }
+
   public setProvider(provider: Provider) {
     this.provider = provider;
   }
 
-  private async fetchStakeEvents(address?: Address, validator?: Address) {
+  /* -------------------------------------------------------------------------- */
+  /*                                   Fetcher                                  */
+  /* -------------------------------------------------------------------------- */
+  /**
+   * Use for fetch "stake" events from giving wallet or validator address then update result to `stakeEvents`
+   * - When giving wallet address will return events of specific wallet address in all validators.
+   * - When giving validator address will return events of specific validator in all wallet.
+   * - When giving both wallet and validator address will return events from specific wallet and validator address
+   * @param {address} wallet - The wallet address
+   * @param {address} validator - The validator address
+   * @returns Stake events of giving wallet or validator
+   */
+  private async fetchStakeEvents(wallet?: Address, validator?: Address) {
     this.isProviderValid();
+
     const staking = this.contract.connect(this.provider);
     const filter = staking.filters.Delegated(
       validator || null,
-      address || null,
+      wallet || null,
       null,
       null
     );
 
+    // query event
     const query = await staking.queryFilter(filter, "earliest", "latest");
     this.stakeEvents = query;
-
     return query;
   }
 
-  private async fetchUnStakeEvents(address?: Address, validator?: Address) {
+  /**
+   * Use for fetch "un-stake" events from giving wallet or validator address then update result to `unStakeEvents`
+   * - When giving wallet address will return events of specific wallet address in all validators.
+   * - When giving validator address will return events of specific validator in all wallet.
+   * - When giving both wallet and validator address will return events from specific wallet and validator address
+   * @param {address} wallet - The wallet address
+   * @param {address} validator - The validator address
+   * @returns Un-stake events of giving wallet or validator
+   */
+  private async fetchUnStakeEvents(wallet?: Address, validator?: Address) {
     this.isProviderValid();
+
     const staking = this.contract.connect(this.provider);
     const filter = staking.filters.Undelegated(
       validator || null,
-      address || null,
+      wallet || null,
       null,
       null
     );
 
+    // query event
     const query = await staking.queryFilter(filter, "earliest", "latest");
     this.unStakeEvents = query;
-
     return query;
   }
 
-  private async fetchClaimEvents(address?: Address, validator?: Address) {
+  /**
+   * Use for fetch "claim" events from giving wallet or validator address then update result to `claimEvents`
+   * - When giving wallet address will return events of specific wallet address in all validators.
+   * - When giving validator address will return events of specific validator in all wallet.
+   * - When giving both wallet and validator address will return events from specific wallet and validator address
+   * @param {address} wallet - The wallet address
+   * @param {address} validator - The validator address
+   * @returns Claim events of giving wallet or validator
+   */
+  private async fetchClaimEvents(wallet?: Address, validator?: Address) {
     this.isProviderValid();
+
     const staking = this.contract.connect(this.provider);
     const filter = staking.filters.Claimed(
       validator || null,
-      address || null,
+      wallet || null,
       null,
       null
     );
 
+    // query event
     const query = await staking.queryFilter(filter, "earliest", "latest");
     this.claimEvents = query;
-
     return query;
   }
 
+  /**
+   * Use for fetch `stake` `un-stake` `claim` events from user wallet address then update result to `myStakingHistoryEvents`
+   * - If `myStakingHistoryEvents` is already exist this function will skip fetch procress
+   * - If `myStakingHistoryEvents` is empty this function will fetch `fetchStakeEvents()` `fetchUnStakeEvents()` `fetchClaimEvents()`
+   * @returns Events from `stake` `unstake` `claim` included sort event with blocknumber
+   */
   public async fetchMyStakingHistory() {
     const address = chainAccount.account.address;
     if (!address) return (this.myStakingHistoryEvents = []);
@@ -148,14 +193,16 @@ export class Staking {
     runInAction(() => {
       this.myStakingHistoryEvents = sortedEvents;
     });
-
     return sortedEvents;
   }
 
   /**
-   * Get my staking validators from stakeEvents and unStakeEvents
+   * Use for fetch user staking validators from stakeEvents and unStakeEvents
+   * - If not found user wallet return `undefined`
+   * - If `stakeEvents` and `myStakeEvents` not found, this function will fetch `fetchStakeEvents()` and `fetchUnStakeEvents()` otherwise skip.
+   * @returns Sorted (blocknumber) validator event of user wallet with
    */
-  public async getMyStakingValidators() {
+  public async fetchMyStakingValidators() {
     const address = chainAccount.account.address;
     if (!address) {
       this.myStakingValidators = undefined;
@@ -237,65 +284,8 @@ export class Staking {
   }
 
   /**
-   * get added validator events
-   */
-  private async getAddedValidatorEvents() {
-    this.isProviderValid();
-    const staking = this.contract.connect(this.provider);
-    // @ts-ignore
-    const filter = staking.filters.ValidatorAdded();
-    const query = await staking.queryFilter(filter, "earliest", "latest");
-    return query;
-  }
-
-  /**
-   * get removed validator events
-   */
-  private async getRemovedValidatorEvents() {
-    this.isProviderValid();
-    const staking = this.contract.connect(this.provider);
-    // @ts-ignore
-    const filter = staking.filters.ValidatorRemoved();
-    const query = await staking.queryFilter(filter, "earliest", "latest");
-    return query;
-  }
-
-  /**
-   * get jailed validator events
-   */
-  private async getJailedValidatorEvents() {
-    this.isProviderValid();
-    const staking = this.contract.connect(this.provider);
-    // @ts-ignore
-    const filter = staking.filters.ValidatorJailed();
-    const query = await staking.queryFilter(filter, "earliest", "latest");
-    return query;
-  }
-
-  /**
-   * get all validator events
-   */
-  public async getAllValidatorEvents() {
-    this.isProviderValid();
-    const [addedValidators, removedValidators, jailedValidators] =
-      await Promise.all([
-        this.getAddedValidatorEvents(),
-        this.getRemovedValidatorEvents(),
-        this.getJailedValidatorEvents(),
-      ]);
-
-    const validatorEvents = [
-      ...addedValidators,
-      ...removedValidators,
-      ...jailedValidators,
-    ];
-
-    this.validatorEvents = validatorEvents;
-    return validatorEvents;
-  }
-
-  /**
-   * get validator data from giving validator event
+   * Use for fetch validator information from giving validator address and epoch
+   * @returns Validator information
    */
   public async fetchValidator(validatorEvent: Event, epoch: $BigNumber) {
     this.isProviderValid();
@@ -315,7 +305,9 @@ export class Staking {
   }
 
   /**
-   * get all validators data from giving validator events
+   * Use for fetch all validators included validator information from system then update result to `validators`
+   * - This function include state `isFetchingValidators`
+   * @returns All validator information
    */
   public async fetchValidators() {
     this.isProviderValid();
@@ -346,6 +338,100 @@ export class Staking {
       this.isFetchingValidators = false;
     });
     return sortValidators;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Action                                   */
+  /* -------------------------------------------------------------------------- */
+  /**
+   * Use for `claim` reward from giving validator address
+   * - user must be signed in
+   * - update validators from call `updateValidators()` after transaction finished
+   * - update myValidators from call `fetchMyStakingValidators()`  after transaction finished
+   * - update myTotalReward from call `calcMyTotalReward()` after transaction finished
+   * @param validatorAddress validator address
+   * @returns contract receipt
+   */
+  public async claimValidatorReward(validatorAddress: Address) {
+    this.isProviderValid();
+    const signer = await fetchSigner();
+    const staking = this.contract.connect(signer as Signer);
+    const transaction = await staking.claimDelegatorFee(validatorAddress, {
+      gasPrice: $BigNumber.from(GAS_PRICE),
+      gasLimit: $BigNumber.from(GAS_LIMIT_CLAIM),
+    });
+    const receip = await transaction.wait();
+
+    await Promise.all([
+      this.updateValidators(), // update validators
+      this.fetchMyStakingValidators().then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+    ]);
+
+    return receip;
+  }
+
+  /**
+   * Use for `stake` amount of token to giving validator
+   * - user must be signed in
+   * - update validators from call `updateValidators()` after transaction finished
+   * - update myValidators from call `fetchMyStakingValidators()`  after transaction finished
+   * - update myTotalReward from call `calcMyTotalReward()` after transaction finished
+   * @param validatorAddress validator address
+   * @param amount amount of token to stake
+   * @returns contract receipt
+   */
+  public async stakeToValidator(validatorAddress: Address, amount: number) {
+    this.isProviderValid();
+    const signer = await fetchSigner();
+    const staking = this.contract.connect(signer as Signer);
+    const transaction = await staking.delegate(validatorAddress, {
+      gasPrice: $BigNumber.from(GAS_PRICE),
+      value: $BigNumber.from(
+        new BigNumber(amount).multipliedBy(CHAIN_DECIMAL).toString()
+      ),
+    });
+    const receip = await transaction.wait();
+
+    await Promise.all([
+      this.updateValidators(), // update validators
+      this.fetchMyStakingValidators().then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+    ]);
+
+    return receip;
+  }
+
+  /**
+   * Use for `un-stake` amount of token to giving validator
+   * - user must be signed in
+   * - update validators from call `updateValidators()` after transaction finished
+   * - update myValidators from call `fetchMyStakingValidators()`  after transaction finished
+   * - update myTotalReward from call `calcMyTotalReward()` after transaction finished
+   * @param validatorAddress validator address
+   * @param amount amount of token to un-stake
+   * @returns contract receipt
+   */
+  public async unstakeFromValidator(
+    validatorAddress: Address,
+    _amount: number
+  ) {
+    this.isProviderValid();
+    const signer = await fetchSigner();
+    const staking = this.contract.connect(signer as Signer);
+    const amount = $BigNumber.from(
+      BigNumber(_amount).multipliedBy(CHAIN_DECIMAL).toString()
+    );
+
+    const transaction = await staking.undelegate(validatorAddress, amount, {
+      gasPrice: $BigNumber.from(GAS_PRICE),
+    });
+    const receip = await transaction.wait();
+
+    await Promise.all([
+      this.updateValidators(), // update validators
+      this.fetchMyStakingValidators().then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+    ]);
+
+    return receip;
   }
 
   public async updateValidators() {
@@ -383,85 +469,39 @@ export class Staking {
     return sortValidators;
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                                 Calculator                                 */
+  /* -------------------------------------------------------------------------- */
   /**
-   * get user staking reward from giving validator address
+   * Calculate total reward of user then update result to `myTotalReward`
+   * - if `myStakingValidators` this function will return `Bignumber(0)`
+   * - if `myStakingValidators` is empty you may forgot to call `fetchMyStakingValidators()`
+   * @returns Bignumber of user total reward
    */
-  public async getMyStakingRewards(address: Address) {
-    this.isProviderValid();
+  async calcMyTotalReward() {
+    if (!this.myStakingValidators?.length) return BigNumber(0);
+    const promises = [];
 
-    const delegator = chainAccount.account.address;
-    if (!delegator) return BigNumber(0);
-    const staking = this.contract.connect(this.provider);
+    for (const { ownerAddress } of this.myStakingValidators) {
+      promises.push(this.getMyStakingRewards(ownerAddress));
+    }
 
-    const reward = await staking.getDelegatorFee(address, delegator);
-    return BigNumber(reward.toString()).div(CHAIN_DECIMAL);
-  }
-
-  /**
-   * get user staking amount from giving validator address
-   */
-  public async getMyStakingAmount(address: Address) {
-    this.isProviderValid();
-
-    const delegator = chainAccount.account.address;
-    if (!delegator) return BigNumber(0);
-    const staking = this.contract.connect(this.provider);
-
-    const amount = await staking.getValidatorDelegation(address, delegator);
-
-    return BigNumber(amount.delegatedAmount.toString()).div(CHAIN_DECIMAL);
-  }
-
-  public async claimValidatorReward(validatorAddress: Address) {
-    this.isProviderValid();
-    const signer = await fetchSigner();
-    const staking = this.contract.connect(signer as Signer);
-    const transaction = await staking.claimDelegatorFee(validatorAddress, {
-      gasPrice: $BigNumber.from(GAS_PRICE),
-      gasLimit: $BigNumber.from(GAS_LIMIT_CLAIM),
-    });
-    const receip = await transaction.wait();
-    this.updateValidators();
-    return receip;
-  }
-
-  public async stakeToValidator(validatorAddress: Address, amount: number) {
-    this.isProviderValid();
-    const signer = await fetchSigner();
-    const staking = this.contract.connect(signer as Signer);
-    const transaction = await staking.delegate(validatorAddress, {
-      gasPrice: $BigNumber.from(GAS_PRICE),
-      value: $BigNumber.from(
-        new BigNumber(amount).multipliedBy(CHAIN_DECIMAL).toString()
-      ),
-    });
-    const receip = await transaction.wait();
-    this.updateValidators();
-    return receip;
-  }
-
-  public async unstakeFromValidator(
-    validatorAddress: Address,
-    _amount: number
-  ) {
-    this.isProviderValid();
-    const signer = await fetchSigner();
-    const staking = this.contract.connect(signer as Signer);
-    const amount = $BigNumber.from(
-      BigNumber(_amount).multipliedBy(CHAIN_DECIMAL).toString()
+    const total = (await Promise.all(promises)).reduce((total, val) =>
+      total.plus(val)
     );
 
-    const transaction = await staking.undelegate(validatorAddress, amount, {
-      gasPrice: $BigNumber.from(GAS_PRICE),
+    runInAction(() => {
+      this.myTotalReward = total;
     });
-    const receip = await transaction.wait();
-    this.updateValidators();
-    return receip;
+
+    return total;
   }
 
   /**
-   * calculate validator apr from giving validator
-   * *this calc base on sdk library
+   * Calculate validator apr from giving validator
+   * @remark this function base on old sdk library
+   * @param validatorAddress validator address
+   * @returns  apr percentage
    */
   public calcValidatorApr(validatorAddress: Address) {
     const validator = this.validators.find(
@@ -489,8 +529,10 @@ export class Staking {
   }
 
   /**
-   * calculate validator block reward base on validator amount
-   * *this calc base on sdk library
+   * Calculate validator block reward from giving validator length
+   * @remark this function base on old sdk library
+   * @param validatorAddress length of validator
+   * @returns number of blockreward
    */
   public calcValidatorBlockReward(validatorAmount: number) {
     return new BigNumber((28800 * 0.6 * 0.603) / validatorAmount).multipliedBy(
@@ -498,7 +540,104 @@ export class Staking {
     );
   }
 
-  /* --------------------------------- Getters -------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                   Getters                                  */
+  /* -------------------------------------------------------------------------- */
+  /**
+   * Get `added` events of validators
+   * @returns  `added` events of validators
+   */
+  private async getAddedValidatorEvents() {
+    this.isProviderValid();
+    const staking = this.contract.connect(this.provider);
+    // @ts-ignore
+    const filter = staking.filters.ValidatorAdded();
+    const query = await staking.queryFilter(filter, "earliest", "latest");
+    return query;
+  }
+
+  /**
+   * Get `removed` events of validators
+   * @returns  `removed` events of validators
+   */
+  private async getRemovedValidatorEvents() {
+    this.isProviderValid();
+    const staking = this.contract.connect(this.provider);
+    // @ts-ignore
+    const filter = staking.filters.ValidatorRemoved();
+    const query = await staking.queryFilter(filter, "earliest", "latest");
+    return query;
+  }
+
+  /**
+   * Get `jailed` events of validators
+   * @returns  `jailed` events of validators
+   */
+  private async getJailedValidatorEvents() {
+    this.isProviderValid();
+    const staking = this.contract.connect(this.provider);
+    // @ts-ignore
+    const filter = staking.filters.ValidatorJailed();
+    const query = await staking.queryFilter(filter, "earliest", "latest");
+    return query;
+  }
+
+  /**
+   * Get `added` `removed` `jailed` events of validators then update result to `validatorEvents`
+   * @returns  `added` `removed` `jailed` events of validators
+   */
+  public async getAllValidatorEvents() {
+    this.isProviderValid();
+    const [addedValidators, removedValidators, jailedValidators] =
+      await Promise.all([
+        this.getAddedValidatorEvents(),
+        this.getRemovedValidatorEvents(),
+        this.getJailedValidatorEvents(),
+      ]);
+
+    const validatorEvents = [
+      ...addedValidators,
+      ...removedValidators,
+      ...jailedValidators,
+    ];
+
+    this.validatorEvents = validatorEvents;
+    return validatorEvents;
+  }
+
+  /**
+   * Get user staking reward from giving validator address
+   * @param address user wallet address
+   * @returns reward of user staking
+   */
+  public async getMyStakingRewards(address: Address) {
+    this.isProviderValid();
+
+    const delegator = chainAccount.account.address;
+    if (!delegator) return BigNumber(0);
+    const staking = this.contract.connect(this.provider);
+
+    const reward = await staking.getDelegatorFee(address, delegator);
+    return BigNumber(reward.toString()).div(CHAIN_DECIMAL);
+  }
+
+  /**
+   * Get user staking amount from giving validator address
+   * @param address user wallet address
+   * @returns amount of user staking
+   */
+  public async getMyStakingAmount(address: Address) {
+    this.isProviderValid();
+
+    const delegator = chainAccount.account.address;
+    if (!delegator) return BigNumber(0);
+    const staking = this.contract.connect(this.provider);
+
+    const amount = await staking.getValidatorDelegation(address, delegator);
+
+    return BigNumber(amount.delegatedAmount.toString()).div(CHAIN_DECIMAL);
+  }
+
   get activeValidator() {
     if (!this.validators) return [];
 
@@ -537,21 +676,6 @@ export class Staking {
         return total.plus(validator.totalAmount);
       }, new BigNumber(0))
       .div(CHAIN_DECIMAL);
-  }
-
-  async getMyTotalReward() {
-    if (!this.myStakingValidators?.length) return BigNumber(0);
-    const promises = [];
-
-    for (const { ownerAddress } of this.myStakingValidators) {
-      promises.push(this.getMyStakingRewards(ownerAddress));
-    }
-
-    const total = (await Promise.all(promises)).reduce((total, val) =>
-      total.plus(val)
-    );
-
-    return total;
   }
 
   get myValidators() {
