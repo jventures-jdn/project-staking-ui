@@ -4,13 +4,13 @@ import {
   WalletOutlined,
 } from '@ant-design/icons'
 import './Assets.css'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IValidator } from 'jfin-staking-sdk'
 import { observer } from 'mobx-react'
 import JfinCoin from '../../components/JfinCoin/JfinCoin'
 import MyValidators from '../../components/MyValidators/MyValidators'
 import StakingHistory from '../../components/StakingHistory/StakingHistory'
-import { useChainStaking } from '@utils/chain/src/contract'
+import { chainAccount, useChainStaking } from '@utils/chain/src/contract'
 import CountUpMemo from '@/components/Countup'
 import { useAccount, useNetwork } from 'wagmi'
 import BigNumber from 'bignumber.js'
@@ -45,11 +45,12 @@ const Assets = observer(() => {
 
   /* --------------------------------- Watches -------------------------------- */
   // on connected or disconnected update myStakingValidators, myStakingHistory
-  useMemo(() => {
+  useEffect(() => {
+    if (!chainAccount.isReady) return
     initial()
-  }, [isConnected, chain?.id])
+  }, [chainAccount.account.address, chain?.id])
 
-  useMemo(() => {
+  useEffect(() => {
     setMyTotalReward(chainStaking.myTotalReward)
     setMyTotalStake(chainStaking.myTotalStake)
   }, [chainStaking.myStakingValidators, chainStaking.myTotalReward])

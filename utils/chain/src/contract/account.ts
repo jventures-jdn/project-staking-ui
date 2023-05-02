@@ -1,13 +1,14 @@
 import { Provider, fetchBalance, getAccount } from "@wagmi/core";
-import { Address } from "abitype";
 import BigNumber from "bignumber.js";
-import { action, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { CHAIN_DECIMAL } from "../chain";
+import { chainStaking } from ".";
 
 export class Account {
   constructor() {
     makeObservable(this, {
       isFetchingAccount: observable,
+      isReady: observable,
       provider: observable,
       account: observable,
       balance: observable,
@@ -17,6 +18,7 @@ export class Account {
   }
   /* ------------------------------- Properties ------------------------------- */
   public isFetchingAccount: boolean;
+  public isReady: boolean;
   public provider: Provider;
   public account: Awaited<ReturnType<typeof getAccount>>;
   public balance: BigNumber;
@@ -26,7 +28,17 @@ export class Account {
    * get web3 wallet account
    */
   public async getAccount() {
-    this.account = await getAccount();
+    this.isReady = false;
+    const account = await getAccount();
+    if (!account.address) {
+      chainStaking.myStakingHistoryEvents = [];
+      chainStaking.myStakingValidators = [];
+      chainStaking.myTotalReward = BigNumber(0);
+    }
+    runInAction(() => {
+      this.account = account;
+    });
+    this.isReady = true;
     return this.account;
   }
 
@@ -45,6 +57,4 @@ export class Account {
     this.balance = new BigNumber(balance.value.toString()).div(CHAIN_DECIMAL);
     return this.balance;
   }
-
-  /* --------------------------------- Getters -------------------------------- */
 }
