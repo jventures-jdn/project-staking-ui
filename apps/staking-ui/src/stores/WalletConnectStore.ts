@@ -58,7 +58,7 @@ export default class WalletConnectStore {
       connectors: [
         ...w3mConnectors({
           projectId: this.projectId,
-          version: 1,
+          version: 2,
           chains: this.chains,
         }),
       ],

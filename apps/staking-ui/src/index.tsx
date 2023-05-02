@@ -1,20 +1,12 @@
 import { Provider } from 'mobx-react'
-import React, { useEffect } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Web3Modal } from '@web3modal/react'
-import {
-  Chain,
-  WagmiConfig,
-  configureChains,
-  createClient,
-  useConnect,
-  useContract,
-  useClient,
-} from 'wagmi'
-import { getConfig, useWallectConnect } from './stores'
+import { WagmiConfig } from 'wagmi'
+import { useWallectConnect } from './stores'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
 import './index.css'
