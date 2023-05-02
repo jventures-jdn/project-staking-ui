@@ -2,7 +2,7 @@
   "hosting": [
     {
       "target": "mainnet",
-      "public": "build",
+      "public": "dist",
       "cleanUrls": true,
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
@@ -14,7 +14,7 @@
     },
     {
       "target": "testnet",
-      "public": "build",
+      "public": "dist",
       "cleanUrls": true,
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [

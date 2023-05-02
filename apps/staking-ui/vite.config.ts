@@ -10,9 +10,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           wagmi: ['@wagmi/core', 'wagmi'],
-          ethers: ['ethers'],
-          mobx: ['mobx'],
-          antd: ['antd'],
         },
       },
     },

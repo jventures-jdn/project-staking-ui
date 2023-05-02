@@ -56,13 +56,13 @@
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
     "start:jfin": "REACT_APP_ENVIRONMENT=jfin vite preview --port 3000",
-    "start:jfintest": "REACT_APP_ENVIRONMENT=jfintest preview vite --port 3000",
+    "start:jfintest": "REACT_APP_ENVIRONMENT=jfintest vite preview --port 3000",
     "dev:jfin": "REACT_APP_ENVIRONMENT=jfin vite --port 3000",
     "dev:jfintest": "REACT_APP_ENVIRONMENT=jfintest vite --port 3000",
     "build:jfin": "REACT_APP_ENVIRONMENT=jfin vite build",
     "build:jfintest": "REACT_APP_ENVIRONMENT=jfintest pnpm lint && vite build",
-    "deploy-preview:mainnet": "pnpm build:jfin && firebase deploy --only hosting:mainnet",
-    "deploy-preview:testnet": "pnpm build:jfintest && firebase deploy --only hosting:testnet",
+    "deploy-preview:mainnet": "REACT_APP_ENVIRONMENT=jfin pnpm build:jfin && firebase deploy --only hosting:mainnet",
+    "deploy-preview:testnet": "REACT_APP_ENVIRONMENT=jfintest pnpm build:jfintest && firebase deploy --only hosting:testnet",
     "deploy-preview": "pnpm deploy-preview:testnet && pnpm deploy-preview:mainnet",
     "dev": "pnpm start:jfin",
     "build": "pnpm build:jfin"
