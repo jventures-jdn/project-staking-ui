@@ -202,7 +202,9 @@ export class Staking {
    * - If `stakeEvents` and `myStakeEvents` not found, this function will fetch `fetchStakeEvents()` and `fetchUnStakeEvents()` otherwise skip.
    * @returns Sorted (blocknumber) validator event of user wallet with
    */
-  public async fetchMyStakingValidators() {
+  public async fetchMyStakingValidators(
+    options: { force: boolean } = { force: false }
+  ) {
     const address = chainAccount.account.address;
     if (!address) {
       this.myStakingValidators = undefined;
@@ -210,7 +212,7 @@ export class Staking {
     }
 
     // fetch if never stake, un-stake before
-    if (!this.stakeEvents && !this.unStakeEvents) {
+    if ((!this.stakeEvents && !this.unStakeEvents) || options.force) {
       await Promise.all([
         this.fetchStakeEvents(address),
         this.fetchUnStakeEvents(address),
@@ -364,7 +366,9 @@ export class Staking {
 
     await Promise.all([
       this.updateValidators(), // update validators
-      this.fetchMyStakingValidators().then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+      this.fetchMyStakingValidators({ force: true }).then(() =>
+        this.calcMyTotalReward()
+      ), // update total stake (my validators),then update total reward
     ]);
 
     return receip;
@@ -394,7 +398,7 @@ export class Staking {
 
     await Promise.all([
       this.updateValidators(), // update validators
-      this.fetchMyStakingValidators().then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+      this.fetchMyStakingValidators({force: true}).then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
     ]);
 
     return receip;
@@ -428,7 +432,7 @@ export class Staking {
 
     await Promise.all([
       this.updateValidators(), // update validators
-      this.fetchMyStakingValidators().then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+      this.fetchMyStakingValidators({force: true}).then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
     ]);
 
     return receip;

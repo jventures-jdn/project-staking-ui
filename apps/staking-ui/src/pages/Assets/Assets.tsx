@@ -13,6 +13,7 @@ import StakingHistory from '../../components/StakingHistory/StakingHistory'
 import { useChainStaking } from '@utils/chain/src/contract'
 import CountUpMemo from '@/components/Countup'
 import { useAccount, useNetwork } from 'wagmi'
+import BigNumber from 'bignumber.js'
 
 export interface IMyValidators {
   amount: number
@@ -30,6 +31,8 @@ const Assets = observer(() => {
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
   const [loading, setLoading] = useState(false)
+  const [myTotalReward, setMyTotalReward] = useState(BigNumber(0))
+  const [myTotalStake, setMyTotalStake] = useState(BigNumber(0))
   const chainStaking = useChainStaking()
 
   /* --------------------------------- Methods -------------------------------- */
@@ -45,6 +48,11 @@ const Assets = observer(() => {
   useMemo(() => {
     initial()
   }, [isConnected, chain?.id])
+
+  useMemo(() => {
+    setMyTotalReward(chainStaking.myTotalReward)
+    setMyTotalStake(chainStaking.myTotalStake)
+  }, [chainStaking.myStakingValidators, chainStaking.myTotalReward])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
@@ -87,7 +95,7 @@ const Assets = observer(() => {
                 ) : (
                   <>
                     <CountUpMemo
-                      end={chainStaking.myTotalStake?.toNumber()}
+                      end={myTotalStake?.toNumber()}
                       decimals={2}
                       duration={1}
                     />
@@ -123,7 +131,7 @@ const Assets = observer(() => {
               ) : (
                 <>
                   <CountUpMemo
-                    end={chainStaking.myTotalReward?.toNumber()}
+                    end={myTotalReward?.toNumber()}
                     decimals={5}
                     duration={1}
                   />
