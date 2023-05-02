@@ -23,7 +23,7 @@ const Staking = observer(() => {
             activeValidators={chainStaking.activeValidator?.length || 0}
             totalDelegated={chainStaking.totalStake.toNumber()}
             isLoading={chainStaking.isFetchingValidators}
-            totalValidators={chainStaking.validators?.length || 0}
+            totalValidators={chainStaking.activeValidator?.length || 0}
           />
 
           <div id="view-point1">
