@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js'
 import prettyTime from 'pretty-time'
 import { VALIDATOR_WALLETS } from '@/utils/const'
 import { useEffect, useState } from 'react'
+import defaultImage from '../../assets/images/partners/default.png'
 
 const StakingHistory = observer(() => {
   /* --------------------------------- States --------------------------------- */
@@ -85,8 +86,8 @@ const StakingHistory = observer(() => {
         return (
           <div className="items-center column-validator">
             <img
-              src={VALIDATOR_WALLETS[args?.validator].image}
-              alt={VALIDATOR_WALLETS[args?.validator].name}
+              src={VALIDATOR_WALLETS[args?.validator]?.image || defaultImage}
+              alt={VALIDATOR_WALLETS[args?.validator]?.name || args?.validator}
               style={{
                 width: '30px',
                 height: '30px',
@@ -96,7 +97,9 @@ const StakingHistory = observer(() => {
               }}
             />
             <div>
-              <span>{VALIDATOR_WALLETS[args?.validator].name}</span>
+              <span>
+                {VALIDATOR_WALLETS[args?.validator]?.name || args?.validator}
+              </span>
               <CopyToClipboard text={args?.validator}>
                 <CopyOutlined
                   className="copy-clipboard"
