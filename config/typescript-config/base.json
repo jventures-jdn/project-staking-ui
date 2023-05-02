@@ -3,7 +3,6 @@
   "display": "Base TS config",
   "compilerOptions": {
     "composite": false,
-    "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "inlineSources": false,
@@ -14,7 +13,9 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "declarationMap": true,
+    "declaration": true
   },
   "exclude": ["node_modules", "dist", "libs"]
 }
