@@ -45,7 +45,7 @@ export class Staking {
   /* ------------------------------- Properties ------------------------------- */
   public isFetchingValidators: boolean;
   public provider: Provider;
-  public contract = stakingContract;
+  public contract: typeof stakingContract = stakingContract;
   public validators: Validator[];
   public myTotalReward: BigNumber;
   public myStakingHistoryEvents: Event[];
