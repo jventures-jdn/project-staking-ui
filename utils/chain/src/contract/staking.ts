@@ -365,6 +365,7 @@ export class Staking {
     const receip = await transaction.wait();
 
     await Promise.all([
+      chainAccount.fetchBalance(),
       this.updateValidators(), // update validators
       this.fetchMyStakingValidators({ force: true }).then(() =>
         this.calcMyTotalReward()
@@ -397,8 +398,11 @@ export class Staking {
     const receip = await transaction.wait();
 
     await Promise.all([
+      chainAccount.fetchBalance(),
       this.updateValidators(), // update validators
-      this.fetchMyStakingValidators({force: true}).then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+      this.fetchMyStakingValidators({ force: true }).then(() =>
+        this.calcMyTotalReward()
+      ), // update total stake (my validators),then update total reward
     ]);
 
     return receip;
@@ -431,8 +435,11 @@ export class Staking {
     const receip = await transaction.wait();
 
     await Promise.all([
+      chainAccount.fetchBalance(),
       this.updateValidators(), // update validators
-      this.fetchMyStakingValidators({force: true}).then(() => this.calcMyTotalReward()), // update total stake (my validators),then update total reward
+      this.fetchMyStakingValidators({ force: true }).then(() =>
+        this.calcMyTotalReward()
+      ), // update total stake (my validators),then update total reward
     ]);
 
     return receip;

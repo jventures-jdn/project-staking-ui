@@ -15,7 +15,9 @@ import { getProvider } from 'wagmi/actions'
 import { useAccount, useNetwork } from 'wagmi'
 
 const Staking = React.lazy(() => import('./pages/Staking/Staking'))
-const StakingRecovery = React.lazy(() => import('./pages/StakingRecovery/StakingRecovery'))
+const StakingRecovery = React.lazy(
+  () => import('./pages/StakingRecovery/StakingRecovery'),
+)
 const Governance = React.lazy(() => import('./pages/Governance/Governance'))
 const Assets = React.lazy(() => import('./pages/Assets/Assets'))
 
@@ -41,7 +43,7 @@ const App = observer(() => {
     await chainStaking.fetchValidators()
   }
 
-  const initialAccount = async () => {
+  const initialChainAccount = async () => {
     await chainAccount.getAccount()
     await chainAccount.fetchBalance()
   }
@@ -50,12 +52,12 @@ const App = observer(() => {
   useEffect(() => {
     initialChainConfig()
     initialChainStaking()
-    initialAccount()
+    initialChainAccount()
   }, [])
 
   // on connected or disconnected update validators & account
   useMemo(() => {
-    initialAccount()
+    initialChainAccount()
     if (!chainStaking.validators?.length) return
     chainStaking.updateValidators()
   }, [isConnected, chain?.id])
