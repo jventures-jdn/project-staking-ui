@@ -12,7 +12,7 @@ import MyValidators from '../../components/MyValidators/MyValidators'
 import StakingHistory from '../../components/StakingHistory/StakingHistory'
 import { chainAccount, useChainStaking } from '@utils/chain/src/contract'
 import CountUpMemo from '@/components/Countup'
-import { useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 import BigNumber from 'bignumber.js'
 
 export interface IMyValidators {
@@ -28,9 +28,8 @@ const Assets = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const { isConnected } = useAccount()
   const { chain } = useNetwork()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [myTotalReward, setMyTotalReward] = useState(BigNumber(0))
   const [myTotalStake, setMyTotalStake] = useState(BigNumber(0))
   const chainStaking = useChainStaking()
@@ -38,8 +37,10 @@ const Assets = observer(() => {
   /* --------------------------------- Methods -------------------------------- */
   const initial = async () => {
     setLoading(true)
-    await chainStaking.fetchMyStakingValidators()
     await chainStaking.calcMyTotalReward()
+    await chainStaking.fetchMyStakingHistory()
+    setMyTotalReward(chainStaking.myTotalReward)
+    setMyTotalStake(chainStaking.myTotalStake)
     setLoading(false)
   }
 
@@ -47,13 +48,13 @@ const Assets = observer(() => {
   // on connected or disconnected update myStakingValidators, myStakingHistory
   useEffect(() => {
     if (!chainAccount.isReady) return
-    initial()
+    chainStaking.fetchMyStakingValidators()
   }, [chainAccount.account.address, chain?.id])
 
   useEffect(() => {
-    setMyTotalReward(chainStaking.myTotalReward)
-    setMyTotalStake(chainStaking.myTotalStake)
-  }, [chainStaking.myStakingValidators, chainStaking.myTotalReward])
+    if (!chainStaking.myStakingValidators) return
+    initial()
+  }, [chainStaking.myStakingValidators])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
@@ -162,7 +163,7 @@ const Assets = observer(() => {
           </b>
         </div>
         <div className="card-body" id="view-point3">
-          <StakingHistory />
+          <StakingHistory loading={loading} />
         </div>
       </div>
     </div>

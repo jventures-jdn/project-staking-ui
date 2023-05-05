@@ -4,27 +4,17 @@ import { ColumnProps } from 'antd/lib/table'
 import { observer } from 'mobx-react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { getCurrentEnv } from '../../stores'
-import {
-  chainAccount,
-  chainConfig,
-  chainStaking,
-} from '@utils/chain/src/contract'
+import { chainConfig, chainStaking } from '@utils/chain/src/contract'
 import { Event } from 'ethers'
 import { CHAIN_DECIMAL } from '@utils/chain/src/chain'
 import CountUpMemo from '../Countup'
 import BigNumber from 'bignumber.js'
 import prettyTime from 'pretty-time'
 import { VALIDATOR_WALLETS } from '@/utils/const'
-import { useEffect, useState } from 'react'
 import defaultImage from '../../assets/images/partners/default.png'
-import { useNetwork } from 'wagmi'
 
-const StakingHistory = observer(() => {
+const StakingHistory = observer(({ loading }: { loading: boolean }) => {
   /* --------------------------------- States --------------------------------- */
-  const [loading, setLoading] = useState(false)
-  const { chain } = useNetwork()
-  const [stakingHistory, setStakingHistory] =
-    useState<typeof chainStaking.myStakingHistoryEvents>()
   const columns: ColumnProps<Event>[] = [
     {
       title: 'Type',
@@ -153,30 +143,13 @@ const StakingHistory = observer(() => {
     },
   ]
 
-  /* --------------------------------- Methods -------------------------------- */
-  const initial = async () => {
-    setLoading(true)
-    await chainStaking.fetchMyStakingHistory()
-    setLoading(false)
-  }
-
-  /* --------------------------------- Watches -------------------------------- */
-  useEffect(() => {
-    if (!chainAccount.isReady) return
-    initial()
-  }, [chainAccount.account.address, chain?.id])
-
-  useEffect(() => {
-    setStakingHistory(chainStaking.myStakingHistoryEvents)
-  }, [chainStaking.myStakingHistoryEvents])
-
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="staking-history-container">
       <Table
         columns={columns}
         loading={loading}
-        dataSource={stakingHistory}
+        dataSource={chainStaking.myStakingHistoryEvents}
         pagination={{ size: 'small' }}
         scroll={{ x: true }}
         rowKey={(row) => row.transactionHash}
