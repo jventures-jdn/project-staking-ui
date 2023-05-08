@@ -1,22 +1,59 @@
 import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 import logo from '../../assets/images/logo.svg'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
-import { Web3Button } from '@web3modal/react'
+import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../stores'
+import { useAccount } from 'wagmi'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
+  const { isConnected } = useAccount()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
+  const isAuto = !!location.search.includes('auto')
+  const { open } = useWeb3Modal()
 
   /* --------------------------------- Methods -------------------------------- */
   const handleRoute = () => {
     setIsBurgerActive(false)
   }
+
+  const handleAutoAuthen = async () => {
+    await open()
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    const w3mModal = document.querySelector('w3m-modal')
+
+    const w3mModalRouter =
+      w3mModal?.shadowRoot?.querySelector('w3m-modal-router')
+    const w3mConnectWalletView = w3mModalRouter?.shadowRoot?.querySelector(
+      'w3m-connect-wallet-view',
+    )
+    const w3mMobileWalletSelection =
+      w3mConnectWalletView?.shadowRoot?.querySelector(
+        'w3m-android-wallet-selection, w3m-ios-wallet-selection',
+      )
+
+    const w3mModalContent =
+      w3mMobileWalletSelection?.shadowRoot?.querySelector('w3m-modal-content')
+
+    const w3mButtonBig = w3mModalContent
+      ?.querySelector('.w3m-slider')
+      ?.querySelector('w3m-button-big')
+
+    w3mButtonBig?.click()
+  }
+
+  /* --------------------------------- Watches -------------------------------- */
+
+  useEffect(() => {
+    if (!isAuto || isConnected) return
+    handleAutoAuthen()
+  }, [isAuto])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
