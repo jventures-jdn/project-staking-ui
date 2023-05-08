@@ -12,7 +12,7 @@ import MyValidators from '../../components/MyValidators/MyValidators'
 import StakingHistory from '../../components/StakingHistory/StakingHistory'
 import { chainAccount, useChainStaking } from '@utils/chain/src/contract'
 import CountUpMemo from '@/components/Countup'
-import { useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import BigNumber from 'bignumber.js'
 
 export interface IMyValidators {
@@ -29,6 +29,7 @@ const Assets = observer(() => {
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
   const { chain } = useNetwork()
+  const { isConnected } = useAccount()
   const [loading, setLoading] = useState(true)
   const [myTotalReward, setMyTotalReward] = useState(BigNumber(0))
   const [myTotalStake, setMyTotalStake] = useState(BigNumber(0))
@@ -48,6 +49,7 @@ const Assets = observer(() => {
   // on connected or disconnected update myStakingValidators, myStakingHistory
   useEffect(() => {
     if (!chainAccount.isReady) return
+    if (!isConnected) return setLoading(false) // handle not logged in
     chainStaking.fetchMyStakingValidators()
   }, [chainAccount.account.address, chain?.id])
 
