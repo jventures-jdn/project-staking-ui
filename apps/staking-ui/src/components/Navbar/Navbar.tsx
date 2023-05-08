@@ -35,23 +35,28 @@ const Navbar = observer(() => {
     )
     const w3mMobileWalletSelection =
       w3mConnectWalletView?.shadowRoot?.querySelector(
-        'w3m-android-wallet-selection, w3m-ios-wallet-selection',
+        'w3m-android-wallet-selection, w3m-mobile-wallet-selection',
       )
 
     const w3mModalContent =
       w3mMobileWalletSelection?.shadowRoot?.querySelector('w3m-modal-content')
 
-    const w3mButtonBig = w3mModalContent
+    const androidButton = w3mModalContent
       ?.querySelector('.w3m-slider')
       ?.querySelector('w3m-button-big')
 
-    w3mButtonBig?.click()
+    const iosButton = w3mModalContent
+      ?.querySelector('w3m-wallet-button')
+      ?.shadowRoot?.querySelector('button')
+
+    androidButton?.click()
+    iosButton?.click()
   }
 
   /* --------------------------------- Watches -------------------------------- */
 
   useEffect(() => {
-    if (!isAuto || isConnected) return
+    if (isConnected) return
     handleAutoAuthen()
   }, [isAuto])
 
