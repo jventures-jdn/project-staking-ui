@@ -34,7 +34,7 @@ Sentry.init({
 
 const Main = () => {
   /* --------------------------------- States --------------------------------- */
-  const { projectId, ethereumClient, chains, wagmiClient } = useWallectConnect()
+  const { projectId, ethereumClient, wagmiClient } = useWallectConnect()
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
@@ -55,7 +55,17 @@ const Main = () => {
             }}
             chainImages={{ 3501: '/jfin-light.png' }}
             tokenImages={{ JFIN: '/jfin-light.png' }}
-            defaultChain={chains[0]}
+            walletImages={{ join: '/jfin-light.png' }}
+            mobileWallets={[
+              {
+                id: 'join',
+                name: 'Join',
+                links: {
+                  native: '',
+                  universal: 'https://joinwalletdev.page.link',
+                },
+              },
+            ]}
           />
         </Provider>
       </BrowserRouter>

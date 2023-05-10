@@ -56,7 +56,7 @@ const Navbar = observer(() => {
   /* --------------------------------- Watches -------------------------------- */
 
   useEffect(() => {
-    if (isConnected) return
+    if (!isAuto || isConnected) return
     handleAutoAuthen()
   }, [isAuto])
 
