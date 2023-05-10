@@ -1,6 +1,7 @@
 {
   "name": "jfin-staking-monorepo",
   "author": "JVenture Team",
+  "version": "1.0",
   "workspaces": [
     "apps/*",
     "packages/*"

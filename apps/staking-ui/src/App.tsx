@@ -13,6 +13,7 @@ import {
 } from '@utils/chain/src/contract'
 import { getProvider } from 'wagmi/actions'
 import { useAccount, useNetwork } from 'wagmi'
+import Footer from './components/Footer/Footer'
 
 const Staking = React.lazy(() => import('./pages/Staking/Staking'))
 const StakingRecovery = React.lazy(
@@ -88,6 +89,7 @@ const App = observer(() => {
           </Suspense>
         </Switch>
       </div>
+      <Footer />
 
       {process.env.NODE_ENV === 'production' && (
         <CookieConsent
