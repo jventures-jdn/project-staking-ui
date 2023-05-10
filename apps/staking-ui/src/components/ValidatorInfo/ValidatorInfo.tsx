@@ -3,27 +3,27 @@ import { Col, Row } from 'antd'
 import { observer } from 'mobx-react'
 import './ValidatorInfo.css'
 import CountUpMemo from '../Countup'
+import { useChainStaking } from '@utils/chain/src/contract'
 
-interface IValidatorProps {
-  activeValidators: number
-  totalValidators: number
-  totalDelegated: number
-  isLoading: boolean
-}
-
-const ValidatorInfo = observer((props: IValidatorProps) => {
+const ValidatorInfo = observer(() => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
+  const chainStaking = useChainStaking()
+  const loading = chainStaking.isFetchingValidators
+  const activeValidators = chainStaking.activeValidator?.length || 0
+  const totalDelegated = chainStaking.totalStake.toNumber()
+  const totalValidators = chainStaking.activeValidator?.length || 0
+
   return (
     <div className="validator-info-container">
       <Row className="validator-info-wrapper" gutter={[24, 24]}>
         <Col md={12} xs={24}>
           <div>
             <span>Validators</span>
-            {!props.isLoading ? (
+            {!loading ? (
               <b>
-                {props.activeValidators}/{props.totalValidators}
+                {activeValidators}/{totalValidators}
               </b>
             ) : (
               <div>
@@ -35,8 +35,8 @@ const ValidatorInfo = observer((props: IValidatorProps) => {
         <Col md={12} xs={24}>
           <div>
             <span>Bonded Tokens</span>
-            {!props.isLoading ? (
-              <b>{<CountUpMemo end={props.totalDelegated} duration={1} />}</b>
+            {!loading ? (
+              <b>{<CountUpMemo end={totalDelegated} duration={1} />}</b>
             ) : (
               <div>
                 <LoadingOutlined spin />

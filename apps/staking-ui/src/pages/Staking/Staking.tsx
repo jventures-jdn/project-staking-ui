@@ -5,9 +5,8 @@ import { useChainStaking } from '@utils/chain/src/contract'
 import ValidatorInfo from '@/components/ValidatorInfo/ValidatorInfo'
 import Validators from '@/components/Validator/Validators'
 
-const Staking = observer(() => {
+const Staking = () => {
   /* --------------------------------- States --------------------------------- */
-  const chainStaking = useChainStaking()
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
@@ -19,23 +18,15 @@ const Staking = observer(() => {
           </b>
         </div>
         <div className="card-body">
-          <ValidatorInfo
-            activeValidators={chainStaking.activeValidator?.length || 0}
-            totalDelegated={chainStaking.totalStake.toNumber()}
-            isLoading={chainStaking.isFetchingValidators}
-            totalValidators={chainStaking.activeValidator?.length || 0}
-          />
+          <ValidatorInfo />
 
           <div id="view-point1">
-            <Validators
-              validators={chainStaking.activeValidator}
-              loading={chainStaking.isFetchingValidators}
-            />
+            <Validators />
           </div>
         </div>
       </div>
     </div>
   )
-})
+}
 
 export default Staking

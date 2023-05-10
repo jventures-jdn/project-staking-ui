@@ -4,20 +4,21 @@ import './Validators.css'
 import { LoadingOutlined } from '@ant-design/icons'
 import ValidatorCollapseHeader from './ValidatorCollapseHeader'
 import { getCurrentEnv } from '../../stores'
-import { chainStaking } from '@utils/chain/src/contract'
+import { useChainStaking } from '@utils/chain/src/contract'
 import ValidatorCollapseContent from './ValidatorCollapseContent'
 
 interface IValidatorsProps {
-  validators: typeof chainStaking.validators
-  loading: boolean
   forceActionButtonsEnabled?: boolean
 }
 
 const Validators = observer(
-  ({ validators, loading, forceActionButtonsEnabled }: IValidatorsProps) => {
+  ({ forceActionButtonsEnabled }: IValidatorsProps) => {
     /* -------------------------------------------------------------------------- */
     /*                                   States                                   */
     /* -------------------------------------------------------------------------- */
+    const chainStaking = useChainStaking()
+    const validators = chainStaking.activeValidator
+    const loading = chainStaking.isFetchingValidators
     const { Panel } = Collapse
     const loadingValidator = Array.from(
       Array(getCurrentEnv() === 'jfin' ? 7 : 3).keys(),
