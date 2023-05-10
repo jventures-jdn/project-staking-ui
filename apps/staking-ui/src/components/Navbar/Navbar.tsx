@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 import logo from '../../assets/images/logo.svg'
 import { useEffect, useState } from 'react'
-import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
+import { CloseOutlined, LoadingOutlined, MenuOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
@@ -15,6 +15,8 @@ const Navbar = observer(() => {
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
   const isAuto = !!location.search.includes('auto')
+  const [loading, setLoading] = useState(false)
+  const [w3mModal, setW3mModal] = useState<HTMLElement | null>()
   const { open } = useWeb3Modal()
 
   /* --------------------------------- Methods -------------------------------- */
@@ -23,13 +25,22 @@ const Navbar = observer(() => {
   }
 
   const handleAutoAuthen = async () => {
+    setLoading(true)
     await open()
-    await new Promise((resolve) => setTimeout(resolve, 500))
 
+    // modal selector
     const w3mModal = document.querySelector('w3m-modal')
-
     const w3mModalRouter =
       w3mModal?.shadowRoot?.querySelector('w3m-modal-router')
+    setW3mModal(w3mModal)
+
+    // hidden modal
+    w3mModal!.style.visibility = 'hidden'
+
+    // wait content load
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    // content selector
     const w3mConnectWalletView = w3mModalRouter?.shadowRoot?.querySelector(
       'w3m-connect-wallet-view',
     )
@@ -37,10 +48,10 @@ const Navbar = observer(() => {
       w3mConnectWalletView?.shadowRoot?.querySelector(
         'w3m-android-wallet-selection, w3m-mobile-wallet-selection',
       )
-
     const w3mModalContent =
       w3mMobileWalletSelection?.shadowRoot?.querySelector('w3m-modal-content')
 
+    // handle login
     const androidButton = w3mModalContent
       ?.querySelector('.w3m-slider')
       ?.querySelector('w3m-button-big')
@@ -53,20 +64,65 @@ const Navbar = observer(() => {
     iosButton?.click()
   }
 
-  /* --------------------------------- Watches -------------------------------- */
+  const resetAutoAuthen = () => {
+    // wait for animation
+    setTimeout(() => {
+      w3mModal!.style.visibility = 'visible'
+      setLoading(false)
+    }, 300)
+  }
 
+  /* --------------------------------- Watches -------------------------------- */
+  // watch auto authen
   useEffect(() => {
     if (!isAuto || isConnected) return
     handleAutoAuthen()
   }, [isAuto])
 
+  useEffect(() => {
+    if (loading && isConnected) resetAutoAuthen()
+  }, [isConnected])
+
+  // handle timeout
+  useEffect(() => {
+    if (!w3mModal || !loading) return
+    const timeout = setTimeout(() => {
+      resetAutoAuthen()
+    }, 3000)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [loading, w3mModal])
+
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <>
+      {loading && (
+        <div
+          className="shadow-loading"
+          style={{
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            background: '#16191dbf',
+            zIndex: 10,
+            fontSize: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <LoadingOutlined spin />
+        </div>
+      )}
+
       <div className="navbar-container">
         <div className="navbar-wrapper">
           <div className="navbar-brand">
-            <a href="https://jfinchain.com">
+            <a href="https://www.jfincoin.io/">
               <img alt="jfinchain logo" src={logo} />
             </a>
           </div>
