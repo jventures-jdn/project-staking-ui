@@ -5,6 +5,7 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "author": "JVenture Team",
+  "repository": "https://github.com/jventures-jdn/project-staking-ui",
   "license": "MIT",
   "private": true,
   "dependencies": {
@@ -73,5 +74,14 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ]
+  ],
+  "release": {
+    "branches": [
+      "main",
+      {
+        "name": "feat/refactor-core",
+        "prerelease": true
+      }
+    ]
+  }
 }
