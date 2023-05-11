@@ -29,8 +29,7 @@
   },
   "release": {
     "branches": [
-      "main",
-      "feat/refactor-core"
+      "main"
     ]
   }
 }
