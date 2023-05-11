@@ -1,4 +1,4 @@
-@import "antd/dist/antd.css";
+@import 'antd/dist/antd.css';
 
 /*body {*/
 /*  margin: 0;*/
@@ -209,7 +209,7 @@ h1.ant-typography {
   background: var(--S100);
   border-color: var(--S100);
 }
-[class*="ant-btn"] {
+[class*='ant-btn'] {
 }
 
 .ant-btn-background-ghost.ant-btn-primary {
@@ -241,6 +241,11 @@ h1.ant-typography {
   color: var(--SL050);
   border-color: var(--SD010);
 }
+
+.ant-progress-text {
+  color: white !important;
+}
+
 .testnet {
   width: 100%;
   position: relative;

@@ -1,12 +1,12 @@
 {
   "name": "jfin-staking-monorepo",
   "author": "JVenture Team",
-  "version": "1.0",
+  "version": "1.0.0",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
-  "description": "Typescript monorepo",
+  "description": "Staking on JFIN Chain allows everyone to earn rewards.",
   "license": "MIT",
   "private": true,
   "engines": {
