@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     branches:
-      - "*"
+      - "feat/refactor-core"
     # branches:
     #   - main
   # pull_request:
@@ -12,7 +12,6 @@ on:
   #     - closed
 jobs:
   release:
-    # if: ${{ github.event.pull_request.merged }}
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
