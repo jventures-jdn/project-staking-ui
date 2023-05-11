@@ -26,5 +26,14 @@
     "husky": "^8.0.0",
     "prettier": "latest",
     "turbo": "1.6.1"
+  },
+  "release": {
+    "branches": [
+      "main",
+      {
+        "name": "feat/refactor-core",
+        "prerelease": true
+      }
+    ]
   }
 }
