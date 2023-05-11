@@ -30,10 +30,7 @@
   "release": {
     "branches": [
       "main",
-      {
-        "name": "feat/refactor-core",
-        "prerelease": true
-      }
+      "feat/refactor-core"
     ]
   }
 }
