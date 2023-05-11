@@ -12,7 +12,7 @@ import { Progress } from 'antd'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
-  const defaultLoadingDuration = 5000
+  const defaultLoadingDuration = 7000
   const { isConnected } = useAccount()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
@@ -20,7 +20,6 @@ const Navbar = observer(() => {
   const [loading, setLoading] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
   const [progress, setProgress] = useState(0)
-  const [w3mModal, setW3mModal] = useState<HTMLElement | null>()
   const [loadingDuration, setLoadingDuration] = useState(defaultLoadingDuration)
   const [loadingText, setLoadingText] = useState('Loading...')
   const { open } = useWeb3Modal()
@@ -38,7 +37,6 @@ const Navbar = observer(() => {
     const w3mModal = document.querySelector('w3m-modal')
     const w3mModalRouter =
       w3mModal?.shadowRoot?.querySelector('w3m-modal-router')
-    setW3mModal(w3mModal)
 
     // hidden modal
     w3mModal!.style.visibility = 'hidden'
@@ -73,8 +71,8 @@ const Navbar = observer(() => {
   const resetAutoAuthen = () => {
     // wait for animation
     setTimeout(() => {
-      w3mModal!.style.visibility = 'visible'
       setLoading(false)
+      document.querySelector('w3m-modal')!.style.visibility = 'visible'
     }, 300)
   }
 
@@ -89,13 +87,14 @@ const Navbar = observer(() => {
   useEffect(() => {
     if (loading && isConnected) {
       setLoadingText('Logged In')
-      setLoadingDuration(1000)
+      setLoadingDuration(500)
       setProgressStep(100)
     }
   }, [isConnected])
 
   useMemo(async () => {
-    if (progress === 100) return resetAutoAuthen()
+    console.log(progress)
+    if (progress >= 100) return resetAutoAuthen()
     if (loadingDuration === defaultLoadingDuration && progress >= 75)
       setLoadingText('Please manually select wallet')
     if (progress >= progressStep) return
