@@ -1,22 +1,28 @@
 import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 import logo from '../../assets/images/logo.svg'
-import { useEffect, useState } from 'react'
-import { CloseOutlined, LoadingOutlined, MenuOutlined } from '@ant-design/icons'
+import { useEffect, useMemo, useState } from 'react'
+import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../stores'
 import { useAccount } from 'wagmi'
+import { Progress } from 'antd'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
+  const defaultLoadingDuration = 5000
   const { isConnected } = useAccount()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
   const isAuto = !!location.search.includes('auto')
   const [loading, setLoading] = useState(false)
+  const [progressStep, setProgressStep] = useState(0)
+  const [progress, setProgress] = useState(0)
   const [w3mModal, setW3mModal] = useState<HTMLElement | null>()
+  const [loadingDuration, setLoadingDuration] = useState(defaultLoadingDuration)
+  const [loadingText, setLoadingText] = useState('Loading...')
   const { open } = useWeb3Modal()
 
   /* --------------------------------- Methods -------------------------------- */
@@ -77,23 +83,26 @@ const Navbar = observer(() => {
   useEffect(() => {
     if (!isAuto || isConnected) return
     handleAutoAuthen()
+    setProgressStep(100)
   }, [isAuto])
 
   useEffect(() => {
-    if (loading && isConnected) resetAutoAuthen()
+    if (loading && isConnected) {
+      setLoadingText('Logged In')
+      setLoadingDuration(1000)
+      setProgressStep(100)
+    }
   }, [isConnected])
 
-  // handle timeout
-  useEffect(() => {
-    if (!w3mModal || !loading) return
-    const timeout = setTimeout(() => {
-      resetAutoAuthen()
-    }, 3000)
+  useMemo(async () => {
+    if (progress === 100) return resetAutoAuthen()
+    if (loadingDuration === defaultLoadingDuration && progress >= 75)
+      setLoadingText('Please manually select wallet')
+    if (progress >= progressStep) return
 
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [loading, w3mModal])
+    await new Promise((resolve) => setTimeout(resolve, loadingDuration / 100))
+    setProgress(progress + 1)
+  }, [progressStep, progress])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
@@ -109,13 +118,27 @@ const Navbar = observer(() => {
             bottom: 0,
             background: '#16191dbf',
             zIndex: 10,
-            fontSize: '30px',
+
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <LoadingOutlined spin />
+          <div>
+            <Progress
+              style={{
+                fontSize: '30px',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+              type="circle"
+              percent={progress}
+              strokeColor={{ '0%': '#c60000', '100%': '#2e3338' }}
+            />
+            <div style={{ textAlign: 'center', paddingTop: '10px' }}>
+              {loadingText}
+            </div>
+          </div>
         </div>
       )}
 
