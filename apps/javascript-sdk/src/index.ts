@@ -33,7 +33,7 @@ export class BasSdk {
       const keyProvider = new KeyProvider(this.config);
       const httpProvider = new Web3.providers.HttpProvider(this.config.rpcUrl);
       const web3 = new Web3(httpProvider);
-      // await keyProvider.connect(web3, true, address);
+      await keyProvider.connect(web3, true, address);
 
       // if detect inject provider
       if (window.ethereum) {

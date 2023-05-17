@@ -16,16 +16,19 @@
     "bignumber.js": "^9.0.2",
     "pretty-time": "^1.1.0",
     "web3": "^1.7.1",
+    "web3-core": "^1.10.0",
     "web3-eth-contract": "^1.7.1",
     "web3-utils": "^1.7.1"
   },
   "devDependencies": {
     "@config/eslint-config": "workspace:*",
     "@config/typescript-config": "workspace:*",
-    "@types/jest": "^29.5.1"
+    "@types/jest": "^29.5.1",
+    "typescript": "^5.0.4"
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
-    "start": "tsc -w --preserveWatchOutput"
+    "start": "tsc -w --preserveWatchOutput",
+    "build": "tsc --build"
   }
 }

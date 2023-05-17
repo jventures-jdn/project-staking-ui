@@ -64,11 +64,11 @@ export class KeyProvider implements IKeyProvider {
     if (remoteChainId != this.config.chainId) {
       await waitForExpectedNetworkOrThrow(web3, this.config);
     }
-    this.accounts = address ? [address] : undefined;
+    // this.accounts = address ? [address] : undefined;
     // init web3 state
-    if (!withoutWallet) {
-      this.accounts = await this.unlockAccounts(web3);
-    }
+    // if (!withoutWallet) {
+    //   this.accounts = await this.unlockAccounts(web3);
+    // }
     this.web3 = web3;
     // init system smart contracts
     // addresses
