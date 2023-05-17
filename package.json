@@ -1,6 +1,6 @@
 {
   "name": "jfin-staking-monorepo",
-  "author": "JVenture Team",
+  "author": "J Ventures Co., Ltd.",
   "version": "1.0.0",
   "workspaces": [
     "apps/*",
