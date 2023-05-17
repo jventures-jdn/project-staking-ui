@@ -136,7 +136,7 @@ export class KeyProvider implements IKeyProvider {
       console.error(e);
       throw new Error("User denied access to account");
     }
-    console.log(`Unlocked accounts: ${unlockedAccounts}`);
+    // console.log(`Unlocked accounts: ${unlockedAccounts}`);
     if (!unlockedAccounts.length || !unlockedAccounts[0]) {
       throw new Error("Unable to detect unlocked MetaMask account");
     }

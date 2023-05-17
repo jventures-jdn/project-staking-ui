@@ -33,7 +33,7 @@ export const tryAddMetaMaskNetwork = async (
   config: IConfig
 ): Promise<boolean> => {
   try {
-    console.log(`Trying to switch MetaMask network to: ${config.chainId}`);
+    // console.log(`Trying to switch MetaMask network to: ${config.chainId}`);
     await web3.givenProvider.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: numberToHex(config.chainId) }],
@@ -43,7 +43,7 @@ export const tryAddMetaMaskNetwork = async (
     console.error(switchError);
   }
   try {
-    console.log(`Trying to add MetaMask network to: ${config.chainId}`);
+    // console.log(`Trying to add MetaMask network to: ${config.chainId}`);
     await web3.givenProvider.request({
       method: "wallet_addEthereumChain",
       params: [
@@ -81,12 +81,12 @@ export const sendTransactionAsync = async (
   }
 ): Promise<IPendingTx> => {
   const price = sendOptions.gasPrice || (await web3.eth.getGasPrice());
-  console.log("Gas Price: " + price);
+  // console.log("Gas Price: " + price);
   let nonce = sendOptions.nonce;
   if (!nonce) {
     nonce = await web3.eth.getTransactionCount(sendOptions.from);
   }
-  console.log("Nonce: " + nonce);
+  // console.log("Nonce: " + nonce);
   const chainId = await web3.eth.getChainId();
 
   // declear gasLimit from parameter or estimate
@@ -110,12 +110,12 @@ export const sendTransactionAsync = async (
     chainId: chainId,
   };
 
-  console.log("Sending transaction via Web3: ", tx);
+  // console.log("Sending transaction via Web3: ", tx);
   return new Promise((resolve, reject) => {
     const promise = web3.eth.sendTransaction(tx);
     promise
       .once("transactionHash", async (transactionHash: string) => {
-        console.log(`Just signed transaction has is: ${transactionHash}`);
+        // console.log(`Just signed transaction has is: ${transactionHash}`);
         const rawTx = await web3.eth.getTransaction(transactionHash);
         console.log(
           `Found transaction in node: `,

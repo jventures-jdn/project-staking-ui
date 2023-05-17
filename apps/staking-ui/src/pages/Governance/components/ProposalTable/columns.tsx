@@ -100,8 +100,8 @@ export const createTableColumns = (store: BasStore): ColumnProps<any>[] => {
                     .getBasSdk()
                     .getGovernance()
                     .voteForProposal(event.id);
-                  console.log(transactionHash);
-                  console.log(await receipt);
+                  // console.log(transactionHash);
+                  // console.log(await receipt);
                 }}
               >
                 Vote For
@@ -113,8 +113,8 @@ export const createTableColumns = (store: BasStore): ColumnProps<any>[] => {
                     .getBasSdk()
                     .getGovernance()
                     .voteAgainstProposal(event.id);
-                  console.log(transactionHash);
-                  console.log(await receipt);
+                  // console.log(transactionHash);
+                  // console.log(await receipt);
                 }}
               >
                 Vote Against

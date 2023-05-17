@@ -77,7 +77,7 @@ export class Staking {
 
   public async getActiveValidatorsAddresses(): Promise<Web3Address[]> {
     const result = await this.keyProvider.stakingContract!.methods.getValidators().call()
-    console.log(`Active Validator Set: ${result}`);
+    // console.log(`Active Validator Set: ${result}`);
     return result
   }
 

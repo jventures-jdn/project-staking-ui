@@ -39,7 +39,7 @@ export const delegate = async (
       .getStaking()
       .delegateTo(validator, `${bigAmount}`)
     const receipt = await result.receipt
-    console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
+    // console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
 
     message.success('Delegating was done!')
   } catch {
@@ -73,7 +73,7 @@ export const undelegate = async (
       .undelegateFrom(validator, `${bigAmount}`)
 
     const receipt = await result.receipt
-    console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
+    // console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
 
     message.success('Undelegating was done!')
   } catch (e) {
@@ -87,14 +87,14 @@ export const claimRewards = async (
   validator: string,
 ): Promise<void> => {
   try {
-    console.log(`Claiming validator fee: ${validator}`)
+    // console.log(`Claiming validator fee: ${validator}`)
     const result = await store
       .getBasSdk()
       .getStaking()
       .claimDelegatorFee(validator)
 
     const receipt = await result.receipt
-    console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
+    // console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
 
     message.success('Claim was done!')
   } catch (e) {
@@ -108,14 +108,14 @@ export const releaseFromJail = async (
   validator: string,
 ): Promise<void> => {
   try {
-    console.log(`Releasing validator from jail: ${validator}`)
+    // console.log(`Releasing validator from jail: ${validator}`)
     const result = await store
       .getBasSdk()
       .getStaking()
       .releaseValidatorFromJail(validator)
 
     const receipt = await result.receipt
-    console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
+    // console.log(`Receipt: ${JSON.stringify(receipt, null, 2)}`)
 
     message.success('Release is done!')
   } catch (e) {

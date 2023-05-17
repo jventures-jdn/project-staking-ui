@@ -48,7 +48,7 @@ export const GovernanceNav = observer((): ReactElement => {
       ) : (
         <div>
           <ProposalTable />
-          <Button
+          {/* <Button
             icon={<PlusOutlined translate="yes" />}
             size="large"
             style={{ margin: 10 }}
@@ -58,7 +58,7 @@ export const GovernanceNav = observer((): ReactElement => {
             }}
           >
             Create Proposal
-          </Button>
+          </Button> */}
         </div>
       )}
     </div>
