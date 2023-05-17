@@ -75,8 +75,6 @@ const modalStore = new ModalStore()
 const walletConnectStore = new WalletConnectStore(config)
 
 basStore.connectProvider()
-basStore.listenAccountChange()
-basStore.listenChainChange()
 
 export const getCurrentEnv = () => {
   return currentEnvironment

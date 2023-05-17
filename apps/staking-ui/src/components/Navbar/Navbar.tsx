@@ -93,7 +93,6 @@ const Navbar = observer(() => {
   }, [isConnected])
 
   useMemo(async () => {
-    console.log(progress)
     if (progress >= 100) return resetAutoAuthen()
     if (loadingDuration === defaultLoadingDuration && progress >= 75)
       setLoadingText('Please manually select wallet')
