@@ -10,7 +10,8 @@
         ],
         "testnet": [
           "jfin-staking-preview-testnet"
-        ]
+        ],
+        "governance": ["jfin-staking-governance-mainnet"]
       }
     }
   }
