@@ -6,9 +6,15 @@
     "jfin-staking-ui": {
       "hosting": {
         "mainnet": [
-          "jfin-staking-preview-mainnet"
+          "jfin-staking-mainnet"
         ],
         "testnet": [
+          "jfin-staking-testnet"
+        ],
+        "preview:mainnet": [
+          "jfin-staking-preview-mainnet"
+        ],
+        "preview:testnet": [
           "jfin-staking-preview-testnet"
         ]
       }
