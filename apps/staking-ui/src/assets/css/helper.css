@@ -12,6 +12,11 @@
   justify-content: center;
 }
 
+.justify-end {
+  display: flex;
+  justify-content: end;
+}
+
 .justify-between {
   display: flex;
   justify-content: space-between;

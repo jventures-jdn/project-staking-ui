@@ -120,7 +120,6 @@ const Navbar = observer(() => {
             bottom: 0,
             background: '#16191dbf',
             zIndex: 10,
-
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -198,27 +197,32 @@ const Navbar = observer(() => {
 
           <div className="navbar-wallet">
             <div style={{ marginRight: 'auto' }}>
-              {!isExpectChain && isConnected && (
-                <div
-                  style={{
-                    marginRight: '1rem',
-                    color: '#fa8c16',
-                    fontSize: '13px',
-                  }}
-                >
-                  <WarningOutlined style={{ paddingRight: '0.5rem' }} />
-                  <span>
-                    Please switch chain to{' '}
-                    <b
-                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                      onClick={() => switchChain()}
-                    >
-                      ({EXPECT_CHAIN.chainName})
-                    </b>
-                  </span>
-                </div>
-              )}
-              <Web3Button />
+              <div className="justify-end items-center">
+                {!isExpectChain && isConnected && (
+                  <div
+                    style={{
+                      marginRight: '1rem',
+                      color: '#fa8c16',
+                      fontSize: '13px',
+                    }}
+                  >
+                    <WarningOutlined style={{ paddingRight: '0.5rem' }} />
+                    <span>
+                      Please switch chain to{' '}
+                      <b
+                        style={{
+                          cursor: 'pointer',
+                          textDecoration: 'underline',
+                        }}
+                        onClick={() => switchChain()}
+                      >
+                        ({EXPECT_CHAIN.chainName})
+                      </b>
+                    </span>
+                  </div>
+                )}
+                <Web3Button />
+              </div>
             </div>
           </div>
 
