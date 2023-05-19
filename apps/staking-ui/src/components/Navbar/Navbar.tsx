@@ -2,18 +2,21 @@ import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 import logo from '../../assets/images/logo.svg'
 import { useEffect, useMemo, useState } from 'react'
-import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
+import { CloseOutlined, MenuOutlined, WarningOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
-import { getCurrentEnv } from '../../stores'
-import { useAccount } from 'wagmi'
+import { getCurrentEnv, useWallectConnect } from '../../stores'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import { Progress } from 'antd'
+import { EXPECT_CHAIN } from '@utils/chain/src/chain'
+import { switchChain } from '@utils/chain/src/utils/wallet'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const defaultLoadingDuration = 7000
   const { isConnected } = useAccount()
+  const { chain } = useNetwork()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
   const isAuto = !!location.search.includes('auto')
@@ -23,6 +26,9 @@ const Navbar = observer(() => {
   const [loadingDuration, setLoadingDuration] = useState(defaultLoadingDuration)
   const [loadingText, setLoadingText] = useState('Loading...')
   const { open } = useWeb3Modal()
+  const isExpectChain = chain?.id === EXPECT_CHAIN.chainId
+  const network = useSwitchNetwork({ chainId: EXPECT_CHAIN.chainId })
+  const { webSockerProvider } = useWallectConnect()
 
   /* --------------------------------- Methods -------------------------------- */
   const handleRoute = () => {
@@ -192,8 +198,33 @@ const Navbar = observer(() => {
             )}
           </div>
 
-          <div className="navbar-wallet">
-            <Web3Button />
+          <div
+            className="navbar-wallet"
+            style={{ display: 'flex', justifyContent: 'end' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {!isExpectChain && isConnected && (
+                <div
+                  style={{
+                    marginRight: '1rem',
+                    color: '#fa8c16',
+                    fontSize: '13px',
+                  }}
+                >
+                  <WarningOutlined style={{ paddingRight: '0.5rem' }} />
+                  <span>
+                    Please switch chain to{' '}
+                    <b
+                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                      onClick={() => switchChain()}
+                    >
+                      ({EXPECT_CHAIN.chainName})
+                    </b>
+                  </span>
+                </div>
+              )}
+              <Web3Button />
+            </div>
           </div>
 
           <div className={`navbar-burger ${isBurgerActive && 'active'}`}>

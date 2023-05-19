@@ -53,8 +53,11 @@ const Main = () => {
               '--w3m-accent-fill-color': '#fff',
               '--w3m-background-color': ' #0b0d0f',
             }}
-            chainImages={{ 3501: '/jfin-light.png' }}
-            tokenImages={{ JFIN: '/jfin-light.png' }}
+            chainImages={{ 3501: '/jfin-light.png', 3502: 'jfin-light.png' }}
+            tokenImages={{
+              JFIN: '/jfin-light.png',
+              'JFIN Testnet': 'jfin-light.png',
+            }}
             walletImages={{ join: '/jfin-light.png' }}
             mobileWallets={[
               {

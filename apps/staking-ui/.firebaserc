@@ -10,12 +10,6 @@
         ],
         "testnet": [
           "jfin-staking-testnet"
-        ],
-        "preview:mainnet": [
-          "jfin-staking-preview-mainnet"
-        ],
-        "preview:testnet": [
-          "jfin-staking-preview-testnet"
         ]
       }
     }

@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          wagmi: ['@wagmi/core', 'wagmi'],
+          wagmi: ['wagmi'],
         },
       },
     },

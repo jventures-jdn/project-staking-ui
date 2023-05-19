@@ -1,7 +1,5 @@
 import './Staking.css'
 import { LockOutlined } from '@ant-design/icons'
-import { observer } from 'mobx-react'
-import { useChainStaking } from '@utils/chain/src/contract'
 import ValidatorInfo from '@/components/ValidatorInfo/ValidatorInfo'
 import Validators from '@/components/Validator/Validators'
 
@@ -20,7 +18,7 @@ const Staking = () => {
         <div className="card-body">
           <ValidatorInfo />
 
-          <div id="view-point1">
+          <div id="view-point1" style={{ paddingTop: '2rem' }}>
             <Validators />
           </div>
         </div>

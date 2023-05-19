@@ -15,6 +15,6 @@
     "turbo/no-undeclared-env-vars": "off",
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-empty-function": "warn",
-    "@typescript-eslint/ban-ts-comment": "warn"
+    "@typescript-eslint/ban-ts-comment": "off"
   }
 }

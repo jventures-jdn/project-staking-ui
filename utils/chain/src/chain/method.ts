@@ -27,7 +27,7 @@ export const getChainExplorer = (chain: Chain) => {
 export const getChain = (chain: Chain) => {
   return {
     chainId: CHAIN_ID[chain],
-    chainName: CHAIN_NAME[chain],
+    chainName: CHAIN_NAME[chain] as Chain,
     chainRpc: CHAIN_RPC[chain],
     chainExplorer: getChainExplorer(chain),
   };

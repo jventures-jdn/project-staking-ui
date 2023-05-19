@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { getChain } from "./method";
 
 /* ---------------------- Contract address declearation --------------------- */
 export const STAKING_ADDRESS = "0x0000000000000000000000000000000000001000";
@@ -17,6 +18,7 @@ export const DEPLOYER_PROXY_ADDRESS =
   "0x0000000000000000000000000000000000007005";
 
 /* ----------------------- Chain property declearation ---------------------- */
+
 export const CHAIN_EXPLORER: { [key in Chain]?: string } = {
   JFIN: "https://exp.jfinchain.com/",
   JFINT: "https://exp.testnet.jfinchain.com",
@@ -33,9 +35,14 @@ export const CHAIN_ID: { [key in Chain]?: number } = {
 };
 
 export const CHAIN_NAME: { [key in Chain]?: string } = {
-  JFIN: "JFIN Mainnet",
+  JFIN: "JFIN",
   JFINT: "JFIN Testnet",
 };
+
+export const EXPECT_CHAIN =
+  process.env.REACT_APP_ENVIRONMENT === "jfintest"
+    ? getChain("JFINT")
+    : getChain("JFIN");
 
 /* ------------------------- Chain type declearation ------------------------ */
 export type Chain = "JFIN" | "JFINT";

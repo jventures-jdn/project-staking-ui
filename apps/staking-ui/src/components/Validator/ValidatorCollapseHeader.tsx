@@ -56,6 +56,13 @@ const ValidatorCollapseHeader = observer(
     /* -------------------------------------------------------------------------- */
     useEffect(() => {
       inital()
+
+      return () => {
+        setLoading(false)
+        setApr(0)
+        setMyStakingAmount(BigNumber(0))
+        setMyStakingReward(BigNumber(0))
+      }
     }, [])
 
     /* -------------------------------------------------------------------------- */

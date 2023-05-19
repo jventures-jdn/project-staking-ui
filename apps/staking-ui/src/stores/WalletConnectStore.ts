@@ -1,50 +1,86 @@
-import { Chain, configureChains, createClient } from 'wagmi'
+import { Chain, configureChains, createClient, goerli } from 'wagmi'
+import {
+  arbitrum,
+  avalanche,
+  bsc,
+  fantom,
+  mainnet,
+  polygon,
+} from 'wagmi/chains'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
-import { IConfig } from 'jfin-staking-sdk'
-import { CHAIN_DECIMAL_UNIT } from '@utils/chain/src/chain'
+import {
+  CHAIN_DECIMAL_UNIT,
+  CHAIN_EXPLORER,
+  CHAIN_ID,
+  CHAIN_NAME,
+  CHAIN_RPC,
+} from '@utils/chain/src/chain'
 
 export default class WalletConnectStore {
-  private readonly config
   public chains
-  public wagmiClient: any
+  public wagmiClient
+  public webSockerProvider: ReturnType<typeof this.configure.webSocketProvider>
   public configure: ReturnType<typeof configureChains>
-  public jsonRpcProvider: ReturnType<typeof this.configure.provider>
   public ethereumClient
 
   public projectId =
     process.env.REACT_APP_PROJECT_ID || '2dc0abd48b692cc1375af974f7533524'
 
-  constructor(_config: IConfig) {
+  constructor() {
     makeAutoObservable(this)
-    this.config = _config
 
     // 1. Init jfin chain
     this.chains = [
+      // JFIN
       {
-        id: _config.chainId,
-        name: _config.chainName,
-        network: _config.chainName,
+        id: CHAIN_ID.JFIN,
+        name: CHAIN_NAME.JFIN,
+        network: CHAIN_NAME.JFIN,
         nativeCurrency: {
           decimals: CHAIN_DECIMAL_UNIT,
-          name: _config.chainName,
-          symbol: _config.chainName,
+          name: CHAIN_NAME.JFIN,
+          symbol: CHAIN_NAME.JFIN,
         },
         rpcUrls: {
-          public: { http: [_config.rpcUrl] },
-          default: { http: [_config.rpcUrl] },
+          public: { http: [CHAIN_RPC.JFIN] },
+          default: { http: [CHAIN_RPC.JFIN] },
         },
         blockExplorers: {
-          etherscan: {
-            name: 'BlockScout',
-            url: _config.explorerConfig?.homePage || '',
-          },
           default: {
             name: 'BlockScout',
-            url: _config.explorerConfig?.homePage || '',
+            url: CHAIN_EXPLORER.JFIN,
           },
         },
       },
+      // JFIN Test
+      {
+        id: CHAIN_ID.JFINT,
+        name: CHAIN_NAME.JFINT,
+        network: CHAIN_NAME.JFINT,
+        nativeCurrency: {
+          decimals: CHAIN_DECIMAL_UNIT,
+          name: CHAIN_NAME.JFINT,
+          symbol: CHAIN_NAME.JFINT,
+        },
+        rpcUrls: {
+          public: { http: [CHAIN_RPC.JFINT] },
+          default: { http: [CHAIN_RPC.JFINT] },
+        },
+        blockExplorers: {
+          default: {
+            name: 'BlockScout',
+            url: CHAIN_EXPLORER.JFINT,
+          },
+        },
+      },
+      mainnet,
+      bsc,
+      polygon,
+      arbitrum,
+      avalanche,
+      fantom,
+      goerli,
     ] as Chain[]
 
     // 2. Get configure from configureChains
@@ -67,9 +103,6 @@ export default class WalletConnectStore {
     })
 
     this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains)
-    this.jsonRpcProvider = this.configure.provider({
-      chainId: this.config.chainId,
-    })
   }
 
   /* -------------------------------------------------------------------------- */

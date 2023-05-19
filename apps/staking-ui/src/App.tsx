@@ -24,12 +24,13 @@ const Assets = React.lazy(() => import('./pages/Assets/Assets'))
 
 const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
+
   const chainConfig = useChainConfig()
   const chainStaking = useChainStaking()
   const chainAccount = useChainAccount()
   const provider = getProvider()
   const { chain } = useNetwork()
-  const { isConnected } = useAccount()
+  const { address } = useAccount()
 
   /* --------------------------------- Methods -------------------------------- */
   const initialChainConfig = async () => {
@@ -49,19 +50,27 @@ const App = observer(() => {
     await chainAccount.fetchBalance()
   }
 
+  const initialOldProvider = async () => {
+    // basStore.connectProvider()
+    // basStore.listenAccountChange()
+    // basStore.listenChainChange()
+  }
+
   /* --------------------------------- Watches -------------------------------- */
   useEffect(() => {
     initialChainConfig()
     initialChainStaking()
     initialChainAccount()
+    initialOldProvider()
   }, [])
 
   // on connected or disconnected update validators & account
   useMemo(() => {
     initialChainAccount()
     if (!chainStaking.validators?.length) return
+    chainStaking.setProvider(provider)
     chainStaking.updateValidators()
-  }, [isConnected, chain?.id])
+  }, [address, chain?.id])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (

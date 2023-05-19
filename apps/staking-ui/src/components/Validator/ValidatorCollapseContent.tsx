@@ -99,6 +99,12 @@ const ValidatorCollapseContent = observer(
     /* -------------------------------------------------------------------------- */
     useEffect(() => {
       inital()
+
+      return () => {
+        setApr(0)
+        setMyStakingReward(BigNumber(0))
+        setMyStakingAmount(BigNumber(0))
+      }
     }, [])
 
     /* -------------------------------------------------------------------------- */

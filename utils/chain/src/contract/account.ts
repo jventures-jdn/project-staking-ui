@@ -30,15 +30,14 @@ export class Account {
   public async getAccount() {
     this.isReady = false;
     const account = await getAccount();
-    if (!account.address) {
-      chainStaking.myStakingHistoryEvents = [];
-      chainStaking.myStakingValidators = [];
-      chainStaking.myTotalReward = BigNumber(0);
-    }
     runInAction(() => {
+      if (!account.address) {
+        chainStaking.myStakingHistoryEvents = [];
+        chainStaking.myTotalReward = BigNumber(0);
+      }
       this.account = account;
+      this.isReady = true;
     });
-    this.isReady = true;
     return this.account;
   }
 

@@ -1,7 +1,3 @@
-.validators-container {
-  padding-top: 2rem;
-}
-
 .validators-item > div > .ant-row {
   width: 100%;
 }
@@ -51,7 +47,11 @@
 
 .validators-item .ant-collapse-content-box {
   /* background: var(--SD050) !important; */
-  background: linear-gradient(to bottom right, var(--SD050), var(--SD075)) !important;
+  background: linear-gradient(
+    to bottom right,
+    var(--SD050),
+    var(--SD075)
+  ) !important;
   color: var(--SL075) !important;
   padding: 1rem;
 }

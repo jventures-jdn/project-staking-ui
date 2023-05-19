@@ -1,6 +1,6 @@
 import { fetchBlockNumber, readContracts } from "wagmi/actions";
 import { chainConfigObject } from ".";
-import { CHAIN_DECIMAL } from "../chain";
+import { CHAIN_DECIMAL, EXPECT_CHAIN } from "../chain";
 import { BigNumber } from "bignumber.js";
 import {
   action,
@@ -98,20 +98,51 @@ export class Config {
 
   public async fetchChainConfig() {
     // prepare promises fetch
-    const promiseFetchBlockNumber = fetchBlockNumber();
+    const promiseFetchBlockNumber = fetchBlockNumber({
+      chainId: EXPECT_CHAIN.chainId,
+    });
     const promiseReadContracts = readContracts({
       contracts: [
         {
           ...chainConfigObject,
           functionName: "getActiveValidatorsLength",
+          chainId: EXPECT_CHAIN.chainId,
         },
-        { ...chainConfigObject, functionName: "getEpochBlockInterval" },
-        { ...chainConfigObject, functionName: "getMisdemeanorThreshold" },
-        { ...chainConfigObject, functionName: "getFelonyThreshold" },
-        { ...chainConfigObject, functionName: "getValidatorJailEpochLength" },
-        { ...chainConfigObject, functionName: "getUndelegatePeriod" },
-        { ...chainConfigObject, functionName: "getMinValidatorStakeAmount" },
-        { ...chainConfigObject, functionName: "getMinStakingAmount" },
+        {
+          ...chainConfigObject,
+          functionName: "getEpochBlockInterval",
+          chainId: EXPECT_CHAIN.chainId,
+        },
+        {
+          ...chainConfigObject,
+          functionName: "getMisdemeanorThreshold",
+          chainId: EXPECT_CHAIN.chainId,
+        },
+        {
+          ...chainConfigObject,
+          functionName: "getFelonyThreshold",
+          chainId: EXPECT_CHAIN.chainId,
+        },
+        {
+          ...chainConfigObject,
+          functionName: "getValidatorJailEpochLength",
+          chainId: EXPECT_CHAIN.chainId,
+        },
+        {
+          ...chainConfigObject,
+          functionName: "getUndelegatePeriod",
+          chainId: EXPECT_CHAIN.chainId,
+        },
+        {
+          ...chainConfigObject,
+          functionName: "getMinValidatorStakeAmount",
+          chainId: EXPECT_CHAIN.chainId,
+        },
+        {
+          ...chainConfigObject,
+          functionName: "getMinStakingAmount",
+          chainId: EXPECT_CHAIN.chainId,
+        },
       ],
     });
 

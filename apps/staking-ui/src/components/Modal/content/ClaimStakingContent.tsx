@@ -1,4 +1,3 @@
-import { GAS_LIMIT_CLAIM } from 'jfin-staking-sdk'
 import {
   AlertOutlined,
   LoadingOutlined,
@@ -11,6 +10,7 @@ import { useModalStore } from '../../../stores'
 import { Validator, chainStaking } from '@utils/chain/src/contract'
 import BigNumber from 'bignumber.js'
 import { message } from 'antd'
+import { GAS_LIMIT_CLAIM } from '@utils/chain/src/gas'
 
 interface IClaimStakingContent {
   isStaking?: boolean
