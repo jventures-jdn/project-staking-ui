@@ -491,30 +491,6 @@ export class Staking {
   /* -------------------------------------------------------------------------- */
   /*                                 Calculator                                 */
   /* -------------------------------------------------------------------------- */
-  /**
-   * Calculate total reward of user then update result to `myTotalReward`
-   * - if `myStakingValidators` this function will return `Bignumber(0)`
-   * - if `myStakingValidators` is empty you may forgot to call `fetchMyStakingValidators()`
-   * @returns Bignumber of user total reward
-   */
-  // async calcMyTotalReward() {
-  //   if (!this.myStakingValidators?.length) return BigNumber(0);
-  //   const promises = [];
-
-  //   for (const { ownerAddress } of this.myStakingValidators) {
-  //     promises.push(this.getMyStakingRewards(ownerAddress));
-  //   }
-
-  //   const total = (await Promise.all(promises)).reduce((total, val) =>
-  //     total.plus(val)
-  //   );
-
-  //   runInAction(() => {
-  //     this.myTotalReward = total;
-  //   });
-
-  //   return total;
-  // }
 
   /**
    * Calculate validator apr from giving validator

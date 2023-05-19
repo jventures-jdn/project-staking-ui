@@ -146,9 +146,10 @@ importers:
     specifiers:
       '@config/eslint-config': workspace:*
       '@config/typescript-config': workspace:*
+      '@ethersproject/abstract-provider': ^5.7.0
       '@types/node': ^18.16.0
       '@wagmi/core': 0.10.10
-      abitype: ^0.8.0
+      abitype: ^0.8.4
       bignumber.js: ^9.0.2
       ethers: ^5
       mobx: ^6.5.0
@@ -158,7 +159,6 @@ importers:
       wagmi: 0.12.12
       web3: ^1.10.0
     dependencies:
-      abitype: 0.8.4_typescript@5.0.4
       bignumber.js: 9.1.1
       ethers: 5.7.2
       mobx: 6.9.0
@@ -168,8 +168,10 @@ importers:
     devDependencies:
       '@config/eslint-config': link:../../config/eslint-config
       '@config/typescript-config': link:../../config/typescript-config
+      '@ethersproject/abstract-provider': 5.7.0
       '@types/node': 18.16.13
       '@wagmi/core': 0.10.10_3k36ym4j55tosb2grw5ovc5d2q
+      abitype: 0.8.4_typescript@5.0.4
       react: 17.0.2
       typescript: 5.0.4
 
@@ -4442,7 +4444,7 @@ packages:
         optional: true
     dependencies:
       typescript: 5.0.4
-    dev: false
+    dev: true
 
   /abortcontroller-polyfill/1.7.5:
     resolution: {integrity: sha512-JMJ5soJWP18htbbxJjG7bG6yuI6pRhgJ0scHHTfkUjf6wjP912xZWvM+A4sJK3gqd9E8fcPbDnOefbA9Th/FIQ==}
@@ -4910,7 +4912,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
 
@@ -7472,6 +7474,15 @@ packages:
   /flatted/3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
 
+  /follow-redirects/1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
@@ -7482,6 +7493,7 @@ packages:
         optional: true
     dependencies:
       debug: 4.3.4
+    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}

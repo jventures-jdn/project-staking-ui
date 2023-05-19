@@ -1,7 +1,7 @@
 import './Staking.css'
 import { LockOutlined } from '@ant-design/icons'
-import ValidatorInfo from '@/components/ValidatorInfo/ValidatorInfo'
-import Validators from '@/components/Validator/Validators'
+import ValidatorInfo from '@/components/Validator/ValidatorInfo/ValidatorInfo'
+import Validators from '@/components/Validator/Validators/Validators'
 
 const Staking = () => {
   /* --------------------------------- States --------------------------------- */

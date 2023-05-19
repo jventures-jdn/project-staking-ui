@@ -1,11 +1,38 @@
-import { GovernanceNav } from "./GovernanceNav";
+import ProposalTable from '@/components/Governance/ProposalTable'
+import { BankOutlined } from '@ant-design/icons'
+import { chainGovernance } from '@utils/chain/src/contract'
+import { useEffect, useState } from 'react'
 
 const Governance = () => {
+  /* --------------------------------- States --------------------------------- */
+  const [loading, setLoading] = useState(false)
+
+  /* --------------------------------- Methods -------------------------------- */
+  const initial = async () => {
+    await chainGovernance.getProposals()
+  }
+  useEffect(() => {
+    initial()
+    return () => setLoading(false)
+  }, [])
+
+  /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="governance-container mt-2" id="view-point2">
-      <GovernanceNav />
+      <div className="content-card">
+        <div className="card-title">
+          <b>
+            <BankOutlined /> <span>Governance</span>
+          </b>
+        </div>
+        <div className="card-body">
+          <div id="view-point1" style={{ paddingTop: '2rem' }}>
+            <ProposalTable loading={loading} />
+          </div>
+        </div>
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default Governance;
+export default Governance

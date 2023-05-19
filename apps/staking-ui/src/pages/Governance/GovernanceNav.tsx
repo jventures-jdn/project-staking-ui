@@ -7,18 +7,10 @@ import '../index.css'
 
 import CreateProposalForm from './components/CreateProposalForm/CreateProposalForm'
 import ProposalTable from './components/ProposalTable/ProposalTable'
-import { useBasStore } from '../../stores'
 
 export const GovernanceNav = observer((): ReactElement => {
-  const store = useBasStore()
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [loading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    if (store.chainInfo) setIsLoading(false)
-
-    return () => setIsLoading(true)
-  }, [store.chainInfo])
 
   return (
     <div>

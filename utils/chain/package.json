@@ -3,7 +3,6 @@
   "main": "./index.ts",
   "type": "./index.ts",
   "dependencies": {
-    "abitype": "^0.8.0",
     "bignumber.js": "^9.0.2",
     "ethers": "^5",
     "mobx": "^6.5.0",
@@ -14,10 +13,12 @@
   "devDependencies": {
     "@config/eslint-config": "workspace:*",
     "@config/typescript-config": "workspace:*",
+    "@ethersproject/abstract-provider": "^5.7.0",
     "@types/node": "^18.16.0",
+    "@wagmi/core": "0.10.10",
+    "abitype": "^0.8.4",
     "react": "^17.0.2",
-    "typescript": "^5.0.4",
-    "@wagmi/core": "0.10.10"
+    "typescript": "^5.0.4"
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",

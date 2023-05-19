@@ -1,19 +1,19 @@
 import { observer } from 'mobx-react'
 import React, { Suspense, useEffect, useMemo } from 'react'
-
-import BlockInfo from './components/BlockInfo/BlockInfo'
+import BlockInfo from './components/Layout/BlockInfo/BlockInfo'
 import Conditions from './components/Conditions'
-import Navbar from './components/Navbar/Navbar'
+import Navbar from './components/Layout/Navbar/Navbar'
 import { Route, Switch } from 'react-router-dom'
 import CookieConsent from 'react-cookie-consent'
 import {
+  chainGovernance,
   useChainAccount,
   useChainConfig,
   useChainStaking,
 } from '@utils/chain/src/contract'
 import { getProvider } from 'wagmi/actions'
 import { useAccount, useNetwork } from 'wagmi'
-import Footer from './components/Footer/Footer'
+import Footer from './components/Layout/Footer/Footer'
 
 const Staking = React.lazy(() => import('./pages/Staking/Staking'))
 const StakingRecovery = React.lazy(
@@ -50,10 +50,8 @@ const App = observer(() => {
     await chainAccount.fetchBalance()
   }
 
-  const initialOldProvider = async () => {
-    // basStore.connectProvider()
-    // basStore.listenAccountChange()
-    // basStore.listenChainChange()
+  const initialChainGovernance = async () => {
+    chainGovernance.setProvider(provider)
   }
 
   /* --------------------------------- Watches -------------------------------- */
@@ -61,7 +59,7 @@ const App = observer(() => {
     initialChainConfig()
     initialChainStaking()
     initialChainAccount()
-    initialOldProvider()
+    initialChainGovernance()
   }, [])
 
   // on connected or disconnected update validators & account

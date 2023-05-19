@@ -1,9 +1,0 @@
-{
-  "extends": "@config/typescript-config/react-lib.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "lib",
-  },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "__tests__"],
-}

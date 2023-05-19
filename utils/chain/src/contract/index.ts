@@ -3,10 +3,10 @@ import STAKING_ABI from "../abi/Staking";
 import SLASHING_INDICATOR_ABI from "../abi/SlashingIndicator.json";
 import SYSTEM_REWARD_ABI from "../abi/SystemReward.json";
 import STAKING_POOL_ABI from "../abi/StakingPool.json";
-import GOVERNANCE_ABI from "../abi/Governance.json";
+import GOVERNANCE_ABI from "../abi/Governance";
 import CHAIN_CONFIG_ABI from "../abi/ChainConfig";
 import RUNTIME_UPGRADE_ABI from "../abi/RuntimeUpgrade.json";
-import DEPLOYER_PROXY_ABI from "../abi/DeployerProxy.json";
+import DEPLOYER_PROXY_ABI from "../abi/DeployerProxy";
 import { getContract } from "wagmi/actions";
 import { Config } from "./config";
 import { Staking } from "./staking";
@@ -21,6 +21,7 @@ import {
   SYSTEM_REWARD_ADDRESS,
 } from "../chain";
 import { Account } from "./account";
+import { Governance } from "./governance";
 
 /**
  * Contract declearation
@@ -49,7 +50,7 @@ export const stakingPoolObject = {
 
 export const governanceObject = {
   address: GOVERNANCE_ADDRESS as Address,
-  abi: GOVERNANCE_ABI as Abi,
+  abi: GOVERNANCE_ABI,
 };
 
 export const chainConfigObject = {
@@ -64,7 +65,7 @@ export const runtimeUpgradeObject = {
 
 export const deployerProxyObject = {
   address: DEPLOYER_PROXY_ADDRESS as Address,
-  abi: DEPLOYER_PROXY_ABI as Abi,
+  abi: DEPLOYER_PROXY_ABI,
 };
 
 /**
@@ -87,10 +88,12 @@ export const deployerProxyContract = getContract(deployerProxyObject);
 export const chainConfig = new Config();
 export const chainStaking = new Staking();
 export const chainAccount = new Account();
+export const chainGovernance = new Governance();
 
 export const useChainConfig = () => chainConfig;
 export const useChainStaking = () => chainStaking;
 export const useChainAccount = () => chainAccount;
+export const useChainGovernance = () => chainGovernance;
 
 export {
   STAKING_ABI,
