@@ -652,10 +652,7 @@ export class Staking {
         delegatedAmount: $BigNumber.from(0),
       }));
 
-    if (
-      !amount.delegatedAmount.isZero() &&
-      !this.myValidators.find((v) => v.ownerAddress === validatorAddress)
-    ) {
+    if (!this.myValidators.find((v) => v.ownerAddress === validatorAddress)) {
       const validator = this.validators.find(
         (v) => v.ownerAddress === validatorAddress
       );
@@ -663,12 +660,14 @@ export class Staking {
 
       runInAction(() => {
         this.myValidators.push(validator);
-        this.myTotalStake = this.myTotalStake.plus(
-          amount.delegatedAmount.toNumber()
-        );
       });
     }
 
+    if (!amount.delegatedAmount.isZero()) {
+      this.myTotalStake = this.myTotalStake.plus(
+        BigNumber(amount.delegatedAmount.toString())
+      );
+    }
     return BigNumber(amount.delegatedAmount.toString()).div(CHAIN_DECIMAL);
   }
 
