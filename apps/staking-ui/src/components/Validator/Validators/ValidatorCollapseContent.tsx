@@ -90,7 +90,12 @@ const ValidatorCollapseContent = observer(
       modalStore.setVisible(true)
       modalStore.setIsLoading(true)
       modalStore.setTitle('Un-Staking')
-      modalStore.setContent(<UnStakingContent validator={validator} />)
+      modalStore.setContent(
+        <UnStakingContent
+          forceActionButtonsEnabled={forceActionButtonsEnabled}
+          validator={validator}
+        />,
+      )
       modalStore.setIsLoading(false)
     }
 
@@ -220,7 +225,11 @@ const ValidatorCollapseContent = observer(
                   <div style={{ textAlign: 'right' }}>
                     <button
                       className="button secondary lg"
-                      disabled={!isConnected || !!myStakingReward.toNumber()}
+                      disabled={
+                        !isConnected ||
+                        !!myStakingReward.toNumber() ||
+                        forceActionButtonsEnabled
+                      }
                       onClick={handleAdd}
                       type="button"
                     >
@@ -229,7 +238,10 @@ const ValidatorCollapseContent = observer(
 
                     <button
                       className="button secondary lg"
-                      disabled={!isConnected || !!myStakingReward.toNumber()}
+                      disabled={
+                        (!isConnected || !!myStakingReward.toNumber()) &&
+                        !forceActionButtonsEnabled
+                      }
                       onClick={handleUnStaking}
                       style={{ marginLeft: '10px' }}
                       type="button"
