@@ -6,8 +6,8 @@ import { CloseOutlined, MenuOutlined, WarningOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
-import { getCurrentEnv, useWallectConnect } from '../../../stores'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import { getCurrentEnv } from '../../../stores'
+import { useAccount, useNetwork } from 'wagmi'
 import { Progress } from 'antd'
 import { EXPECT_CHAIN } from '@utils/chain/src/chain'
 import { switchChain } from '@utils/chain/src/utils/wallet'
@@ -27,8 +27,6 @@ const Navbar = observer(() => {
   const [loadingText, setLoadingText] = useState('Loading...')
   const { open } = useWeb3Modal()
   const isExpectChain = chain?.id === EXPECT_CHAIN.chainId
-  const network = useSwitchNetwork({ chainId: EXPECT_CHAIN.chainId })
-  const { webSockerProvider } = useWallectConnect()
 
   /* --------------------------------- Methods -------------------------------- */
   const handleRoute = () => {
@@ -198,11 +196,8 @@ const Navbar = observer(() => {
             )}
           </div>
 
-          <div
-            className="navbar-wallet"
-            style={{ display: 'flex', justifyContent: 'end' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="navbar-wallet">
+            <div style={{ marginRight: 'auto' }}>
               {!isExpectChain && isConnected && (
                 <div
                   style={{
