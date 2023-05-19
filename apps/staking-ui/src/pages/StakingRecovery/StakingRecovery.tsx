@@ -17,7 +17,7 @@ const StakingRecovery = observer(() => {
         <div className="card-body">
           <ValidatorInfo />
 
-          <div id="view-point1">
+          <div id="view-point1" style={{ paddingTop: '2rem' }}>
             <Validators forceActionButtonsEnabled={true} />
           </div>
         </div>
