@@ -14,6 +14,7 @@ import { useAccount, useNetwork } from 'wagmi'
 import Validators from '@/components/Validator/Validators/Validators'
 import { CHAIN_DECIMAL } from '@utils/chain/src/chain'
 import { Link } from 'react-router-dom'
+import BigNumber from 'bignumber.js'
 
 const Assets = observer(() => {
   /* -------------------------------------------------------------------------- */
@@ -86,6 +87,10 @@ const Assets = observer(() => {
                   <>
                     <CountUpMemo
                       end={chainStaking.myTotalStake
+                        .reduce(
+                          (prev, curr) => prev.plus(curr.amount),
+                          BigNumber(0),
+                        )
                         ?.div(CHAIN_DECIMAL)
                         ?.toNumber()}
                       decimals={2}
@@ -124,6 +129,10 @@ const Assets = observer(() => {
                 <>
                   <CountUpMemo
                     end={chainStaking.myTotalReward
+                      .reduce(
+                        (prev, curr) => prev.plus(curr.amount),
+                        BigNumber(0),
+                      )
                       ?.div(CHAIN_DECIMAL)
                       ?.toNumber()}
                     decimals={5}

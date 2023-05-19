@@ -47,8 +47,8 @@ export class Staking {
   public contract: typeof stakingContract = stakingContract;
   public validators: Validator[];
   public myValidators: Validator[] = [];
-  public myTotalReward: BigNumber = BigNumber(0);
-  public myTotalStake: BigNumber = BigNumber(0);
+  public myTotalReward: { validator: Address; amount: BigNumber }[] = [];
+  public myTotalStake: { validator: Address; amount: BigNumber }[] = [];
   public myStakingHistoryEvents: Event[];
   // public myStakingValidators: Awaited<
   //   ReturnType<typeof this.fetchMyStakingValidators>
@@ -373,10 +373,6 @@ export class Staking {
     await Promise.all([
       chainAccount.fetchBalance(),
       this.updateValidators(), // update validators
-      // this.fetchMyStakingValidators({ force: true }).then(
-      //   () => {}
-      //   // this.calcMyTotalReward()
-      // ), // update total stake (my validators),then update total reward
     ]);
 
     return receip;
@@ -480,8 +476,8 @@ export class Staking {
 
     runInAction(() => {
       this.myValidators = [];
-      this.myTotalReward = BigNumber(0);
-      this.myTotalStake = BigNumber(0);
+      this.myTotalReward = [];
+      this.myTotalStake = [];
       this.validators = sortValidators;
       this.isFetchingValidators = false;
     });
@@ -625,9 +621,16 @@ export class Staking {
 
       runInAction(() => {
         this.myValidators.push(validator);
-        this.myTotalReward = this.myTotalReward.plus(
-          BigNumber(reward.toString())
-        );
+      });
+    }
+
+    if (
+      !reward.isZero() &&
+      !this.myTotalReward.find((i) => i.validator === validatorAddress)
+    ) {
+      this.myTotalReward.push({
+        validator: validatorAddress as Address,
+        amount: BigNumber(reward.toString()),
       });
     }
 
@@ -652,7 +655,10 @@ export class Staking {
         delegatedAmount: $BigNumber.from(0),
       }));
 
-    if (!this.myValidators.find((v) => v.ownerAddress === validatorAddress)) {
+    if (
+      !amount.delegatedAmount &&
+      !this.myValidators.find((v) => v.ownerAddress === validatorAddress)
+    ) {
       const validator = this.validators.find(
         (v) => v.ownerAddress === validatorAddress
       );
@@ -663,11 +669,16 @@ export class Staking {
       });
     }
 
-    if (!amount.delegatedAmount.isZero()) {
-      this.myTotalStake = this.myTotalStake.plus(
-        BigNumber(amount.delegatedAmount.toString())
-      );
+    if (
+      !amount.delegatedAmount.isZero() &&
+      !this.myTotalStake.find((i) => i.validator === validatorAddress)
+    ) {
+      this.myTotalStake.push({
+        validator: validatorAddress as Address,
+        amount: BigNumber(amount.delegatedAmount.toString()),
+      });
     }
+
     return BigNumber(amount.delegatedAmount.toString()).div(CHAIN_DECIMAL);
   }
 

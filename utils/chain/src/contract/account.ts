@@ -33,7 +33,7 @@ export class Account {
     runInAction(() => {
       if (!account.address) {
         chainStaking.myStakingHistoryEvents = [];
-        chainStaking.myTotalReward = BigNumber(0);
+        chainStaking.myTotalReward = [];
       }
       this.account = account;
       this.isReady = true;
