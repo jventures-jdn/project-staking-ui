@@ -20,7 +20,7 @@ export class Governance {
   public provider: Provider;
   public governanceContract: typeof governanceContract = governanceContract;
 
-  public proposals: Event[];
+  public proposals: Awaited<ReturnType<typeof this.getProposals>>;
 
   /* --------------------------------- Helper --------------------------------- */
   private isProviderValid() {
@@ -34,8 +34,25 @@ export class Governance {
     this.provider = provider;
   }
 
+  public mappingCastVoteEventArgs(args?: Result) {
+    const [address, proposalId, support, weight, reason] = args as [
+      address: Address,
+      proposalId: $BigNumber,
+      support: $BigNumber,
+      weight: $BigNumber,
+      reason: string
+    ];
+
+    return {
+      address,
+      proposalId: BigNumber(proposalId.toString()),
+      support: BigNumber(support.toString()),
+      weight: BigNumber(weight.toString()),
+      reason,
+    };
+  }
+
   public mappingCreatedEventArgs(args?: Result) {
-    if (!args?.length) return;
     const [
       proposalId,
       proposal,
@@ -89,7 +106,9 @@ export class Governance {
 
   public async getVotingPowers() {}
 
-  public async getProposalCreatedEvents() {
+  public async getProposalCreatedEvents(): Promise<
+    (Event & { values: ReturnType<Governance["mappingCreatedEventArgs"]> })[]
+  > {
     const provider = getProvider({ chainId: EXPECT_CHAIN.chainId });
     const governanceContract = this.governanceContract.connect(provider);
     const proposalEvents = await governanceContract.queryFilter(
@@ -97,10 +116,18 @@ export class Governance {
       "earliest",
       "latest"
     );
-    return proposalEvents;
+
+    const proposals = proposalEvents.map((event) => {
+      const args = this.mappingCreatedEventArgs(event.args);
+      return { ...event, values: { ...args } };
+    });
+
+    return proposals;
   }
 
-  public async getProposalCastVoteEvents() {
+  public async getProposalCastVoteEvents(): Promise<
+    (Event & { values: ReturnType<Governance["mappingCastVoteEventArgs"]> })[]
+  > {
     const provider = getProvider({ chainId: EXPECT_CHAIN.chainId });
     const governanceContract = this.governanceContract.connect(provider);
     const [vote, voteParams] = await Promise.all([
@@ -117,7 +144,23 @@ export class Governance {
       (prev, curr) => curr.blockNumber - prev.blockNumber
     );
 
-    return proposalVoteEvents;
+    const proposalVotes = proposalVoteEvents.map((event) => {
+      const args = this.mappingCastVoteEventArgs(event.args);
+
+      let voteType = "ABSTAIN";
+      switch (args?.support.toNumber()) {
+        case 0:
+          voteType = "AGAINST";
+          break;
+        case 1:
+          voteType = "FOR";
+          break;
+      }
+
+      return { ...event, values: { ...args, voteType } };
+    });
+
+    return proposalVotes;
   }
 
   /* --------------------------------- Getters -------------------------------- */
@@ -131,7 +174,6 @@ export class Governance {
       this.proposals = createdEvents;
     });
 
-    console.log(this.proposals);
     return createdEvents;
   }
 }

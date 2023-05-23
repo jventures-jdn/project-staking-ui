@@ -4,6 +4,7 @@ import {
   makeObservable,
   observable,
   runInAction,
+  toJS,
 } from "mobx";
 import { Validator, chainAccount, stakingContract } from ".";
 import { BigNumber as $BigNumber, Event, Signer } from "ethers";
@@ -656,7 +657,7 @@ export class Staking {
       }));
 
     if (
-      !amount.delegatedAmount &&
+      !amount.delegatedAmount.isZero() &&
       !this.myValidators.find((v) => v.ownerAddress === validatorAddress)
     ) {
       const validator = this.validators.find(

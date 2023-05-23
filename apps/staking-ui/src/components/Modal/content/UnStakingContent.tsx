@@ -7,6 +7,7 @@ import JfinCoin from '../../JfinCoin/JfinCoin'
 import { Validator, chainStaking } from '@utils/chain/src/contract'
 
 interface IUnStakingContent {
+  forceActionButtonsEnabled?: boolean
   validator: Validator
   amount?: number
 }
@@ -27,11 +28,15 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
     e.preventDefault()
     setError(undefined)
 
-    if (unStakingAmount < 1) return setError('Un-Stake amount must be more 1')
-    if (unStakingAmount > Number(stakedAmount))
-      return setError(
-        `Un-Stake amount must be lower or equal to ${stakedAmount}`,
-      )
+    console.log(props.forceActionButtonsEnabled)
+    if (!props.forceActionButtonsEnabled) {
+      if (unStakingAmount < 1) return setError('Un-Stake amount must be more 1')
+      if (unStakingAmount > Number(stakedAmount))
+        return setError(
+          `Un-Stake amount must be lower or equal to ${stakedAmount}`,
+        )
+    }
+
     try {
       modalStore.setIsLoading(true)
       await chainStaking.unstakeFromValidator(

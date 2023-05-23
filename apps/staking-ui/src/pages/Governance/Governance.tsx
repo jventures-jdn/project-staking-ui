@@ -9,7 +9,9 @@ const Governance = () => {
 
   /* --------------------------------- Methods -------------------------------- */
   const initial = async () => {
+    setLoading(true)
     await chainGovernance.getProposals()
+    setLoading(false)
   }
   useEffect(() => {
     initial()
@@ -26,7 +28,7 @@ const Governance = () => {
           </b>
         </div>
         <div className="card-body">
-          <div id="view-point1" style={{ paddingTop: '2rem' }}>
+          <div id="view-point1">
             <ProposalTable loading={loading} />
           </div>
         </div>
