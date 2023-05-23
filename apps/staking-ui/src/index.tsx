@@ -5,7 +5,7 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Web3Modal } from '@web3modal/react'
 import { WagmiConfig } from 'wagmi'
-import { useWallectConnect } from './stores'
+import { getCurrentEnv, useWallectConnect } from './stores'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
 import './assets/css/index.css'
@@ -64,7 +64,10 @@ const Main = () => {
                 name: 'Join',
                 links: {
                   native: '',
-                  universal: 'https://joinwalletdev.page.link',
+                  universal:
+                    getCurrentEnv() === 'jfin'
+                      ? 'https://joinwallet.page.link'
+                      : 'https://joinwalletdev.page.link',
                 },
               },
             ]}
@@ -74,6 +77,7 @@ const Main = () => {
     </React.StrictMode>
   )
 }
+console.log(getCurrentEnv())
 ReactDOM.render(<Main />, document.getElementById('root'))
 
 // If you want to start measuring performance in your app, pass a function

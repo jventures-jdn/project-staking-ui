@@ -237,7 +237,20 @@ const Navbar = observer(() => {
           </div>
         </div>
       </div>
-      <div className={`navbar-overlay ${isBurgerActive && 'active'}`}>
+      <div
+        className={`navbar-overlay ${isBurgerActive && 'active'}`}
+        style={{
+          height: isBurgerActive
+            ? getCurrentEnv() === 'jfin'
+              ? isConnected
+                ? '270px'
+                : '330px'
+              : isConnected
+              ? '330px'
+              : '385px'
+            : '0px',
+        }}
+      >
         <NavHashLink
           className={`${
             ['/', '/staking'].includes(location.pathname) && 'active'
@@ -285,6 +298,27 @@ const Navbar = observer(() => {
         <div style={{ paddingBottom: '1rem' }}>
           <Web3Button />
         </div>
+        {!isConnected && (
+          <div>
+            <a
+              href={`https://metamask.app.link/dapp/${window.location.href}`}
+              style={{
+                marginBottom: '2rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                borderRadius: '10px',
+                backgroundColor: '#F6851B',
+                padding: '0 15px 1px',
+                height: '40px',
+                color: '#fff',
+                fontSize: '15px',
+                fontWeight: 'normal',
+              }}
+            >
+              Connect Metamask
+            </a>
+          </div>
+        )}
       </div>
     </>
   )
