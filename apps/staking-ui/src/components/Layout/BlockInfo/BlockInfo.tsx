@@ -2,19 +2,47 @@ import { Col, Row } from 'antd'
 import './BlockInfo.css'
 import { observer } from 'mobx-react'
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import prettyTime from 'pretty-time'
 import { useChainConfig } from '@utils/chain/src/contract'
 import CountUpMemo from '../../Countup'
+import { switchChain } from '@utils/chain/src/utils/wallet'
+import { EXPECT_CHAIN } from '@utils/chain/src/chain'
 
 const BlockInfo = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const { isConnected } = useAccount()
   const chainConfig = useChainConfig()
+  const { chain } = useNetwork()
+  const isExpectChain = chain?.id === EXPECT_CHAIN.chainId
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="block-info-container">
+      {!isExpectChain && isConnected && (
+        <div
+          style={{
+            color: '#fa8c16',
+            fontSize: '13px',
+            paddingBottom: '15px',
+          }}
+          className="network-alert"
+        >
+          <WarningOutlined style={{ paddingRight: '0.5rem' }} />
+          <span>
+            Please switch chain to{' '}
+            <b
+              style={{
+                cursor: 'pointer',
+                textDecoration: 'underline',
+              }}
+              onClick={() => switchChain()}
+            >
+              ({EXPECT_CHAIN.chainName})
+            </b>
+          </span>
+        </div>
+      )}
       {/* show alert message incase not connect metamask */}
       {!isConnected && (
         <div className="wallet-warning" style={{ textAlign: 'right' }}>

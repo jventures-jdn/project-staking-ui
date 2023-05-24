@@ -77,7 +77,6 @@ const Main = () => {
     </React.StrictMode>
   )
 }
-console.log(getCurrentEnv())
 ReactDOM.render(<Main />, document.getElementById('root'))
 
 // If you want to start measuring performance in your app, pass a function
