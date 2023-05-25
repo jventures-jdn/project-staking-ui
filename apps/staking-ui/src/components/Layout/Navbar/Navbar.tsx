@@ -14,7 +14,7 @@ import { switchChain } from '@utils/chain/src/utils/wallet'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
-  const defaultLoadingDuration = 7000
+  const defaultLoadingDuration = 10000
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
@@ -27,6 +27,7 @@ const Navbar = observer(() => {
   const [loadingText, setLoadingText] = useState('Loading...')
   const { open } = useWeb3Modal()
   const isExpectChain = chain?.id === EXPECT_CHAIN.chainId
+  const isMetamask = window.ethereum
 
   /* --------------------------------- Methods -------------------------------- */
   const handleRoute = () => {
@@ -39,6 +40,7 @@ const Navbar = observer(() => {
 
     // modal selector
     const w3mModal = document.querySelector('w3m-modal')
+
     const w3mModalRouter =
       w3mModal?.shadowRoot?.querySelector('w3m-modal-router')
 
@@ -91,14 +93,14 @@ const Navbar = observer(() => {
   useEffect(() => {
     if (loading && isConnected) {
       setLoadingText('Logged In')
-      setLoadingDuration(500)
+      setLoadingDuration(300)
       setProgressStep(100)
     }
   }, [isConnected])
 
   useMemo(async () => {
     if (progress >= 100) return resetAutoAuthen()
-    if (loadingDuration === defaultLoadingDuration && progress >= 75)
+    if (loadingDuration === defaultLoadingDuration && progress >= 85)
       setLoadingText('Please manually select wallet')
     if (progress >= progressStep) return
 
@@ -107,6 +109,30 @@ const Navbar = observer(() => {
   }, [progressStep, progress])
 
   /* ---------------------------------- Doms ---------------------------------- */
+  const ConnectMetamaskButton = () => {
+    return (
+      <div>
+        <a
+          href={`https://metamask.app.link/dapp/${window.location.href}`}
+          style={{
+            marginBottom: '2rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            borderRadius: '10px',
+            backgroundColor: '#F6851B',
+            padding: '0 15px 1px',
+            height: '40px',
+            color: '#fff',
+            fontSize: '15px',
+            fontWeight: 'normal',
+          }}
+        >
+          Open Metamask
+        </a>
+      </div>
+    )
+  }
+
   return (
     <>
       {loading && (
@@ -156,19 +182,19 @@ const Navbar = observer(() => {
               className={`${
                 ['/', '/staking'].includes(location?.pathname) && 'active'
               }`}
-              to="/staking"
+              to={`/staking${isAuto && '?auto=1'}`}
             >
               Staking
             </Link>
             <Link
               className={`${location?.pathname === '/governance' && 'active'}`}
-              to="/governance"
+              to={`/governance${isAuto && '?auto=1'}`}
             >
               Governance
             </Link>
             <Link
               className={`${location?.pathname === '/assets' && 'active'}`}
-              to="/assets"
+              to={`/assets${isAuto && '?auto=1'}`}
             >
               Assets
             </Link>
@@ -240,15 +266,7 @@ const Navbar = observer(() => {
       <div
         className={`navbar-overlay ${isBurgerActive && 'active'}`}
         style={{
-          height: isBurgerActive
-            ? getCurrentEnv() === 'jfin'
-              ? isConnected
-                ? '270px'
-                : '330px'
-              : isConnected
-              ? '330px'
-              : '385px'
-            : '0px',
+          height: isBurgerActive ? (isAuto ? '220px' : '270px') : '0px',
         }}
       >
         <NavHashLink
@@ -256,21 +274,21 @@ const Navbar = observer(() => {
             ['/', '/staking'].includes(location.pathname) && 'active'
           }`}
           onClick={handleRoute}
-          to="/staking#view-point1"
+          to={`/staking${isAuto && '?auto=1'}#view-point1`}
         >
           Staking
         </NavHashLink>
         <NavHashLink
           className={`${location.pathname === '/governance' && 'active'}`}
           onClick={handleRoute}
-          to="/governance#view-point2"
+          to={`/governance${isAuto ? '?auto=1' : ''}#view-point2`}
         >
           Governance
         </NavHashLink>
         <NavHashLink
           className={`${location.pathname === '/assets' && 'active'}`}
           onClick={handleRoute}
-          to="/assets#view-point3"
+          to={`/assets${isAuto && '?auto=1'}#view-point3`}
         >
           Assets
         </NavHashLink>
@@ -295,30 +313,16 @@ const Navbar = observer(() => {
             Faucet
           </a>
         )}
-        <div style={{ paddingBottom: '1rem' }}>
-          <Web3Button />
+
+        <div
+          style={{
+            paddingBottom: '1rem',
+            visibility: isAuto ? 'visible' : 'visible',
+          }}
+        >
+          {!isAuto &&
+            (!isMetamask ? <ConnectMetamaskButton /> : <Web3Button />)}
         </div>
-        {!isConnected && (
-          <div>
-            <a
-              href={`https://metamask.app.link/dapp/${window.location.href}`}
-              style={{
-                marginBottom: '2rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                borderRadius: '10px',
-                backgroundColor: '#F6851B',
-                padding: '0 15px 1px',
-                height: '40px',
-                color: '#fff',
-                fontSize: '15px',
-                fontWeight: 'normal',
-              }}
-            >
-              Connect Metamask
-            </a>
-          </div>
-        )}
       </div>
     </>
   )
