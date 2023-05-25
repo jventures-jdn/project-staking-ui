@@ -30,7 +30,8 @@ export const switchChain = async () => {
     });
   } catch (e: any) {
     // 4902 = Unrecognized chain ID "xxx". Try adding the chain using wallet_addEthereumChain first.
-    if (e.code === 4902) {
+    // metamask mobile format or metamask extension format
+    if (e.data?.originalError?.code === 4902 || e.code === 4902) {
       return await addChain()
         .then(() => true)
         .catch((e) => e);
