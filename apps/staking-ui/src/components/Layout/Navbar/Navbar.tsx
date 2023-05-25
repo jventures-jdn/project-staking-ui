@@ -14,7 +14,7 @@ import { switchChain } from '@utils/chain/src/utils/wallet'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
-  const defaultLoadingDuration = 10000
+  const defaultLoadingDuration = 7000
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
@@ -34,6 +34,39 @@ const Navbar = observer(() => {
     setIsBurgerActive(false)
   }
 
+  const recursiveClickAuthen = (element: HTMLElement | ShadowRoot) => {
+    // handle login
+    const androidButton = element
+      ?.querySelector('.w3m-slider')
+      ?.querySelector('w3m-button-big')
+
+    const iosButton = element
+      ?.querySelector('w3m-wallet-button[name="Join"]')
+      ?.shadowRoot?.querySelector('button')
+
+    if (androidButton) {
+      // androidButton!.style.cursor = 'pointer;'
+      return androidButton?.click()
+    }
+    if (iosButton) {
+      // iosButton!.style.cursor = 'pointer;'
+      return iosButton?.click()
+    }
+
+    // travel to children node
+    if (element.hasChildNodes()) {
+      const children = [...element.children]
+      children.forEach((children) =>
+        recursiveClickAuthen(children as HTMLElement),
+      )
+    }
+
+    // travel to shadow root
+    if (element instanceof HTMLElement && element.shadowRoot) {
+      recursiveClickAuthen(element.shadowRoot)
+    }
+  }
+
   const handleAutoAuthen = async () => {
     setLoading(true)
     await open()
@@ -50,28 +83,38 @@ const Navbar = observer(() => {
     // wait content load
     await new Promise((resolve) => setTimeout(resolve, 500))
 
-    // content selector
-    const w3mConnectWalletView = w3mModalRouter?.shadowRoot?.querySelector(
-      'w3m-connect-wallet-view',
-    )
-    const w3mMobileWalletSelection =
-      w3mConnectWalletView?.shadowRoot?.querySelector(
-        'w3m-android-wallet-selection, w3m-mobile-wallet-selection',
-      )
-    const w3mModalContent =
-      w3mMobileWalletSelection?.shadowRoot?.querySelector('w3m-modal-content')
+    recursiveClickAuthen(w3mModalRouter as HTMLElement)
 
-    // handle login
-    const androidButton = w3mModalContent
-      ?.querySelector('.w3m-slider')
-      ?.querySelector('w3m-button-big')
+    // const testFire = document.querySelector('#test-fire') as HTMLElement
+    // if (testFire) {
+    //   testFire.style.cursor = 'pointer'
+    //   testFire.click()
+    //   const event = new Event('touchstart')
+    //   testFire.dispatchEvent(event)
+    // }
 
-    const iosButton = w3mModalContent
-      ?.querySelector('w3m-wallet-button')
-      ?.shadowRoot?.querySelector('button')
+    // // content selector
+    // const w3mConnectWalletView = w3mModalRouter?.shadowRoot?.querySelector(
+    //   'w3m-connect-wallet-view',
+    // )
+    // const w3mMobileWalletSelection =
+    //   w3mConnectWalletView?.shadowRoot?.querySelector(
+    //     'w3m-android-wallet-selection, w3m-mobile-wallet-selection',
+    //   )
+    // const w3mModalContent =
+    //   w3mMobileWalletSelection?.shadowRoot?.querySelector('w3m-modal-content')
 
-    androidButton?.click()
-    iosButton?.click()
+    // // handle login
+    // const androidButton = w3mModalContent
+    //   ?.querySelector('.w3m-slider')
+    //   ?.querySelector('w3m-button-big')
+
+    // const iosButton = w3mModalContent
+    //   ?.querySelector('w3m-wallet-button')
+    //   ?.shadowRoot?.querySelector('button')
+
+    // androidButton?.click()
+    // iosButton?.click()
   }
 
   const resetAutoAuthen = () => {
@@ -182,19 +225,19 @@ const Navbar = observer(() => {
               className={`${
                 ['/', '/staking'].includes(location?.pathname) && 'active'
               }`}
-              to={`/staking${isAuto && '?auto=1'}`}
+              to={`/staking${isAuto ? '?auto=1' : ''}`}
             >
               Staking
             </Link>
             <Link
               className={`${location?.pathname === '/governance' && 'active'}`}
-              to={`/governance${isAuto && '?auto=1'}`}
+              to={`/governance${isAuto ? '?auto=1' : ''}`}
             >
               Governance
             </Link>
             <Link
               className={`${location?.pathname === '/assets' && 'active'}`}
-              to={`/assets${isAuto && '?auto=1'}`}
+              to={`/assets${isAuto ? '?auto=1' : ''}`}
             >
               Assets
             </Link>
@@ -247,6 +290,13 @@ const Navbar = observer(() => {
                     </span>
                   </div>
                 )}
+                <div
+                  onClick={() => alert('Fire!')}
+                  onTouchStart={() => alert('Touch')}
+                  id="test-fire"
+                >
+                  Test Fire
+                </div>
                 <Web3Button />
               </div>
             </div>
@@ -274,7 +324,7 @@ const Navbar = observer(() => {
             ['/', '/staking'].includes(location.pathname) && 'active'
           }`}
           onClick={handleRoute}
-          to={`/staking${isAuto && '?auto=1'}#view-point1`}
+          to={`/staking${isAuto ? '?auto=1' : ''}#view-point1`}
         >
           Staking
         </NavHashLink>
@@ -288,7 +338,7 @@ const Navbar = observer(() => {
         <NavHashLink
           className={`${location.pathname === '/assets' && 'active'}`}
           onClick={handleRoute}
-          to={`/assets${isAuto && '?auto=1'}#view-point3`}
+          to={`/assets${isAuto ? '?auto=1' : ''}#view-point3`}
         >
           Assets
         </NavHashLink>
@@ -322,6 +372,7 @@ const Navbar = observer(() => {
         >
           {!isAuto &&
             (!isMetamask ? <ConnectMetamaskButton /> : <Web3Button />)}
+          {/* {!isMetamask ? <ConnectMetamaskButton /> : <Web3Button />} */}
         </div>
       </div>
     </>
