@@ -70,7 +70,7 @@ const ValidatorCollapseContent = observer(
         await chainStaking.claimValidatorReward(validator.ownerAddress)
         message.success('Claim reward was done!')
       } catch (e: any) {
-        message.error(`Something went wrong ${e.message || ''}`)
+        message.error(`Something went wrong ${e?.message || ''}`)
       }
     }
 

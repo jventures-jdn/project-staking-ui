@@ -46,7 +46,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
       modalStore.setVisible(false)
       message.success(`Un-Stake was done!`)
     } catch (e: any) {
-      message.error(`Something went wrong ${e.message || ''}`)
+      message.error(`Something went wrong ${e?.message || ''}`)
     } finally {
       modalStore.setIsLoading(false)
     }

@@ -41,7 +41,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
       modalStore.setVisible(false)
       message.success(`Staked was done!`)
     } catch (e: any) {
-      message.error(`Something went wrong ${e.message || ''}`)
+      message.error(`Something went wrong ${e?.message || ''}`)
     } finally {
       modalStore.setIsLoading(false)
     }

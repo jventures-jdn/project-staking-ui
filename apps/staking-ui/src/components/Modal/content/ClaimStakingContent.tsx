@@ -37,7 +37,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
       modalStore.setVisible(false)
       message.success('Claim reward was done!')
     } catch (e: any) {
-      message.error(`Something went wrong ${e.message || ''}`)
+      message.error(`Something went wrong ${e?.message || ''}`)
     } finally {
       modalStore.setIsLoading(false)
     }
