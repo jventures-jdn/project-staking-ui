@@ -4,7 +4,6 @@ import {
   makeObservable,
   observable,
   runInAction,
-  toJS,
 } from "mobx";
 import { Validator, chainAccount, stakingContract } from ".";
 import { BigNumber as $BigNumber, Event, Signer } from "ethers";
@@ -374,6 +373,7 @@ export class Staking {
     await Promise.all([
       chainAccount.fetchBalance(),
       this.updateValidators(), // update validators
+      this.fetchMyStakingHistory(), // update history
     ]);
 
     return receip;
@@ -406,7 +406,7 @@ export class Staking {
     await Promise.all([
       chainAccount.fetchBalance(),
       this.updateValidators(), // update validators
-      // this.fetchMyStakingValidators({ force: true }), // update total stake (my validators)
+      this.fetchMyStakingHistory(), // update history
     ]);
 
     return receip;
@@ -441,7 +441,7 @@ export class Staking {
     await Promise.all([
       chainAccount.fetchBalance(),
       this.updateValidators(), // update validators
-      // this.fetchMyStakingValidators({ force: true }), // update total stake (my validators)
+      this.fetchMyStakingHistory(), // update history
     ]);
 
     return receip;
