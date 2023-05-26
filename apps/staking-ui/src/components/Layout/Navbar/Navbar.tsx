@@ -7,7 +7,7 @@ import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../../stores'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { Progress } from 'antd'
 import { EXPECT_CHAIN } from '@utils/chain/src/chain'
 import { switchChain } from '@utils/chain/src/utils/wallet'
@@ -15,7 +15,8 @@ import { switchChain } from '@utils/chain/src/utils/wallet'
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const defaultLoadingDuration = 7000
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
+  const balance = useBalance({ address: address, watch: true })
   const { chain } = useNetwork()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
@@ -41,7 +42,7 @@ const Navbar = observer(() => {
       ?.querySelector('w3m-button-big')
 
     const iosButton = element
-      ?.querySelector('w3m-wallet-button[name="Join"]')
+      ?.querySelector('w3m-wallet-button')
       ?.shadowRoot?.querySelector('button')
 
     if (androidButton) {
@@ -84,37 +85,6 @@ const Navbar = observer(() => {
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     recursiveClickAuthen(w3mModalRouter as HTMLElement)
-
-    // const testFire = document.querySelector('#test-fire') as HTMLElement
-    // if (testFire) {
-    //   testFire.style.cursor = 'pointer'
-    //   testFire.click()
-    //   const event = new Event('touchstart')
-    //   testFire.dispatchEvent(event)
-    // }
-
-    // // content selector
-    // const w3mConnectWalletView = w3mModalRouter?.shadowRoot?.querySelector(
-    //   'w3m-connect-wallet-view',
-    // )
-    // const w3mMobileWalletSelection =
-    //   w3mConnectWalletView?.shadowRoot?.querySelector(
-    //     'w3m-android-wallet-selection, w3m-mobile-wallet-selection',
-    //   )
-    // const w3mModalContent =
-    //   w3mMobileWalletSelection?.shadowRoot?.querySelector('w3m-modal-content')
-
-    // // handle login
-    // const androidButton = w3mModalContent
-    //   ?.querySelector('.w3m-slider')
-    //   ?.querySelector('w3m-button-big')
-
-    // const iosButton = w3mModalContent
-    //   ?.querySelector('w3m-wallet-button')
-    //   ?.shadowRoot?.querySelector('button')
-
-    // androidButton?.click()
-    // iosButton?.click()
   }
 
   const resetAutoAuthen = () => {
@@ -290,13 +260,6 @@ const Navbar = observer(() => {
                     </span>
                   </div>
                 )}
-                <div
-                  onClick={() => alert('Fire!')}
-                  onTouchStart={() => alert('Touch')}
-                  id="test-fire"
-                >
-                  Test Fire
-                </div>
                 <Web3Button />
               </div>
             </div>
@@ -316,7 +279,13 @@ const Navbar = observer(() => {
       <div
         className={`navbar-overlay ${isBurgerActive && 'active'}`}
         style={{
-          height: isBurgerActive ? (isAuto ? '220px' : '270px') : '0px',
+          height: isBurgerActive
+            ? isAuto
+              ? isConnected
+                ? '270px'
+                : '220px'
+              : '270px'
+            : '0px',
         }}
       >
         <NavHashLink
@@ -372,8 +341,16 @@ const Navbar = observer(() => {
         >
           {!isAuto &&
             (!isMetamask ? <ConnectMetamaskButton /> : <Web3Button />)}
-          {/* {!isMetamask ? <ConnectMetamaskButton /> : <Web3Button />} */}
         </div>
+        {isConnected && isAuto && (
+          <div>
+            Balance:{' '}
+            <b style={{ color: '#c60000' }}>
+              {balance.data?.formatted.slice(0, 6) || 0}
+            </b>{' '}
+            {balance.data?.symbol}
+          </div>
+        )}
       </div>
     </>
   )

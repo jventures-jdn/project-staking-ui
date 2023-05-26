@@ -5,7 +5,7 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Web3Modal } from '@web3modal/react'
 import { WagmiConfig } from 'wagmi'
-import { getCurrentEnv, useWallectConnect } from './stores'
+import { useWallectConnect } from './stores'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
 import './assets/css/index.css'
@@ -16,6 +16,14 @@ import './assets/css/pagination.css'
 import './assets/css/modal.css'
 import { BrowserRouter } from 'react-router-dom'
 
+const hostname = window.location.hostname
+const isProd = [
+  'staking.jfinchain.com',
+  'staking.testnet.jfinchain.com',
+  'jfin-staking-mainnet.web.app',
+  'jfin-staking-testnet.web.app',
+].includes(hostname)
+
 Sentry.init({
   dsn:
     process.env.NODE_ENV === 'production'
@@ -23,11 +31,13 @@ Sentry.init({
       : '',
   integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
   // Performance Monitoring
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 1.0 : 0.0, // Capture 100% of the transactions, reduce in production!
+  tracesSampleRate: isProd ? 1.0 : 0.0, // Capture 100% of the transactions, reduce in production!
   // Session Replay
-  replaysSessionSampleRate: process.env.NODE_ENV === 'production' ? 0.0 : 0.0, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-  replaysOnErrorSampleRate: process.env.NODE_ENV === 'production' ? 1.0 : 0.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-  environment: `${process.env.REACT_APP_ENVIRONMENT}_${process.env.NODE_ENV}`,
+  replaysSessionSampleRate: isProd ? 0.0 : 0.0, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: isProd ? 1.0 : 0.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  environment: `${process.env.REACT_APP_ENVIRONMENT}_${
+    isProd ? 'production' : 'development'
+  }`,
   attachStacktrace: true,
 })
 
@@ -64,10 +74,9 @@ const Main = () => {
                 name: 'Join',
                 links: {
                   native: '',
-                  universal:
-                    getCurrentEnv() === 'jfin'
-                      ? 'https://joinwallet.page.link'
-                      : 'https://joinwalletdev.page.link',
+                  universal: isProd
+                    ? 'https://jfinwallet.page.link'
+                    : 'https://joinwalletdev.page.link',
                 },
               },
             ]}
