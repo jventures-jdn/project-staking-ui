@@ -292,21 +292,21 @@ const Navbar = observer(() => {
             ['/', '/staking'].includes(location.pathname) && 'active'
           }`}
           onClick={handleRoute}
-          to={`/staking${isAuto ? '?auto=1' : ''}#view-point1`}
+          to={`/staking${isAuto ? '?auto=1' : ''}`}
         >
           Staking
         </NavHashLink>
         <NavHashLink
           className={`${location.pathname === '/governance' && 'active'}`}
           onClick={handleRoute}
-          to={`/governance${isAuto ? '?auto=1' : ''}#view-point2`}
+          to={`/governance${isAuto ? '?auto=1' : ''}`}
         >
           Governance
         </NavHashLink>
         <NavHashLink
           className={`${location.pathname === '/assets' && 'active'}`}
           onClick={handleRoute}
-          to={`/assets${isAuto ? '?auto=1' : ''}#view-point3`}
+          to={`/assets${isAuto ? '?auto=1' : ''}`}
         >
           Assets
         </NavHashLink>
