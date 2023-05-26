@@ -281,9 +281,15 @@ const Navbar = observer(() => {
           height: isBurgerActive
             ? isAuto
               ? isConnected
-                ? '270px'
+                ? getCurrentEnv() === 'JFIN'
+                  ? '270px'
+                  : '320px'
+                : getCurrentEnv() === 'JFIN'
+                ? '220px'
                 : '220px'
-              : '270px'
+              : getCurrentEnv() === 'JFIN'
+              ? '270px'
+              : '320px'
             : '0px',
         }}
       >

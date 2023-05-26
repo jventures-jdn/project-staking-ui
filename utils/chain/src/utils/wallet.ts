@@ -17,7 +17,7 @@ export const switchChainWhenIncorrectChain = async () => {
 };
 
 export const switchChain = async () => {
-  const chainIdHex = web3.utils.numberToHex(chainId || 1);
+  const chainIdHex = web3.utils.numberToHex(EXPECT_CHAIN?.chainId || 1);
 
   try {
     await web3.givenProvider.request({
@@ -41,7 +41,7 @@ export const switchChain = async () => {
 };
 
 export const addChain = async () => {
-  const chainIdHex = web3.utils.numberToHex(chainId || 1);
+  const chainIdHex = web3.utils.numberToHex(EXPECT_CHAIN?.chainId || 1);
   await web3.givenProvider.request({
     method: "wallet_addEthereumChain",
     params: [
