@@ -39,6 +39,11 @@ export const CHAIN_NAME: { [key in Chain]?: string } = {
   JFINT: "JFIN Testnet",
 };
 
+export const CHAIN_SYMBOL: { [key in Chain]?: string } = {
+  JFIN: "JFIN",
+  JFINT: "JFINT",
+};
+
 export const EXPECT_CHAIN =
   process.env.REACT_APP_ENVIRONMENT === "jfintest"
     ? getChain("JFINT")

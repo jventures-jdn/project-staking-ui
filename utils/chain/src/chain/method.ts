@@ -3,6 +3,7 @@ import {
   CHAIN_ID,
   CHAIN_NAME,
   CHAIN_RPC,
+  CHAIN_SYMBOL,
   Chain,
   VALIDATOR_STATUS_ENUM,
   VALIDATOR_STATUS_MAPPING,
@@ -30,6 +31,7 @@ export const getChain = (chain: Chain) => {
     chainName: CHAIN_NAME[chain] as Chain,
     chainRpc: CHAIN_RPC[chain],
     chainExplorer: getChainExplorer(chain),
+    chainSymbol: CHAIN_SYMBOL[chain],
   };
 };
 

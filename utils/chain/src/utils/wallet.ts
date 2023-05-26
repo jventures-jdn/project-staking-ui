@@ -2,9 +2,7 @@ import { getNetwork } from "@wagmi/core";
 import { CHAIN_DECIMAL_UNIT, EXPECT_CHAIN, getChain } from "../chain";
 import Web3 from "web3";
 
-const { chainRpc, chainId, chainName, chainExplorer } = getChain(
-  EXPECT_CHAIN.chainName
-);
+const { chainRpc } = getChain(EXPECT_CHAIN.chainName);
 const httpProvider = new Web3.providers.HttpProvider(chainRpc || "");
 const web3 = new Web3(httpProvider);
 
@@ -18,7 +16,6 @@ export const switchChainWhenIncorrectChain = async () => {
 
 export const switchChain = async () => {
   const chainIdHex = web3.utils.numberToHex(EXPECT_CHAIN?.chainId || 1);
-
   try {
     await web3.givenProvider.request({
       method: "wallet_switchEthereumChain",
@@ -47,14 +44,14 @@ export const addChain = async () => {
     params: [
       {
         chainId: chainIdHex,
-        rpcUrls: [chainRpc],
-        chainName,
+        rpcUrls: [EXPECT_CHAIN.chainRpc],
+        chainName: EXPECT_CHAIN.chainName,
         nativeCurrency: {
           decimals: CHAIN_DECIMAL_UNIT,
-          name: chainName,
-          symbol: chainName,
+          name: EXPECT_CHAIN.chainName,
+          symbol: EXPECT_CHAIN.chainSymbol,
         },
-        blockExplorerUrls: [chainExplorer.homePage],
+        blockExplorerUrls: [EXPECT_CHAIN.chainExplorer.homePage],
         iconUrls: ["https://staking.jfinchain.com/favicon-96x96.png"],
       },
     ],
