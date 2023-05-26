@@ -12,7 +12,7 @@
   ],
   "plugins": ["react"],
   "rules": {
-    "turbo/no-undeclared-env-vars": "off",
+    "turbo/no-undeclared-env-vars": "warn",
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/ban-ts-comment": "off"
