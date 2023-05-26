@@ -46,12 +46,11 @@ const Navbar = observer(() => {
       ?.shadowRoot?.querySelector('button')
 
     if (androidButton) {
-      // androidButton!.style.cursor = 'pointer;'
-      return androidButton?.click()
+      if (isMetamask) return iosButton?.click() // is metamask browser or extension
+      return androidButton?.click() // is join
     }
     if (iosButton) {
-      // iosButton!.style.cursor = 'pointer;'
-      return iosButton?.click()
+      return iosButton?.click() // is join
     }
 
     // travel to children node
@@ -126,7 +125,7 @@ const Navbar = observer(() => {
     return (
       <div>
         <a
-          href={`https://metamask.app.link/dapp/${window.location.href}`}
+          href={`https://metamask.app.link/dapp/${window.location.href}?auto=1`}
           style={{
             marginBottom: '2rem',
             display: 'inline-flex',
