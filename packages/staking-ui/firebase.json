@@ -25,7 +25,19 @@
       ]
     },
     {
-      "target": "governance",
+      "target": "legacy:mainnet",
+      "public": "build",
+      "cleanUrls": true,
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "target": "legacy:testnet",
       "public": "build",
       "cleanUrls": true,
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],

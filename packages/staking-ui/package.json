@@ -71,7 +71,8 @@
     "build:jfintest": "REACT_APP_ENVIRONMENT=jfintest react-scripts build",
     "deploy-preview:mainnet": "yarn build:jfin && firebase deploy --only hosting:mainnet",
     "deploy-preview:testnet": "yarn build:jfintest && firebase deploy --only hosting:testnet",
-    "deploy-governance:mainnet": "yarn build:jfin && firebase deploy --only hosting:governance",
+    "deploy-legacy:mainnet": "yarn build:jfin && firebase deploy --only hosting:legacy:mainnet",
+    "deploy-legacy:testnet": "yarn build:jfintest && firebase deploy --only hosting:legacy:testnet",
     "deploy-preview": "yarn deploy-preview:testnet && yarn deploy-preview:mainnet"
   },
   "browserslist": {
