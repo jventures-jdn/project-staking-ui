@@ -580,21 +580,17 @@ export class Staking {
    */
   public async getAllValidatorEvents() {
     this.isProviderValid();
-    const [addedValidators, removedValidators, jailedValidators] =
-      await Promise.all([
-        this.getAddedValidatorEvents(),
-        this.getRemovedValidatorEvents(),
-        this.getJailedValidatorEvents(),
-      ]);
+    const [addedValidators, removedValidators] = await Promise.all([
+      this.getAddedValidatorEvents(),
+      this.getRemovedValidatorEvents(),
+    ]);
 
-    const validatorEvents = [
-      ...addedValidators,
-      ...removedValidators,
-      ...jailedValidators,
-    ];
+    const availableValidators = addedValidators.filter(
+      (i) => !removedValidators.find((r) => r.args?.[0] === i.args?.[0])
+    );
 
-    this.validatorEvents = validatorEvents;
-    return validatorEvents;
+    this.validatorEvents = availableValidators;
+    return availableValidators;
   }
 
   /**
