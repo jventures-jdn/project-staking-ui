@@ -105,11 +105,6 @@ export default class WalletConnectStore {
       provider: this.configure.provider,
     })
 
-    this.wagmiClient.clearState()
-    console.log(toJS(this.wagmiClient.config.storage))
-
-    // this.wagmiClient.
-
     this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains)
   }
 
