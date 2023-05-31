@@ -77,7 +77,7 @@ const App = observer(() => {
       <div className="body">
         <BlockInfo />
         <Switch>
-          <Suspense fallback={'loading...'}>
+          <Suspense fallback={''}>
             <Route key="staking" path={['/', '/staking']} exact>
               <Staking />
             </Route>

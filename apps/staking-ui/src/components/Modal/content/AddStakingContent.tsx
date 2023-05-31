@@ -37,7 +37,10 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
 
     try {
       modalStore.setIsLoading(true)
-      await chainStaking.stakeToValidator(props.validator.ownerAddress, stakingAmount)
+      await chainStaking.stakeToValidator(
+        props.validator.ownerAddress,
+        stakingAmount,
+      )
       modalStore.setVisible(false)
       message.success(`Staked was done!`)
     } catch (e: any) {

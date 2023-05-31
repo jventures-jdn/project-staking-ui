@@ -395,10 +395,11 @@ export class Staking {
 
     const signer = await fetchSigner();
     const staking = this.contract.connect(signer as Signer);
+
     const transaction = await staking.delegate(validatorAddress, {
       gasPrice: $BigNumber.from(GAS_PRICE),
       value: $BigNumber.from(
-        new BigNumber(amount).multipliedBy(CHAIN_DECIMAL).toString()
+        new BigNumber(amount).multipliedBy(CHAIN_DECIMAL).toString(10)
       ),
     });
     const receip = await transaction.wait();
@@ -430,7 +431,7 @@ export class Staking {
     const signer = await fetchSigner();
     const staking = this.contract.connect(signer as Signer);
     const amount = $BigNumber.from(
-      BigNumber(_amount).multipliedBy(CHAIN_DECIMAL).toString()
+      BigNumber(_amount).multipliedBy(CHAIN_DECIMAL).toString(10)
     );
 
     const transaction = await staking.undelegate(validatorAddress, amount, {

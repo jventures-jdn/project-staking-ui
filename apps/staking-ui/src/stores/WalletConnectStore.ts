@@ -84,8 +84,6 @@ export default class WalletConnectStore {
       goerli,
     ] as Chain[]
 
-    console.log(this.chains)
-
     // 2. Get configure from configureChains
     this.configure = configureChains(this.chains, [
       w3mProvider({ projectId: this.projectId }),
