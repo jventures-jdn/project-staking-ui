@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "TS Library",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "declaration": false,
+    "module": "commonjs",
+    "removeComments": true,
+    "target": "es2017",
+    "allowJs": true
+  }
+}

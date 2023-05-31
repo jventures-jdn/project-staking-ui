@@ -1,0 +1,18 @@
+.footer {
+  padding: 0.5rem 48px;
+  background: linear-gradient(
+    to bottom right,
+    var(--SD075),
+    var(--SD100)
+  ) !important;
+  text-align: center;
+}
+
+.footer span {
+  color: var(--SD025);
+}
+
+.footer a {
+  color: var(--S075) !important;
+  opacity: 0.75
+}

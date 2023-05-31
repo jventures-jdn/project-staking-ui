@@ -20,49 +20,47 @@
 
 ## Installation
 
-<b>Note</b>: In this guide we describe using yarn to install packages. Other package managers may be used at your discretion. With yarn, you have several options available for managing how your OS command line resolves the location of package. but we prefer to use yarn to avoid any problems.
+<b>Note</b>: In this guide we describe using pnpm to install packages.
 
-Install project dependencies
-
-```bash
-$ cd root-project
-$ yarn install
-```
-
-Build monorepo package
+First, you need to install package manager call pnpm, this package is absolutely necessary to manage monorepo project
 
 ```bash
-$ cd root-project
-$ yarn build
+$ npm install -g pnpm
 ```
 
-Use Node v16
+Second, Install project dependencies to all repo
 
-```
-nvm use 16
+```bash
+$ pnpm i
 ```
 
 ## Using
 
-Once installed, you can start user-interface in local environment with following commands:
+Once installed everything above, you can start website in local environment with following commands:
 
 ```bash
-$ cd root-project/packages/staking-ui
-$ yarn start:[jfin, jfintest]
+$ cd ./apps/staking-ui
+$ pnpm dev:jfin # for mainnet
+$ pnpm dev:jfintest # for testnet
 ```
 
-For deploy to production you need to build static at user-interface directory, and then copy `build` directory to your web server, to build static run the following commands:
+## Deploy
+
+To deploy to firebase, run the following commands:
 
 ```bash
-$ cd root-project/packages/staking-ui
-$ yarn build:[jfin, jfintest]
+$ cd ./apps/staking-ui
+$ pnpm deploy-preview:mainnet # for mainnet
+$ pnpm deploy-preview:testnet # for testnet
+$ pnpm deploy-preview # both
 ```
 
-To deploy user interface to <b>preview</b> envrioment include mainnet, testnet by run the following commands:
+If you want to deploy to custom hosting you need to build static then copy `dist` directory to your hosting, to build static run the following commands:
 
 ```bash
-$ cd root-project/packages/staking-ui
-$ yarn deploy-preview:[mainnet, testnet]
+$ cd ./apps/staking-ui
+$ pnpm build:jfin # for mainnet
+$ pnpm build:jfintest # for testnet
 ```
 
 ## Project structure
@@ -71,9 +69,8 @@ This project consists of three parts. that are connected to each other, the main
 
 ```
     .
-    ├── packages
-    │   ├── backoffice-ui           # Backoffice user-interface
-    │   ├── javascript-sdk          # Web3 sdk library (need to build every time after changed)
+    ├── apps
+    │   ├── javascript-sdk          # "Old" web3 sdk library (no longer used)
     │   └── staking-ui              # Staking user-interface
     │       └── src
     │           ├── assets          # assets file include images, css
@@ -81,19 +78,12 @@ This project consists of three parts. that are connected to each other, the main
     │           ├── pages           # user-interface pages
     │           ├── stores          # mobx storage include web3 config, functional and modal
     │           └── utils           # helper and const
-    └── ...
+    ├── utils
+    │   └── chain                   # "New" web3 sdk for handle all things in smart contract
+    └──...
 ```
-
-\*\*\* Please check before using some page and components. It's an old file that is no longer in use. but is also exist for future error references (from original fork).
 
 ## Others
-
-`javascript-sdk` It needs to be rebuilt after every edit.
-
-```bash
-$ cd root-project
-$ yarn build
-```
 
 When new validator has been added to the chain you need to match address with the validator's name and image at `staking-ui/.../utils/const.ts`
 

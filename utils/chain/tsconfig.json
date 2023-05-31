@@ -1,0 +1,10 @@
+{
+  "extends": "@config/typescript-config/react-lib.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": "."
+  },
+  "declaration": true,
+  "include": ["./src"],
+  "exclude": ["node_modules", "dist"]
+}

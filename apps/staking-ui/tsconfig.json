@@ -1,0 +1,22 @@
+{
+  "extends": "@config/typescript-config/react-lib.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*", "./dist/*", ""]
+    },
+    "types": [
+      "@synthetixio/synpress/support",
+    ]
+  },
+  "types": ["vite/client"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "vite.config.ts",
+    "playwright.config.ts",
+    "e2e/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

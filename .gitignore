@@ -1,12 +1,40 @@
-idea
+# dependencies
 node_modules
-.DS_Store
-*.log
-.vscode
+.pnp
+.pnp.js
+*.tsbuildinfo
+
+# testing
+coverage
+__tests__
+*/**/cypress/videos
+*/**/cypress/images
+*/**/cypress/downloads
+*/**/test-results/
+*/**/playwright-report/
+*/**/playwright/.cache/
+
+
+# build
 dist
-lib
-tsconfig.tsbuildinfo
-.idea
 build
-.eslintcache
+lib
+
+# misc
+.DS_Store
+*.pem
+.vscode
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ci
+.turbo
 .firebase
+
+# temp
+.temp
+

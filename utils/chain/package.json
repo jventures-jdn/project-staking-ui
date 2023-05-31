@@ -1,0 +1,27 @@
+{
+  "name": "@utils/chain",
+  "main": "./index.ts",
+  "type": "./index.ts",
+  "dependencies": {
+    "bignumber.js": "^9.0.2",
+    "ethers": "^5",
+    "mobx": "^6.5.0",
+    "pretty-time": "^1.1.0",
+    "wagmi": "0.12.12",
+    "web3": "^1.10.0"
+  },
+  "devDependencies": {
+    "@config/eslint-config": "workspace:*",
+    "@config/typescript-config": "workspace:*",
+    "@ethersproject/abstract-provider": "^5.7.0",
+    "@types/node": "^18.16.0",
+    "@wagmi/core": "0.10.10",
+    "abitype": "^0.8.4",
+    "react": "^17.0.2",
+    "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
+    "build": "tsc --build"
+  }
+}
