@@ -7,7 +7,7 @@ import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../../stores'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import { Progress } from 'antd'
 import { EXPECT_CHAIN } from '@utils/chain/src/chain'
 import { switchChain } from '@utils/chain/src/utils/wallet'
@@ -15,8 +15,7 @@ import { switchChain } from '@utils/chain/src/utils/wallet'
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const defaultLoadingDuration = 7000
-  const { isConnected, address } = useAccount()
-  const balance = useBalance({ address: address, watch: true })
+  const { isConnected } = useAccount()
   const { chain } = useNetwork()
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
@@ -279,15 +278,7 @@ const Navbar = observer(() => {
         className={`navbar-overlay ${isBurgerActive && 'active'}`}
         style={{
           height: isBurgerActive
-            ? isAuto
-              ? isConnected
-                ? getCurrentEnv() === 'jfin'
-                  ? '270px'
-                  : '320px'
-                : getCurrentEnv() === 'jfin'
-                ? '220px'
-                : '220px'
-              : getCurrentEnv() === 'jfin'
+            ? getCurrentEnv() === 'jfin'
               ? '270px'
               : '320px'
             : '0px',
@@ -344,18 +335,8 @@ const Navbar = observer(() => {
             visibility: isAuto ? 'visible' : 'visible',
           }}
         >
-          {!isAuto &&
-            (!isMetamask ? <ConnectMetamaskButton /> : <Web3Button />)}
+          {!isMetamask && !isAuto ? <ConnectMetamaskButton /> : <Web3Button />}
         </div>
-        {isConnected && isAuto && (
-          <div>
-            Balance:{' '}
-            <b style={{ color: '#c60000' }}>
-              {balance.data?.formatted.slice(0, 6) || 0}
-            </b>{' '}
-            {balance.data?.symbol}
-          </div>
-        )}
       </div>
     </>
   )
