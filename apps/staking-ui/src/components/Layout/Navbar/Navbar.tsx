@@ -7,7 +7,7 @@ import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../../stores'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { Progress } from 'antd'
 import { EXPECT_CHAIN } from '@utils/chain/src/chain'
 import { switchChain } from '@utils/chain/src/utils/wallet'
@@ -15,8 +15,9 @@ import { switchChain } from '@utils/chain/src/utils/wallet'
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const defaultLoadingDuration = 7000
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
+  const balance = useBalance({ address: address, watch: true })
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
   const isAuto = !!location.search.includes('auto')
@@ -335,7 +336,19 @@ const Navbar = observer(() => {
             visibility: isAuto ? 'visible' : 'visible',
           }}
         >
-          {!isMetamask && !isAuto ? <ConnectMetamaskButton /> : <Web3Button />}
+          {!isMetamask && !isAuto ? (
+            <ConnectMetamaskButton />
+          ) : isConnected ? (
+            <div>
+              Balance:{' '}
+              <b style={{ color: '#c60000' }}>
+                {balance.data?.formatted.slice(0, 6) || 0}
+              </b>{' '}
+              {balance.data?.symbol}
+            </div>
+          ) : (
+            <Web3Button />
+          )}
         </div>
       </div>
     </>
