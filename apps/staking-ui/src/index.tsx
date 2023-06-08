@@ -17,7 +17,7 @@ import './assets/css/modal.css'
 import { BrowserRouter } from 'react-router-dom'
 
 const hostname = window.location.hostname
-const isProd = [
+export const isProd = [
   'staking.jfinchain.com',
   'staking.testnet.jfinchain.com',
   'jfin-staking-mainnet.web.app',
