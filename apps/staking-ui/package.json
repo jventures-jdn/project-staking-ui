@@ -55,7 +55,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
     "start": "vite preview --port 3000",
-    "dev": "NETWORK=jfin COMMIT_HASH=$(git rev-parse HEAD) pnpm start:jfin",
+    "dev": "pnpm dev:jfin",
     "dev:jfin": "NETWORK=jfin COMMIT_HASH=$(git rev-parse HEAD) vite --port 3000",
     "dev:jfintest": "NETWORK=jfintest COMMIT_HASH=$(git rev-parse HEAD) vite --port 3000",
     "build:jfin:dev": "NETWORK=jfin pnpm build",
