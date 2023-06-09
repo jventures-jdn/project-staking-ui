@@ -8,4 +8,5 @@ elif [ "$CF_PAGES_BRANCH" == *"testnet"* ]; then
     pnpm build:jfintest
 else
     echo Error : network not found in branch name
+    exit 1
 fi
