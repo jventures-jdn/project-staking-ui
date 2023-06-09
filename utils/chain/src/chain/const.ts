@@ -45,9 +45,7 @@ export const CHAIN_SYMBOL: { [key in Chain]?: string } = {
 };
 
 export const EXPECT_CHAIN =
-  process.env.REACT_APP_ENVIRONMENT === "jfintest"
-    ? getChain("JFINT")
-    : getChain("JFIN");
+  process.env.NETWORK === "jfintest" ? getChain("JFINT") : getChain("JFIN");
 
 /* ------------------------- Chain type declearation ------------------------ */
 export type Chain = "JFIN" | "JFINT";
