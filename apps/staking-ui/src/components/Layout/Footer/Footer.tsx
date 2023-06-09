@@ -10,10 +10,9 @@ const Footer = () => {
         {isProd ? (
           <span>
             {' '}
-            {`${
-              process.env.CF_PAGES_COMMIT_SHA ||
-              process.env.REACT_APP_COMMIT?.slice(0, 7)
-            }`}{' '}
+            {`${(
+              process.env.CF_PAGES_COMMIT_SHA || process.env.REACT_APP_COMMIT
+            )?.slice(0, 7)}`}{' '}
             {process.env.CF_PAGES_BRANCH}
           </span>
         ) : (
@@ -23,10 +22,9 @@ const Footer = () => {
               rel="noreferrer"
               href={`https://github.com/jventures-jdn/project-staking-ui/commit/${process.env.REACT_APP_COMMIT}`}
             >
-              {`${
-                process.env.CF_PAGES_COMMIT_SHA ||
-                process.env.REACT_APP_COMMIT?.slice(0, 7)
-              }`}
+              {`${(
+                process.env.CF_PAGES_COMMIT_SHA || process.env.REACT_APP_COMMIT
+              )?.slice(0, 7)}`}
             </a>{' '}
             {process.env.CF_PAGES_BRANCH}
           </>
