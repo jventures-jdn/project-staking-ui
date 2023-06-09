@@ -1,7 +1,7 @@
 import ModalStore from './ModalStore'
 import WalletConnectStore from './WalletConnectStore'
 
-const currentEnvironment = process.env.REACT_APP_ENVIRONMENT
+const currentEnvironment = process.env.NETWORK
 const modalStore = new ModalStore()
 const walletConnectStore = new WalletConnectStore()
 
