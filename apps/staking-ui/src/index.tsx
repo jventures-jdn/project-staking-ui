@@ -16,13 +16,7 @@ import './assets/css/pagination.css'
 import './assets/css/modal.css'
 import { BrowserRouter } from 'react-router-dom'
 
-const hostname = window.location.hostname
-export const isProd = [
-  'staking.jfinchain.com',
-  'staking.testnet.jfinchain.com',
-  'jfin-staking-mainnet.web.app',
-  'jfin-staking-testnet.web.app',
-].includes(hostname)
+export const isProd = process.env.PROD_MODE || false
 
 Sentry.init({
   dsn:
