@@ -16,7 +16,8 @@ import './assets/css/pagination.css'
 import './assets/css/modal.css'
 import { BrowserRouter } from 'react-router-dom'
 
-export const isProd = process.env.PROD_MODE || false
+export const isProd =
+  process.env.PROD_MODE === '1' || process.env.PROD_MODE === 'true' || false
 
 Sentry.init({
   dsn:
@@ -29,7 +30,7 @@ Sentry.init({
   // Session Replay
   replaysSessionSampleRate: isProd ? 0.0 : 0.0, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: isProd ? 1.0 : 0.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-  environment: `${process.env.REACT_APP_ENVIRONMENT}_${
+  environment: `${process.env.NETWORK}_${
     isProd ? 'production' : 'development'
   }`,
   attachStacktrace: true,
