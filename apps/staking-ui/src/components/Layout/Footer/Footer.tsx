@@ -13,7 +13,6 @@ const Footer = () => {
             {`${(
               process.env.CF_PAGES_COMMIT_SHA || process.env.COMMIT_HASH
             )?.slice(0, 7)}`}{' '}
-            {process.env.CF_PAGES_BRANCH}
           </span>
         ) : (
           <>
