@@ -16,8 +16,8 @@ const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
   const defaultLoadingDuration = 7000
   const { isConnected, address } = useAccount()
-  const balance = useBalance({ address: address, watch: true })
   const { chain } = useNetwork()
+  const balance = useBalance({ address: address, watch: true })
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
   const isAuto = !!location.search.includes('auto')
@@ -279,15 +279,7 @@ const Navbar = observer(() => {
         className={`navbar-overlay ${isBurgerActive && 'active'}`}
         style={{
           height: isBurgerActive
-            ? isAuto
-              ? isConnected
-                ? getCurrentEnv() === 'jfin'
-                  ? '270px'
-                  : '320px'
-                : getCurrentEnv() === 'jfin'
-                ? '220px'
-                : '220px'
-              : getCurrentEnv() === 'jfin'
+            ? getCurrentEnv() === 'jfin'
               ? '270px'
               : '320px'
             : '0px',
@@ -344,18 +336,20 @@ const Navbar = observer(() => {
             visibility: isAuto ? 'visible' : 'visible',
           }}
         >
-          {!isAuto &&
-            (!isMetamask ? <ConnectMetamaskButton /> : <Web3Button />)}
+          {!isMetamask && !isAuto ? (
+            <ConnectMetamaskButton />
+          ) : isConnected ? (
+            <div>
+              Balance:{' '}
+              <b style={{ color: '#c60000' }}>
+                {balance.data?.formatted.slice(0, 6) || 0}
+              </b>{' '}
+              {balance.data?.symbol}
+            </div>
+          ) : (
+            <Web3Button />
+          )}
         </div>
-        {isConnected && isAuto && (
-          <div>
-            Balance:{' '}
-            <b style={{ color: '#c60000' }}>
-              {balance.data?.formatted.slice(0, 6) || 0}
-            </b>{' '}
-            {balance.data?.symbol}
-          </div>
-        )}
       </div>
     </>
   )
