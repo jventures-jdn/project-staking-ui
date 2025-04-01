@@ -6,16 +6,16 @@
     "jfin-staking-ui": {
       "hosting": {
         "mainnet": [
-          "jfin-staking-mainnet"
+          "jfin-staking-preview-mainnet"
         ],
         "testnet": [
-          "jfin-staking-testnet"
+          "jfin-staking-preview-testnet"
         ],
-        "preview:mainnet": [
-          "jfin-staking-mainnet-preview"
+        "legacy:mainnet": [
+          "jfin-staking-mainnet-legacy"
         ],
-        "preview:testnet": [
-          "jfin-staking-devnet-legacy"
+        "legacy:testnet": [
+          "jfin-staking-testnet-legacy"
         ]
       }
     }
