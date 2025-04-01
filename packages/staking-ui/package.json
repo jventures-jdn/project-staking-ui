@@ -64,15 +64,18 @@
     "start:devnet": "REACT_APP_ENVIRONMENT=devnet react-app-rewired start",
     "start:jfin": "REACT_APP_ENVIRONMENT=jfin react-app-rewired start",
     "start:jfintest": "REACT_APP_ENVIRONMENT=jfintest react-app-rewired start",
+    "start:jfindev": "REACT_APP_ENVIRONMENT=jfindev react-app-rewired start",
     "build": "REACT_APP_ENVIRONMENT=env react-scripts build",
     "build:local": "REACT_APP_ENVIRONMENT=local react-scripts build",
     "build:devnet": "REACT_APP_ENVIRONMENT=devnet react-scripts build",
     "build:jfin": "REACT_APP_ENVIRONMENT=jfin react-scripts build",
     "build:jfintest": "REACT_APP_ENVIRONMENT=jfintest react-scripts build",
+    "build:jfindev": "REACT_APP_ENVIRONMENT=jfindev react-scripts build",
     "deploy-preview:mainnet": "yarn build:jfin && firebase deploy --only hosting:mainnet",
     "deploy-preview:testnet": "yarn build:jfintest && firebase deploy --only hosting:testnet",
     "deploy-legacy:mainnet": "yarn build:jfin && firebase deploy --only hosting:legacy:mainnet",
     "deploy-legacy:testnet": "yarn build:jfintest && firebase deploy --only hosting:legacy:testnet",
+    "deploy-legacy:devnet": "yarn build:jfindev && firebase deploy --only hosting:legacy:devnet",
     "deploy-preview": "yarn deploy-preview:testnet && yarn deploy-preview:mainnet"
   },
   "browserslist": {

@@ -92,6 +92,12 @@ export const JFIN_TESTNET_CONFIG: IConfig = makeDefaultConfig(
   "https://rpc.testnet.jfinchain.com",
   "https://exp.testnet.jfinchain.com/"
 );
+export const JFIN_DEVNET_CONFIG: IConfig = makeDefaultConfig(
+  3501111,
+  "JFIN",
+  "https://rpc-devnet.jfinchain.com",
+  "http://65.21.195.240:8080"
+);
 
 export const CONFIGS: Record<string, IConfig> = {
   localhost: makeDefaultConfig(1337, "localhost", "http://localhost:8545/"),
