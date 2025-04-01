@@ -61,9 +61,9 @@
   "scripts": {
     "start": "REACT_APP_ENVIRONMENT=env react-app-rewired start",
     "start:local": "REACT_APP_ENVIRONMENT=local react-app-rewired start",
-    "start:devnet": "REACT_APP_ENVIRONMENT=devnet react-app-rewired start",
-    "start:jfin": "REACT_APP_ENVIRONMENT=jfin react-app-rewired start",
-    "start:jfintest": "REACT_APP_ENVIRONMENT=jfintest react-app-rewired start",
+    "start:devnet": "REACT_APP_ENVIRONMENT=devnet react-app-rewired start ",
+    "start:jfin": "REACT_APP_ENVIRONMENT=jfin react-app-rewired --openssl-legacy-provider start",
+    "start:jfintest": "REACT_APP_ENVIRONMENT=jfintest react-app-rewired --openssl-legacy-provider start",
     "build": "REACT_APP_ENVIRONMENT=env react-scripts build",
     "build:local": "REACT_APP_ENVIRONMENT=local react-scripts build",
     "build:devnet": "REACT_APP_ENVIRONMENT=devnet react-scripts build",
@@ -73,7 +73,9 @@
     "deploy-preview:testnet": "yarn build:jfintest && firebase deploy --only hosting:testnet",
     "deploy-legacy:mainnet": "yarn build:jfin && firebase deploy --only hosting:legacy:mainnet",
     "deploy-legacy:testnet": "yarn build:jfintest && firebase deploy --only hosting:legacy:testnet",
-    "deploy-preview": "yarn deploy-preview:testnet && yarn deploy-preview:mainnet"
+    "deploy-preview": "yarn deploy-preview:testnet && yarn deploy-preview:mainnet",
+    "deploy:mainnet": "PROD_MODE=1 firebase hosting:clone jfin-staking-mainnet-preview:live jfin-staking-mainnet:live",
+    "deploy:testnet": "PROD_MODE=1 firebase hosting:clone jfin-staking-testnet-preview:live jfin-staking-testnet:live"
   },
   "browserslist": {
     "production": [
