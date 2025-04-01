@@ -11,12 +11,7 @@
         "testnet": [
           "jfin-staking-testnet"
         ],
-        "preview:mainnet": [
-          "jfin-staking-mainnet-preview"
-        ],
-        "preview:testnet": [
-          "jfin-staking-devnet-legacy"
-        ]
+        "governance": ["jfin-staking-governance-mainnet"]
       }
     }
   }
