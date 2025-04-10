@@ -8,6 +8,7 @@ import {
   METAAPES_CONFIG,
   JFIN_CONFIG,
   JFIN_TESTNET_CONFIG,
+  JFIN_DEVNET_CONFIG,
   MRFOX_CONFIG,
   makeDefaultConfig,
   CONFIGS,
@@ -34,6 +35,9 @@ switch (currentEnvironment) {
     break;
   case "jfintest":
     config = JFIN_TESTNET_CONFIG;
+    break;
+  case "jfindev":
+    config = JFIN_DEVNET_CONFIG;
     break;
   default:
     config = LOCAL_CONFIG;

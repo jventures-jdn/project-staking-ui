@@ -16,6 +16,9 @@
         ],
         "legacy:testnet": [
           "jfin-staking-testnet-legacy"
+        ],
+        "legacy:devnet": [
+          "jfin-staking-devnet-legacy"
         ]
       }
     }
