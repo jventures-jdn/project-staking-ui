@@ -1,7 +1,7 @@
 import jdn from "../assets/images/partners/jdn.png";
 import tbwg from "../assets/images/partners/tbwg.png";
 import tokenine from "../assets/images/partners/tokenine.png";
-import iam from "../assets/images/partners/iam.png";
+
 import jet from "../assets/images/partners/jet.png";
 import jmb from "../assets/images/partners/jmb.png";
 import bnb from "../assets/images/partners/bnb.png";
@@ -33,8 +33,8 @@ export const VALIDATOR_WALLETS: Record<
     image: tokenine,
   },
   "0xe8391988483355e6a8170AC10f5726D4868e5C68": {
-    name: "I AM",
-    image: iam,
+    name: "JDN",
+    image: jdn,
   },
   "0x6DE767908d0d792385200E30d66A5696B24f709c": {
     name: "JET",

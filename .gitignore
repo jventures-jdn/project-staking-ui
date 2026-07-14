@@ -10,3 +10,6 @@ tsconfig.tsbuildinfo
 build
 .eslintcache
 .firebase
+.env
+.env.local
+.env.*
