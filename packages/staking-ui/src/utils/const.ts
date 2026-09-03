@@ -36,6 +36,14 @@ export const VALIDATOR_WALLETS: Record<
     name: "JDN",
     image: jdn,
   },
+  "0x0D13bCA30eEb238BF17E1573C83311700Ee3F7a1": {
+    name: "JDN",
+    image: jdn,
+  },
+  "0x7d7D4B9950bD53562DFDB41de47Ac717Fac25F54": {
+    name: "JDN",
+    image: jdn,
+  },
   "0x6DE767908d0d792385200E30d66A5696B24f709c": {
     name: "JET",
     image: jet,
